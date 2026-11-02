@@ -1,0 +1,110 @@
+# Kinlex web application
+
+The Kinlex web application is built with Next.js and uses Supabase for its local database and authentication services.
+
+## Prerequisites
+
+- Node.js 24 or later
+- pnpm 11 or later
+- Docker Desktop
+- Supabase CLI
+
+Docker Desktop must be running before starting the local Supabase services.
+
+## Start the application locally
+
+Run the following commands from the repository root.
+
+### 1. Start Supabase
+
+```bash
+supabase start
+```
+
+Initialize the local database with the project migrations and seed data:
+
+```bash
+supabase db reset
+```
+
+This command rebuilds the local Supabase database. It does not affect a remote or production database.
+
+### 2. Configure the web application
+
+Create the local environment file:
+
+```bash
+cp web/.env.example web/.env.local
+```
+
+Display the local Supabase connection details:
+
+```bash
+supabase status
+```
+
+Copy the local publishable key into `NEXT_PUBLIC_SUPABASE_ANON_KEY` in `web/.env.local`. The default local URLs in `.env.example` normally do not need to be changed.
+
+Do not commit `.env.local` or any credentials.
+
+### 3. Install dependencies and run Next.js
+
+```bash
+cd web
+pnpm install
+pnpm dev
+```
+
+Open <http://localhost:3000> in a browser. The development server reloads the application when source files change.
+
+Useful local pages include:
+
+- <http://localhost:3000/de/levels/A1>
+- <http://localhost:3000/de/topics>
+- <http://localhost:3000/de/roots>
+
+## Stop the local services
+
+Stop the Next.js development server with `Ctrl+C`. Then run the following command from the repository root:
+
+```bash
+supabase stop
+```
+
+## Quality checks
+
+Run these commands from `web/`:
+
+```bash
+pnpm lint
+pnpm typecheck
+pnpm format:check
+```
+
+To verify a production build locally:
+
+```bash
+pnpm build
+pnpm start
+```
+
+## Troubleshooting
+
+- If Supabase cannot connect to Docker, confirm that Docker Desktop is running and retry `supabase start`.
+- If the application reports a missing `NEXT_PUBLIC_SUPABASE_ANON_KEY`, run `supabase status`, update `web/.env.local`, and restart `pnpm dev`.
+- If port 3000 is already in use, Next.js selects another port and prints its URL in the terminal.
+
+
+
+#### Terminal 1
+First, ensure that Docker Desktop is running, then execute the following in the project root directory:
+```
+supabase start
+```
+
+#### Terminal 2
+Execute the following in a new terminal:
+```
+cd web
+pnpm dev
+```

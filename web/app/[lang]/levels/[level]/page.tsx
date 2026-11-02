@@ -1,0 +1,172 @@
+import type { Metadata } from 'next'
+import { notFound, permanentRedirect } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
+
+import { WordList, type WordListLabels } from '@/components/list/WordList'
+import { config } from '@/lib/config'
+import { UnsupportedLanguageError } from '@/lib/errors'
+import { supportedLanguageCodes } from '@/lib/languages'
+import { listWordFilterOptions, listWords } from '@/lib/services/wordService'
+import { getPublicSupabase } from '@/lib/supabase/server'
+import { wordLevels } from '@/lib/validation/words'
+
+export const revalidate = 3600
+
+const PAGE_SIZE = 20
+
+type WordLevel = (typeof wordLevels)[number]
+const ALL_LEVELS_ROUTE = 'all'
+
+interface LevelPageProps {
+  params: Promise<{
+    lang: string
+    level: string
+  }>
+}
+
+function parseLevel(value: string): WordLevel | null {
+  const normalizedLevel = value.toUpperCase()
+  return wordLevels.find((level) => level === normalizedLevel) ?? null
+}
+
+function getLevelPath(language: string, level: string): string {
+  return `/${encodeURIComponent(language)}/levels/${level.toLowerCase()}`
+}
+
+export function generateStaticParams() {
+  return supportedLanguageCodes.flatMap((language) =>
+    [ALL_LEVELS_ROUTE, ...wordLevels.map((level) => level.toLowerCase())].map((level) => ({
+      lang: language,
+      level,
+    })),
+  )
+}
+
+export async function generateMetadata({ params }: LevelPageProps): Promise<Metadata> {
+  const { lang, level: rawLevel } = await params
+  const isAllLevels = rawLevel.toLowerCase() === ALL_LEVELS_ROUTE
+  const level = isAllLevels ? undefined : parseLevel(rawLevel)
+
+  if (!supportedLanguageCodes.some((language) => language === lang) || (!isAllLevels && !level)) {
+    notFound()
+  }
+
+  const t = await getTranslations('levelPage')
+  const canonicalUrl = new URL(
+    getLevelPath(lang, level ?? ALL_LEVELS_ROUTE),
+    config.siteUrl,
+  ).toString()
+  const title = level ? t('metadataTitle', { level }) : t('allLevelsMetadataTitle')
+  const description = level
+    ? t('metadataDescription', { level })
+    : t('allLevelsMetadataDescription')
+
+  return {
+    title,
+    description,
+    alternates: { canonical: canonicalUrl },
+    openGraph: {
+      type: 'website',
+      url: canonicalUrl,
+      title,
+      description,
+    },
+  }
+}
+
+export default async function LevelPage({ params }: LevelPageProps) {
+  const { lang, level: rawLevel } = await params
+  const isAllLevels = rawLevel.toLowerCase() === ALL_LEVELS_ROUTE
+  const parsedLevel = parseLevel(rawLevel)
+
+  if (!isAllLevels && !parsedLevel) {
+    notFound()
+  }
+  const level: WordLevel | undefined = isAllLevels ? undefined : (parsedLevel ?? undefined)
+
+  const normalizedLevel = level?.toLowerCase() ?? ALL_LEVELS_ROUTE
+  if (rawLevel !== normalizedLevel) {
+    permanentRedirect(getLevelPath(lang, normalizedLevel))
+  }
+
+  const db = getPublicSupabase()
+
+  let initialPage
+  let filterOptions
+  try {
+    ;[initialPage, filterOptions] = await Promise.all([
+      listWords(db, { lang, explain: 'en', level, limit: PAGE_SIZE }),
+      listWordFilterOptions(db, lang),
+    ])
+  } catch (error) {
+    if (error instanceof UnsupportedLanguageError) {
+      notFound()
+    }
+
+    throw error
+  }
+
+  const [t, wordT, morphemeT] = await Promise.all([
+    getTranslations('levelPage'),
+    getTranslations('wordDetail'),
+    getTranslations('morphemeCard'),
+  ])
+  const labels: WordListLabels = {
+    allLevels: t('allLevels'),
+    level: t('levelFilter'),
+    allPartsOfSpeech: t('allPartsOfSpeech'),
+    partOfSpeech: t('partOfSpeech'),
+    allTopics: t('allTopics'),
+    topic: t('topic'),
+    searchWords: t('searchWords'),
+    searchPlaceholder: t('searchPlaceholder'),
+    hideMeanings: t('hideMeanings'),
+    showMeanings: t('showMeanings'),
+    loadMore: t('loadMore'),
+    loading: t('loading'),
+    empty: t('empty'),
+    loadError: t('loadError'),
+    retry: t('retry'),
+    playWord: t.raw('playWord') as string,
+    playExample: t('playExample'),
+    slowAudio: t('slowAudio'),
+    hideWord: t('hideWord'),
+    showWord: t('showWord'),
+    openWord: t.raw('openWord') as string,
+    morphemeTypes: {
+      prefix: wordT('morphemeTypes.prefix'),
+      root: wordT('morphemeTypes.root'),
+      suffix: wordT('morphemeTypes.suffix'),
+    },
+    partsOfSpeech: {
+      noun: wordT('partsOfSpeech.noun'),
+      verb: wordT('partsOfSpeech.verb'),
+      adjective: wordT('partsOfSpeech.adjective'),
+      adverb: wordT('partsOfSpeech.adverb'),
+    },
+    morphemeCard: {
+      loading: morphemeT('loading'),
+      loadError: morphemeT('loadError'),
+      retry: morphemeT('retry'),
+      relatedWords: morphemeT('relatedWords'),
+      noRelatedWords: morphemeT('noRelatedWords'),
+      separable: morphemeT('separable'),
+    },
+  }
+  const pageTitle = level ? t('title', { level }) : t('allLevelsTitle')
+
+  return (
+    <main className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-12">
+      <section aria-label={pageTitle}>
+        <WordList
+          language={lang}
+          level={level}
+          showLevelFilter
+          initialPage={initialPage}
+          filterOptions={filterOptions}
+          labels={labels}
+        />
+      </section>
+    </main>
+  )
+}

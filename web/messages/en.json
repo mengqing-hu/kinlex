@@ -1,0 +1,126 @@
+{
+  "navigation": {
+    "home": "Kinlex",
+    "learningLanguage": "Learning {language}",
+    "levels": "Levels",
+    "topics": "Topics",
+    "allTopics": "All topics",
+    "roots": "Roots",
+    "search": "Search",
+    "signIn": "Sign in",
+    "account": "Account",
+    "mainNavigation": "Main navigation"
+  },
+  "footer": {
+    "description": "Learn words through their connections.",
+    "copyright": "Copyright {year} Kinlex"
+  },
+  "topicsPage": {
+    "eyebrow": "German vocabulary",
+    "title": "Explore vocabulary by topic",
+    "description": "Choose a topic and learn related German words through meanings, examples and word structure.",
+    "wordCount": "{count, plural, one {# word} other {# words}}",
+    "empty": "No topics are available yet.",
+    "metadataTitle": "German vocabulary topics",
+    "metadataDescription": "Explore German vocabulary grouped by practical topics."
+  },
+  "topicPage": {
+    "allTopics": "All topics",
+    "eyebrow": "German vocabulary topic",
+    "title": "{topic} vocabulary",
+    "description": "Learn German words connected to {topic} with meanings, examples and word structure.",
+    "metadataTitle": "{topic} German vocabulary",
+    "metadataDescription": "Learn German vocabulary related to {topic} with meanings, examples and word structure."
+  },
+  "rootsPage": {
+    "eyebrow": "Word structure",
+    "title": "Explore German word families",
+    "description": "Browse prefixes, roots and suffixes to see how German words are connected.",
+    "searchLabel": "Filter word parts",
+    "searchPlaceholder": "Search by form or meaning",
+    "empty": "No word parts match this search.",
+    "word": "word",
+    "words": "words",
+    "types": { "prefix": "Prefixes", "root": "Roots", "suffix": "Suffixes" },
+    "metadataTitle": "German roots, prefixes and suffixes",
+    "metadataDescription": "Explore German word families through roots, prefixes and suffixes."
+  },
+  "rootPage": {
+    "allRoots": "All word parts",
+    "separable": "Separable prefix",
+    "words": "Words containing {root}",
+    "types": { "prefix": "Prefix", "root": "Root", "suffix": "Suffix" },
+    "metadataTitle": "{root} German word family",
+    "metadataDescription": "Learn German words containing {root}, meaning {meaning}."
+  },
+  "wordDetail": {
+    "backToHome": "Kinlex",
+    "level": "Level {level}",
+    "plural": "Plural: {plural}",
+    "meaning": "Meaning",
+    "wordForms": "Word forms",
+    "form": "Form",
+    "formType": "Type",
+    "structure": "Word structure",
+    "examples": "Examples",
+    "wordFamily": "Word family",
+    "noExamples": "No examples are available yet.",
+    "noRelatedWords": "No related words are available yet.",
+    "playWord": "Play pronunciation of {word}",
+    "playExample": "Play example sentence",
+    "slowAudio": "Replay at a slower speed",
+    "morphemeTypes": {
+      "prefix": "Prefix",
+      "root": "Root",
+      "suffix": "Suffix"
+    },
+    "partsOfSpeech": {
+      "noun": "Noun",
+      "verb": "Verb",
+      "adjective": "Adjective",
+      "adverb": "Adverb"
+    },
+    "metadataTitle": "{word} – meaning, examples and word family",
+    "metadataDescription": "Learn the meaning, word structure, forms and examples of {word}."
+  },
+  "levelPage": {
+    "backToHome": "Kinlex",
+    "eyebrow": "German vocabulary",
+    "title": "Level {level} words",
+    "allLevelsTitle": "All German words",
+    "description": "Build your German vocabulary with clear meanings, examples and word structure.",
+    "allLevels": "All levels",
+    "levelFilter": "Level",
+    "allPartsOfSpeech": "All word types",
+    "partOfSpeech": "Word type",
+    "allTopics": "All topics",
+    "topic": "Topic",
+    "searchWords": "Search",
+    "searchPlaceholder": "Search German words",
+    "hideMeanings": "Hide meanings",
+    "showMeanings": "Show meanings",
+    "loadMore": "Load more",
+    "loading": "Loading words",
+    "empty": "No words match these filters.",
+    "loadError": "Words could not be loaded. Please try again.",
+    "retry": "Try again",
+    "playWord": "Play pronunciation of {word}",
+    "playExample": "Play example sentence",
+    "slowAudio": "Replay at a slower speed",
+    "hideWord": "Hide word",
+    "showWord": "Show word",
+    "openWord": "Open details for {word}",
+    "metadataTitle": "German {level} vocabulary",
+    "metadataDescription": "Learn German {level} vocabulary with meanings, examples and word structure.",
+    "allLevelsMetadataTitle": "German vocabulary",
+    "allLevelsMetadataDescription": "Learn German vocabulary across all CEFR levels with meanings, examples and word structure."
+  },
+  "morphemeCard": {
+    "loading": "Loading word family",
+    "loadError": "This word family could not be loaded.",
+    "retry": "Try again",
+    "relatedWords": "Related words",
+    "noRelatedWords": "No related words are available yet.",
+    "separable": "Separable"
+  }
+}

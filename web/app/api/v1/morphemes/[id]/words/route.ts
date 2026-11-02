@@ -1,0 +1,41 @@
+import type { NextRequest } from 'next/server'
+
+import { AppError } from '@/lib/errors'
+import { contentErrorResponse, contentResponse } from '@/lib/http'
+import { getMorphemeWords } from '@/lib/services/morphemeService'
+import { getPublicSupabase } from '@/lib/supabase/server'
+import { formatValidationError } from '@/lib/validation/common'
+import { morphemeIdSchema, morphemeWordsParamsSchema } from '@/lib/validation/morphemes'
+
+interface MorphemeWordsRouteContext {
+  params: Promise<{ id: string }>
+}
+
+export async function GET(request: NextRequest, context: MorphemeWordsRouteContext) {
+  const { id: rawId } = await context.params
+  const parsedId = morphemeIdSchema.safeParse(rawId)
+  const parsedParams = morphemeWordsParamsSchema.safeParse(
+    Object.fromEntries(request.nextUrl.searchParams.entries()),
+  )
+
+  if (!parsedId.success) {
+    return contentErrorResponse('INVALID_PARAMS', formatValidationError(parsedId.error), 400)
+  }
+
+  if (!parsedParams.success) {
+    return contentErrorResponse('INVALID_PARAMS', formatValidationError(parsedParams.error), 400)
+  }
+
+  try {
+    const db = getPublicSupabase()
+    const result = await getMorphemeWords(db, parsedId.data, parsedParams.data.lang)
+    return contentResponse(result)
+  } catch (error) {
+    if (error instanceof AppError) {
+      return contentErrorResponse(error.code, error.message, error.status)
+    }
+
+    console.error('Failed to load morpheme words', error)
+    return contentErrorResponse('INTERNAL', 'An unexpected error occurred', 500)
+  }
+}
