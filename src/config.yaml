@@ -1,0 +1,17 @@
+language: de
+
+providers:
+  llm:
+    model: mistralai/Mistral-Large-4
+    rate_limits: { mistralai/Mistral-Large-4: 20 }
+    reasoning_effort: low
+  tts:
+    provider: openai
+    model: tts-1-hd
+    fallback: null
+    fallback_voice: null
+    voices: { de: alloy }
+    instructions: {}
+llm_concurrency: 4
+tts_concurrency: 4
+retries: 3

@@ -1,0 +1,18 @@
+{
+  "overrides": {
+    "die Kasse": [
+      {"word_part": "Kasse", "morpheme_type": "root", "morpheme": "Kasse", "morpheme_meaning": "till, checkout"}
+    ],
+    "das Mädchen": [
+      {"word_part": "Mädchen", "morpheme_type": "root", "morpheme": "Mädchen", "morpheme_meaning": "girl"}
+    ],
+    "das Krankenhaus": [
+      {"word_part": "Krank", "morpheme_type": "root", "morpheme": "krank", "morpheme_meaning": "ill, sick"},
+      {"word_part": "en"},
+      {"word_part": "haus", "morpheme_type": "root", "morpheme": "Haus", "morpheme_meaning": "house"}
+    ]
+  },
+  "lowercase_roots": {
+    "deutsch": "the adjective; Deutsch and Deutschland are named after it"
+  }
+}

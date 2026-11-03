@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools==84.2.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kinlex-pipeline"
+version = "0.2.0"
+description = "Database-driven vocabulary enrichment and audio pipeline for Kinlex."
+readme = "README.md"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+  "boto3==1.43.123",
+  "httpx==0.28.1",
+  "psycopg[binary]==3.3.6",
+  "pydantic==2.14.2",
+  "pydantic-settings==2.16.2",
+  "PyYAML==6.0.3",
+]
+
+[project.optional-dependencies]
+dev = [
+  "mypy==2.4.1",
+  "ruff==0.17.3",
+  "types-PyYAML==6.0.12.20261030",
+]
+
+[project.scripts]
+kinlex-pipeline = "cli:main"
+
+[tool.setuptools]
+py-modules = ["cli", "config"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["core*", "scripts*", "services*", "utils*"]
+namespaces = false
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+src = ["core", "scripts", "services", "utils"]
+extend-exclude = ["data"]
+
+[tool.ruff.lint]
+select = ["B", "E", "F", "I", "RUF", "SIM", "UP"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["config", "core", "scripts", "services", "utils"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+docstring-code-format = true
+
+[tool.mypy]
+python_version = "3.13"
+plugins = ["pydantic.mypy"]
+files = ["cli.py", "config.py", "core", "scripts", "services", "utils"]
+exclude = "(^|/)data/"
+strict = true
+pretty = true
+show_error_codes = true
+warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = ["boto3", "boto3.*", "botocore", "botocore.*"]
+ignore_missing_imports = true

@@ -1,0 +1,52 @@
+"""Hand-checked root decisions that the model gets wrong.
+
+src/lexicon/{language}_roots.json holds two lists:
+
+- `overrides`: the full segmentation of an entry's stem (without its article or "sich"), keyed
+  by the entry as written in the vocabulary CSV. It replaces the model's segmentation on every
+  run, so a fix made during review survives regeneration.
+- `lowercase_roots`: roots that stay lowercase although a noun has the same letters, because the
+  noun is named after an adjective (Deutsch after deutsch). The review report does not flag them.
+"""
+
+import json
+from functools import cache
+from typing import Any
+
+from core.consistency import spelling_key
+from core.models import Segment
+from utils.affixes import LEXICON_ROOT
+
+
+@cache
+def _load(language: str) -> dict[str, dict[str, Any]]:
+    path = LEXICON_ROOT / f"{language}_roots.json"
+    if not path.is_file():
+        return {}
+    data: dict[str, dict[str, Any]] = json.loads(path.read_text(encoding="utf-8"))
+    return data
+
+
+@cache
+def load_root_overrides(language: str) -> dict[str, list[Segment]]:
+    entries = _load(language).get("overrides", {})
+    return {
+        word: [Segment.model_validate(part) for part in parts] for word, parts in entries.items()
+    }
+
+
+@cache
+def load_lowercase_roots(language: str) -> frozenset[str]:
+    return frozenset(_load(language).get("lowercase_roots", {}))
+
+
+def apply_root_override(
+    word: str, stem: str, segments: list[Segment], overrides: dict[str, list[Segment]]
+) -> list[Segment]:
+    """Use the hand-checked segmentation of `word` when there is one."""
+    override = overrides.get(word)
+    if override is None:
+        return segments
+    if spelling_key("".join(part.word_part for part in override)) != spelling_key(stem):
+        raise ValueError(f"root override for {word!r} does not spell {stem!r}")
+    return override
