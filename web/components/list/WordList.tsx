@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useEffect, useMemo, useState, useSyncExternalStore } from 'react'
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 
 import { FilterBar } from '@/components/list/FilterBar'
 import { normalizePartOfSpeech } from '@/lib/utils/partOfSpeech'
@@ -14,6 +14,7 @@ import type { CursorPage, WordFilterOption, WordFilterOptions, WordListItem } fr
 
 const FILTER_CHANGE_EVENT = 'kinlex:filters'
 const PAGE_SIZE = 20
+const MIN_SCROLL_AREA_HEIGHT = 320
 
 export interface WordListLabels {
   allLevels: string
@@ -185,6 +186,10 @@ export function WordList({
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
   const [signedIn, setSignedIn] = useState(false)
+  const scrollAreaRef = useRef<HTMLDivElement>(null)
+  const loadMoreSentinelRef = useRef<HTMLDivElement>(null)
+  const loadMoreRef = useRef<() => Promise<void>>(async () => undefined)
+  const [scrollAreaHeight, setScrollAreaHeight] = useState<number | null>(null)
   // Familiarity sorting needs an account, so guests always get the default order.
   const sort = signedIn ? filters.sort : ''
   const queryKey = `${debouncedSearchQuery}:${filters.partOfSpeech}:${filters.topic}:${morpheme ?? ''}:${sort}`
@@ -244,6 +249,47 @@ export function WordList({
   ])
 
   const isRefreshing = state.queryKey !== queryKey
+
+  useEffect(() => {
+    const scrollArea = scrollAreaRef.current
+    if (!scrollArea) {
+      return
+    }
+
+    // Size the word area so the whole page, including what sits below the list (the page's bottom
+    // padding and the footer), fits in the window. The page then has nothing to scroll, so the
+    // filter bar never slides under the sticky navigation. Positions are measured against the
+    // page, so the result is the same however far the page has been scrolled.
+    function measure() {
+      if (!scrollArea) {
+        return
+      }
+      const areaRect = scrollArea.getBoundingClientRect()
+      const mainRect = scrollArea.closest('main')?.getBoundingClientRect()
+      const footerHeight = document.querySelector('footer')?.getBoundingClientRect().height ?? 0
+      const top = areaRect.top + window.scrollY
+      const below = (mainRect ? mainRect.bottom - areaRect.bottom : 0) + footerHeight
+      setScrollAreaHeight(Math.max(MIN_SCROLL_AREA_HEIGHT, window.innerHeight - top - below))
+    }
+
+    measure()
+    window.addEventListener('resize', measure)
+    // The filter bar above can wrap onto more lines, which moves the word area down.
+    const observer = new ResizeObserver(measure)
+    if (scrollArea.previousElementSibling) {
+      observer.observe(scrollArea.previousElementSibling)
+    }
+
+    return () => {
+      window.removeEventListener('resize', measure)
+      observer.disconnect()
+    }
+  }, [])
+
+  useEffect(() => {
+    // A new filter result starts from the top of the word area, not where the old list was.
+    scrollAreaRef.current?.scrollTo({ top: 0 })
+  }, [state.queryKey])
   const partOfSpeechOptions: WordFilterOption[] = filterOptions.partsOfSpeech.map((value) => ({
     value,
     label: labels.partsOfSpeech[value] ?? value,
@@ -279,6 +325,31 @@ export function WordList({
     }
   }
 
+  useEffect(() => {
+    loadMoreRef.current = loadMore
+  })
+
+  useEffect(() => {
+    const scrollArea = scrollAreaRef.current
+    const sentinel = loadMoreSentinelRef.current
+    if (!scrollArea || !sentinel || !state.nextCursor || state.error) {
+      return
+    }
+
+    // Load the next page as the end of the list scrolls into view. The observer is recreated after
+    // every page, so it fires again straight away while the list is still too short to scroll.
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          void loadMoreRef.current()
+        }
+      },
+      { root: scrollArea, rootMargin: '0px 0px 300px 0px' },
+    )
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [state.nextCursor, state.error])
+
   return (
     <div>
       <FilterBar
@@ -309,87 +380,86 @@ export function WordList({
         onHideActionsChange={(checked) => updateSearchParameter('actions', checked ? '0' : '')}
       />
 
-      <div aria-busy={isRefreshing} className={isRefreshing ? 'opacity-50' : undefined}>
-        {state.error ? (
-          <div className="py-12 text-center">
-            <p className="text-[var(--mute)]">{labels.loadError}</p>
-            <button
-              className="mt-4 rounded-lg border border-[var(--line)] bg-[var(--card)] px-4 py-2 text-sm font-semibold text-[var(--ink)] hover:border-[var(--info)]"
-              type="button"
-              onClick={() => {
-                setState((current) => ({ ...current, queryKey: '' }))
-                setRetryVersion((version) => version + 1)
-              }}
-            >
-              {labels.retry}
-            </button>
-          </div>
-        ) : state.items.length > 0 ? (
-          <div className="overflow-x-auto">
-            <ul className="min-w-5xl">
-              {state.items.map((word) => (
-                <WordRow
-                  language={language}
-                  word={word}
-                  hideMeanings={filters.hideMeanings}
-                  hideActions={filters.hideActions}
-                  hidden={hiddenWordIds.has(word.id)}
-                  key={word.id}
-                  labels={{
-                    playWord: labels.playWord.replace('{word}', word.lemma),
-                    playExample: labels.playExample,
-                    slowAudio: labels.slowAudio,
-                    hideWord: labels.hideWord,
-                    showWord: labels.showWord,
-                    familiarity: labels.familiarity,
-                  }}
-                  morphemeTypeLabels={labels.morphemeTypes}
-                  morphemeCardLabels={{
-                    ...labels.morphemeCard,
-                    morphemeTypes: labels.morphemeTypes,
-                    partsOfSpeech: labels.partsOfSpeech,
-                  }}
-                  partOfSpeechLabels={labels.partsOfSpeech}
-                  onToggleHidden={() => {
-                    setHiddenWordIds((current) => {
-                      const next = new Set(current)
+      <div
+        className="max-h-[calc(100dvh-12rem)] overflow-y-auto overscroll-contain"
+        ref={scrollAreaRef}
+        style={scrollAreaHeight === null ? undefined : { maxHeight: scrollAreaHeight }}
+      >
+        <div aria-busy={isRefreshing} className={isRefreshing ? 'opacity-50' : undefined}>
+          {state.error ? (
+            <div className="py-12 text-center">
+              <p className="text-[var(--mute)]">{labels.loadError}</p>
+              <button
+                className="mt-4 rounded-lg border border-[var(--line)] bg-[var(--card)] px-4 py-2 text-sm font-semibold text-[var(--ink)] hover:border-[var(--info)]"
+                type="button"
+                onClick={() => {
+                  setState((current) => ({ ...current, queryKey: '' }))
+                  setRetryVersion((version) => version + 1)
+                }}
+              >
+                {labels.retry}
+              </button>
+            </div>
+          ) : state.items.length > 0 ? (
+            <div className="overflow-x-auto">
+              <ul className="min-w-5xl">
+                {state.items.map((word) => (
+                  <WordRow
+                    language={language}
+                    word={word}
+                    hideMeanings={filters.hideMeanings}
+                    hideActions={filters.hideActions}
+                    hidden={hiddenWordIds.has(word.id)}
+                    key={word.id}
+                    labels={{
+                      playWord: labels.playWord.replace('{word}', word.lemma),
+                      playExample: labels.playExample,
+                      slowAudio: labels.slowAudio,
+                      hideWord: labels.hideWord,
+                      showWord: labels.showWord,
+                      familiarity: labels.familiarity,
+                    }}
+                    morphemeTypeLabels={labels.morphemeTypes}
+                    morphemeCardLabels={{
+                      ...labels.morphemeCard,
+                      morphemeTypes: labels.morphemeTypes,
+                      partsOfSpeech: labels.partsOfSpeech,
+                    }}
+                    partOfSpeechLabels={labels.partsOfSpeech}
+                    onToggleHidden={() => {
+                      setHiddenWordIds((current) => {
+                        const next = new Set(current)
 
-                      if (next.has(word.id)) {
-                        next.delete(word.id)
-                      } else {
-                        next.add(word.id)
-                      }
+                        if (next.has(word.id)) {
+                          next.delete(word.id)
+                        } else {
+                          next.add(word.id)
+                        }
 
-                      return next
-                    })
-                  }}
-                />
-              ))}
-            </ul>
-          </div>
-        ) : (
-          <p className="py-12 text-center text-[var(--mute)]">{labels.empty}</p>
-        )}
-      </div>
-
-      {isRefreshing ? (
-        <p className="py-4 text-center text-sm text-[var(--mute)]" role="status">
-          {labels.loading}
-        </p>
-      ) : null}
-
-      {state.nextCursor && !state.error ? (
-        <div className="pt-8 text-center">
-          <button
-            className="rounded-lg border border-[var(--line)] bg-[var(--card)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] hover:border-[var(--suffix)] disabled:cursor-wait disabled:opacity-60"
-            disabled={isLoadingMore}
-            type="button"
-            onClick={() => void loadMore()}
-          >
-            {isLoadingMore ? labels.loading : labels.loadMore}
-          </button>
+                        return next
+                      })
+                    }}
+                  />
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <p className="py-12 text-center text-[var(--mute)]">{labels.empty}</p>
+          )}
         </div>
-      ) : null}
+
+        {isRefreshing ? (
+          <p className="py-4 text-center text-sm text-[var(--mute)]" role="status">
+            {labels.loading}
+          </p>
+        ) : null}
+
+        {state.nextCursor && !state.error ? (
+          <div className="py-4 text-center text-sm text-[var(--mute)]" ref={loadMoreSentinelRef}>
+            {isLoadingMore ? <span role="status">{labels.loading}</span> : null}
+          </div>
+        ) : null}
+      </div>
     </div>
   )
 }
