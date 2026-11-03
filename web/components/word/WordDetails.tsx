@@ -1,13 +1,9 @@
 import { ExampleLine } from '@/components/word/ExampleLine'
-import { FormsTable } from '@/components/word/FormsTable'
 import { RelatedWords } from '@/components/word/RelatedWords'
 import type { WordDetail } from '@/types/domain'
 
 export interface WordDetailLabels {
   meaning: string
-  wordForms: string
-  form: string
-  formType: string
   structure: string
   examples: string
   wordFamily: string
@@ -41,13 +37,6 @@ export function WordDetails({ language, word, labels }: WordDetailsProps) {
           ))}
         </ol>
       </section>
-
-      {word.forms.length > 0 ? (
-        <section className={sectionClassName}>
-          <h2 className={headingClassName}>{labels.wordForms}</h2>
-          <FormsTable forms={word.forms} formLabel={labels.form} typeLabel={labels.formType} />
-        </section>
-      ) : null}
 
       {word.segments.some(({ morpheme }) => morpheme !== null) ? (
         <section className={sectionClassName}>

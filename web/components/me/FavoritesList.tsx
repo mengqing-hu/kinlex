@@ -18,7 +18,6 @@ export function FavoritesList({ words }: { words: readonly FavoriteWord[] }) {
               >
                 <span>
                   <strong>
-                    {word.gender ? `${word.gender} ` : ''}
                     {word.lemma}
                   </strong>
                   <span className="ml-2 text-sm text-[var(--mute)]">{word.pos}</span>

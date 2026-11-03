@@ -28,7 +28,12 @@ export async function GET(request: NextRequest, context: MorphemeWordsRouteConte
 
   try {
     const db = getPublicSupabase()
-    const result = await getMorphemeWords(db, parsedId.data, parsedParams.data.lang)
+    const result = await getMorphemeWords(
+      db,
+      parsedId.data,
+      parsedParams.data.lang,
+      parsedParams.data.explain,
+    )
     return contentResponse(result)
   } catch (error) {
     if (error instanceof AppError) {

@@ -21,8 +21,13 @@ export async function listWords(
   if (params.cursor && !decodedCursor) {
     throw new InvalidParamsError('cursor is invalid')
   }
+  // Familiarity is per user, so the sort only applies when someone is signed in.
+  const sort = userId ? params.sort : undefined
+  if (decodedCursor && (sort !== undefined) !== (decodedCursor.familiarity !== undefined)) {
+    throw new InvalidParamsError('cursor does not match the sort order')
+  }
 
-  return findWords(db, { ...params, decodedCursor }, userId)
+  return findWords(db, { ...params, sort, decodedCursor }, userId)
 }
 
 export async function listWordFilterOptions(

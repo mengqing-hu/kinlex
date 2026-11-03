@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 
 import { getBrowserSupabase } from '@/lib/supabase/browser'
 import { flushEventQueue } from '@/lib/client/eventQueue'
+import { mergeLocalFamiliarity } from '@/lib/client/localFamiliarity'
 import { mergeLocalFavorites } from '@/lib/client/localFavorites'
 
 interface UserMenuProps {
@@ -31,6 +32,7 @@ export function UserMenu({ accountLabel, signInLabel }: UserMenuProps) {
       }
       if (session) {
         void mergeLocalFavorites()
+        void mergeLocalFamiliarity()
         void flushEventQueue()
       }
     })

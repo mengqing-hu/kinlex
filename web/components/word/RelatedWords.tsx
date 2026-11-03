@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+import { formatPartOfSpeech } from '@/lib/utils/partOfSpeech'
 import type { RelatedWord } from '@/types/domain'
 
 interface RelatedWordsProps {
@@ -28,11 +29,10 @@ export function RelatedWords({
             href={`/${encodeURIComponent(language)}/word/${encodeURIComponent(word.slug)}`}
           >
             <span className="font-semibold text-[var(--ink)]">
-              {word.gender ? `${word.gender} ` : ''}
               {word.lemma}
             </span>
             <span className="mt-0.5 block text-xs text-[var(--mute)]">
-              {partOfSpeechLabels[word.pos] ?? word.pos}
+              {formatPartOfSpeech(partOfSpeechLabels, word.pos, word.posDetail)}
               {word.level ? ` · ${word.level}` : ''}
             </span>
           </Link>

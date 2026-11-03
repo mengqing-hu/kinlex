@@ -11,12 +11,13 @@ export async function getMorphemeWords(
   db: SupabaseClient<Database>,
   morphemeId: number,
   language: string,
+  explainLanguage: string,
 ): Promise<MorphemeWordCollection> {
   if (!isSupportedLanguage(language)) {
     throw new UnsupportedLanguageError(language)
   }
 
-  const result = await findMorphemeWords(db, morphemeId, language)
+  const result = await findMorphemeWords(db, morphemeId, language, explainLanguage)
   if (!result) {
     throw new NotFoundError('Morpheme not found')
   }

@@ -10,6 +10,7 @@ import { NotFoundError, UnsupportedLanguageError } from '@/lib/errors'
 import { config } from '@/lib/config'
 import { getWordDetail } from '@/lib/services/wordService'
 import { getPublicSupabase } from '@/lib/supabase/server'
+import { formatPartOfSpeech } from '@/lib/utils/partOfSpeech'
 
 export const revalidate = 3600
 
@@ -98,17 +99,9 @@ export default async function WordPage({ params }: WordPageProps) {
     root: t('morphemeTypes.root'),
     suffix: t('morphemeTypes.suffix'),
   }
-  const partsOfSpeech = {
-    noun: t('partsOfSpeech.noun'),
-    verb: t('partsOfSpeech.verb'),
-    adjective: t('partsOfSpeech.adjective'),
-    adverb: t('partsOfSpeech.adverb'),
-  }
+  const partsOfSpeech = t.raw('partsOfSpeech') as Record<string, string>
   const detailLabels: WordDetailLabels = {
     meaning: t('meaning'),
-    wordForms: t('wordForms'),
-    form: t('form'),
-    formType: t('formType'),
     structure: t('structure'),
     examples: t('examples'),
     wordFamily: t('wordFamily'),
@@ -137,7 +130,7 @@ export default async function WordPage({ params }: WordPageProps) {
         <WordHeader
           language={lang}
           word={word}
-          partOfSpeech={partsOfSpeech[word.pos as keyof typeof partsOfSpeech] ?? word.pos}
+          partOfSpeech={formatPartOfSpeech(partsOfSpeech, word.pos, word.posDetail)}
           levelLabel={word.level ? t('level', { level: word.level }) : null}
           pluralLabel={word.plural ? t('plural', { plural: word.plural }) : null}
           playLabel={t('playWord', { word: word.lemma })}

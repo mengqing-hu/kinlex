@@ -15,9 +15,16 @@ interface FavoriteButtonProps {
   initialFavorited: boolean
   language: string
   wordId: number
+  /** Compact sizing for dense list rows. */
+  small?: boolean
 }
 
-export function FavoriteButton({ initialFavorited, language, wordId }: FavoriteButtonProps) {
+export function FavoriteButton({
+  initialFavorited,
+  language,
+  wordId,
+  small = false,
+}: FavoriteButtonProps) {
   const [favorited, setFavorited] = useState(initialFavorited)
   const [signedIn, setSignedIn] = useState(false)
   const [pending, setPending] = useState(false)
@@ -69,12 +76,12 @@ export function FavoriteButton({ initialFavorited, language, wordId }: FavoriteB
     <button
       aria-label={favorited ? 'Remove from favorites' : 'Add to favorites'}
       aria-pressed={favorited}
-      className="inline-flex size-9 items-center justify-center rounded-full text-[var(--suffix)] hover:bg-[var(--bg)] disabled:opacity-50"
+      className={`inline-flex ${small ? 'size-7' : 'size-9'} items-center justify-center rounded-full text-[var(--suffix)] hover:bg-[var(--bg)] disabled:opacity-50`}
       disabled={pending}
       type="button"
       onClick={() => void toggle()}
     >
-      <svg aria-hidden="true" className="size-5" viewBox="0 0 24 24">
+      <svg aria-hidden="true" className={small ? 'size-4' : 'size-5'} viewBox="0 0 24 24">
         <path
           d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-2.9-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3Z"
           fill={favorited ? 'currentColor' : 'none'}

@@ -36,11 +36,7 @@ export function WordHeader({
             />
           </h1>
           <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-sm text-[var(--mute)]">
-            {word.gender ? (
-              <span className="font-medium text-[var(--ink)]">{word.gender}</span>
-            ) : null}
             <span>{partOfSpeech}</span>
-            {word.ipa ? <span>{word.ipa}</span> : null}
             {levelLabel ? (
               <span className="rounded-full border border-[var(--line)] px-2 py-0.5">
                 {levelLabel}

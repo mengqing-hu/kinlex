@@ -11,6 +11,13 @@
   --root: #687457;
   --suffix: #9b6c1d;
   --info: #557b9c;
+  --highlight: #fbe48a;
+  --row-hover: #e9e5e1;
+  --familiarity-1: #c8553d;
+  --familiarity-2: #e07b39;
+  --familiarity-3: #e0a526;
+  --familiarity-4: #9fae3f;
+  --familiarity-5: #5f8f4e;
   --background: var(--bg);
   --foreground: var(--ink);
 }
@@ -27,6 +34,13 @@
     --root: #a9b69a;
     --suffix: #dfb566;
     --info: #91b4d0;
+    --highlight: #6b5a1f;
+    --row-hover: #24221f;
+    --familiarity-1: #e07a62;
+    --familiarity-2: #eb9a5c;
+    --familiarity-3: #e8b84a;
+    --familiarity-4: #bfcb66;
+    --familiarity-5: #8fbf7c;
     --background: var(--bg);
     --foreground: var(--ink);
   }

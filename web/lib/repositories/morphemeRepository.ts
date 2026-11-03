@@ -14,10 +14,13 @@ export async function findMorphemeWords(
   db: SupabaseClient<Database>,
   morphemeId: number,
   language: string,
+  explainLanguage: string,
 ): Promise<MorphemeWordCollection | null> {
   const { data: morpheme, error: morphemeError } = await db
     .from('morphemes')
-    .select('id, slug, text, type, meaning, separable')
+    .select(
+      'id, slug, text:morpheme, type:morpheme_type, meaning:morpheme_meaning, separable:is_separable',
+    )
     .eq('id', morphemeId)
     .eq('language', language)
     .maybeSingle()
@@ -41,7 +44,9 @@ export async function findMorphemeWords(
 
   const { data: words, error: wordsError } = await db
     .from('words')
-    .select('id, slug, lemma, pos, gender, level')
+    .select(
+      'id, slug, lemma:word, pos:word_class, posDetail:word_class_detail, gender, level, word_morphemes(position, surface:word_part, morpheme_id, morphemes(type:morpheme_type)), senses(gloss:word_meaning, gloss_language:meaning_language, sort_order)',
+    )
     .eq('language', language)
     .in('id', wordIds)
     .order('freq_rank', { ascending: true, nullsFirst: false })
@@ -49,7 +54,23 @@ export async function findMorphemeWords(
     .limit(8)
 
   assertQuerySucceeded(wordsError, 'load morpheme words')
-  return { morpheme, words: words ?? [] }
+  return {
+    morpheme,
+    words: (words ?? []).map(({ senses, word_morphemes, ...word }) => ({
+      ...word,
+      segments: word_morphemes
+        .toSorted((left, right) => left.position - right.position)
+        .map((segment) => ({
+          surface: segment.surface,
+          morphemeId: segment.morpheme_id,
+          type: segment.morphemes?.type ?? null,
+        })),
+      glosses: senses
+        .filter(({ gloss_language }) => gloss_language === explainLanguage)
+        .toSorted((left, right) => left.sort_order - right.sort_order)
+        .map(({ gloss }) => gloss),
+    })),
+  }
 }
 
 export async function findMorphemeDirectory(
@@ -59,10 +80,12 @@ export async function findMorphemeDirectory(
   const [morphemesResult, relationsResult] = await Promise.all([
     db
       .from('morphemes')
-      .select('id, slug, text, type, meaning, separable')
+      .select(
+        'id, slug, text:morpheme, type:morpheme_type, meaning:morpheme_meaning, separable:is_separable',
+      )
       .eq('language', language)
-      .order('type', { ascending: true })
-      .order('text', { ascending: true }),
+      .order('morpheme_type', { ascending: true })
+      .order('morpheme', { ascending: true }),
     db
       .from('word_morphemes')
       .select('morpheme_id, words!inner(language)')

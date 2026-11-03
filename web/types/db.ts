@@ -162,18 +162,18 @@ export type Database = {
       example_translations: {
         Row: {
           example_id: number
-          language: string
-          text: string
+          meaning_language: string
+          sentence_meaning: string
         }
         Insert: {
           example_id: number
-          language: string
-          text: string
+          meaning_language: string
+          sentence_meaning: string
         }
         Update: {
           example_id?: number
-          language?: string
-          text?: string
+          meaning_language?: string
+          sentence_meaning?: string
         }
         Relationships: [
           {
@@ -187,29 +187,29 @@ export type Database = {
       }
       examples: {
         Row: {
+          example_sentence: string
           id: number
           language: string
           level: string | null
           model_info: Json | null
-          sentence: string
           source: string
           status: string
         }
         Insert: {
+          example_sentence: string
           id?: never
           language: string
           level?: string | null
           model_info?: Json | null
-          sentence: string
           source: string
           status?: string
         }
         Update: {
+          example_sentence?: string
           id?: never
           language?: string
           level?: string | null
           model_info?: Json | null
-          sentence?: string
           source?: string
           status?: string
         }
@@ -250,30 +250,30 @@ export type Database = {
       morphemes: {
         Row: {
           id: number
+          is_separable: boolean | null
           language: string
-          meaning: string
-          separable: boolean | null
+          morpheme: string
+          morpheme_meaning: string
+          morpheme_type: string
           slug: string
-          text: string
-          type: string
         }
         Insert: {
           id?: never
+          is_separable?: boolean | null
           language: string
-          meaning: string
-          separable?: boolean | null
+          morpheme: string
+          morpheme_meaning: string
+          morpheme_type: string
           slug: string
-          text: string
-          type: string
         }
         Update: {
           id?: never
+          is_separable?: boolean | null
           language?: string
-          meaning?: string
-          separable?: boolean | null
+          morpheme?: string
+          morpheme_meaning?: string
+          morpheme_type?: string
           slug?: string
-          text?: string
-          type?: string
         }
         Relationships: []
       }
@@ -309,25 +309,25 @@ export type Database = {
       }
       senses: {
         Row: {
-          gloss: string
-          gloss_language: string
           id: number
+          meaning_language: string
           sort_order: number
           word_id: number
+          word_meaning: string
         }
         Insert: {
-          gloss: string
-          gloss_language: string
           id?: never
+          meaning_language: string
           sort_order?: number
           word_id: number
+          word_meaning: string
         }
         Update: {
-          gloss?: string
-          gloss_language?: string
           id?: never
+          meaning_language?: string
           sort_order?: number
           word_id?: number
+          word_meaning?: string
         }
         Relationships: [
           {
@@ -432,6 +432,7 @@ export type Database = {
       user_word_state: {
         Row: {
           due_at: string | null
+          familiarity: number
           favorited: boolean
           status: string
           updated_at: string
@@ -440,6 +441,7 @@ export type Database = {
         }
         Insert: {
           due_at?: string | null
+          familiarity?: number
           favorited?: boolean
           status?: string
           updated_at?: string
@@ -448,6 +450,7 @@ export type Database = {
         }
         Update: {
           due_at?: string | null
+          familiarity?: number
           favorited?: boolean
           status?: string
           updated_at?: string
@@ -490,53 +493,24 @@ export type Database = {
           },
         ]
       }
-      word_forms: {
-        Row: {
-          form: string
-          form_type: string | null
-          language: string
-          word_id: number
-        }
-        Insert: {
-          form: string
-          form_type?: string | null
-          language: string
-          word_id: number
-        }
-        Update: {
-          form?: string
-          form_type?: string | null
-          language?: string
-          word_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "word_forms_word_id_fkey"
-            columns: ["word_id"]
-            isOneToOne: false
-            referencedRelation: "words"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       word_morphemes: {
         Row: {
           morpheme_id: number | null
           position: number
-          surface: string
           word_id: number
+          word_part: string
         }
         Insert: {
           morpheme_id?: number | null
           position: number
-          surface: string
           word_id: number
+          word_part: string
         }
         Update: {
           morpheme_id?: number | null
           position?: number
-          surface?: string
           word_id?: number
+          word_part?: string
         }
         Relationships: [
           {
@@ -614,60 +588,57 @@ export type Database = {
       words: {
         Row: {
           created_at: string
-          entry_type: string
           freq_rank: number | null
           gender: string | null
           id: number
-          ipa: string | null
           language: string
-          lemma: string
           level: string | null
           level_source: string | null
           model_info: Json | null
           plural: string | null
-          pos: string
           slug: string
           source: string
           status: string
           updated_at: string
+          word: string
+          word_class: string
+          word_class_detail: string | null
         }
         Insert: {
           created_at?: string
-          entry_type?: string
           freq_rank?: number | null
           gender?: string | null
           id?: never
-          ipa?: string | null
           language: string
-          lemma: string
           level?: string | null
           level_source?: string | null
           model_info?: Json | null
           plural?: string | null
-          pos: string
           slug: string
           source: string
           status?: string
           updated_at?: string
+          word: string
+          word_class: string
+          word_class_detail: string | null
         }
         Update: {
           created_at?: string
-          entry_type?: string
           freq_rank?: number | null
           gender?: string | null
           id?: never
-          ipa?: string | null
           language?: string
-          lemma?: string
           level?: string | null
           level_source?: string | null
           model_info?: Json | null
           plural?: string | null
-          pos?: string
           slug?: string
           source?: string
           status?: string
           updated_at?: string
+          word?: string
+          word_class?: string
+          word_class_detail?: string | null
         }
         Relationships: []
       }
@@ -697,22 +668,21 @@ export type Database = {
         Args: { p_language: string; p_limit?: number; p_query: string }
         Returns: {
           created_at: string
-          entry_type: string
           freq_rank: number | null
           gender: string | null
           id: number
-          ipa: string | null
           language: string
-          lemma: string
           level: string | null
           level_source: string | null
           model_info: Json | null
           plural: string | null
-          pos: string
           slug: string
           source: string
           status: string
           updated_at: string
+          word: string
+          word_class: string
+          word_class_detail: string | null
         }[]
         SetofOptions: {
           from: "*"
@@ -743,6 +713,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      word_class_options: { Args: { p_language: string }; Returns: string[] }
     }
     Enums: {
       [_ in never]: never
@@ -878,4 +849,3 @@ export const Constants = {
     Enums: {},
   },
 } as const
-

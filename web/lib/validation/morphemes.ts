@@ -1,9 +1,10 @@
 import { z } from 'zod'
 
-import { languageCodeSchema } from '@/lib/validation/common'
+import { languageCodeSchema, optionalLanguageCodeSchema } from '@/lib/validation/common'
 
 export const morphemeWordsParamsSchema = z.object({
   lang: languageCodeSchema,
+  explain: optionalLanguageCodeSchema.default('en'),
 })
 
 export const morphemeIdSchema = z.coerce

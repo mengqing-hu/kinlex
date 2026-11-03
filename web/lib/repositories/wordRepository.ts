@@ -2,7 +2,9 @@ import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js'
 
 import { RepositoryError } from '@/lib/errors'
 import { getAudioUrl } from '@/lib/utils/audioUrl'
+import { findFamiliarities } from '@/lib/repositories/familiarityRepository'
 import { encodeWordCursor, type WordCursor } from '@/lib/utils/cursor'
+import { normalizePartOfSpeech, partOfSpeechPrefixes } from '@/lib/utils/partOfSpeech'
 import type { WordListParams } from '@/lib/validation/words'
 import type { Database } from '@/types/db'
 import type {
@@ -125,12 +127,12 @@ async function findExamples(
   }
 
   const [examplesResult, translationsResult, audioResult] = await Promise.all([
-    db.from('examples').select('id, sentence').in('id', exampleIds),
+    db.from('examples').select('id, sentence:example_sentence').in('id', exampleIds),
     db
       .from('example_translations')
-      .select('example_id, text')
+      .select('example_id, text:sentence_meaning')
       .in('example_id', exampleIds)
-      .eq('language', explainLanguage),
+      .eq('meaning_language', explainLanguage),
     db
       .from('audio')
       .select('owner_id, path, id')
@@ -219,6 +221,112 @@ async function findFavoriteWordIds(
   return new Set((data ?? []).map(({ word_id }) => word_id))
 }
 
+interface WordIdFilter {
+  include?: number[]
+  exclude?: number[]
+}
+
+function queryWordRows(
+  db: SupabaseClient<Database>,
+  params: WordListQuery,
+  limit: number,
+  idFilter: WordIdFilter,
+  cursor?: WordCursor,
+) {
+  let query = db
+    .from('words')
+    .select(
+      'id, slug, lemma:word, pos:word_class, posDetail:word_class_detail, gender, level, freq_rank, word_morphemes(position, surface:word_part, morpheme_id, morphemes(type:morpheme_type)), senses(gloss:word_meaning, gloss_language:meaning_language, sort_order)',
+    )
+    .eq('language', params.lang)
+    .order('freq_rank', { ascending: true, nullsFirst: false })
+    .order('id', { ascending: true })
+    .limit(limit)
+
+  if (params.level) {
+    query = query.eq('level', params.level)
+  }
+
+  if (params.q) {
+    query = query.ilike('word', `%${params.q}%`)
+  }
+
+  if (params.pos) {
+    const prefixes = partOfSpeechPrefixes[normalizePartOfSpeech(params.pos)]
+    if (!prefixes) {
+      query = query.eq('word_class', params.pos)
+    } else if (prefixes.length === 1) {
+      query = query.ilike('word_class', `${prefixes[0]}%`)
+    } else {
+      query = query.or(prefixes.map((prefix) => `word_class.ilike.${prefix}%`).join(','))
+    }
+  }
+
+  if (idFilter.include) {
+    query = query.in('id', idFilter.include)
+  }
+
+  if (idFilter.exclude && idFilter.exclude.length > 0) {
+    query = query.not('id', 'in', `(${idFilter.exclude.join(',')})`)
+  }
+
+  if (cursor) {
+    query = query.or(getCursorFilter(cursor))
+  }
+
+  return query
+}
+
+type WordListRecord = NonNullable<Awaited<ReturnType<typeof queryWordRows>>['data']>[number]
+
+// Familiarity lives in user_word_state, which PostgREST cannot sort words by, so each familiarity
+// group is read in turn (keeping the usual frequency order inside a group) until the page is full.
+async function findWordRowsByFamiliarity(
+  db: SupabaseClient<Database>,
+  params: WordListQuery,
+  filterWordIds: number[] | undefined,
+  familiarityByWordId: Map<number, number>,
+): Promise<WordListRecord[]> {
+  const levels = params.sort === 'familiarity_desc' ? [5, 4, 3, 2, 1, 0] : [0, 1, 2, 3, 4, 5]
+  const cursor = params.decodedCursor
+  const ratedIds = [...familiarityByWordId.keys()]
+  const filterIdSet = filterWordIds ? new Set(filterWordIds) : null
+  const rows: WordListRecord[] = []
+
+  for (const level of levels.slice(cursor ? levels.indexOf(cursor.familiarity ?? 0) : 0)) {
+    const remaining = params.limit + 1 - rows.length
+    if (remaining <= 0) {
+      break
+    }
+
+    let idFilter: WordIdFilter
+    if (level > 0) {
+      const levelIds = ratedIds.filter((id) => familiarityByWordId.get(id) === level)
+      idFilter = { include: filterIdSet ? levelIds.filter((id) => filterIdSet.has(id)) : levelIds }
+    } else if (filterWordIds) {
+      idFilter = { include: filterWordIds.filter((id) => !familiarityByWordId.has(id)) }
+    } else {
+      idFilter = { exclude: ratedIds }
+    }
+
+    if (idFilter.include?.length === 0) {
+      continue
+    }
+
+    const { data, error } = await queryWordRows(
+      db,
+      params,
+      remaining,
+      idFilter,
+      cursor?.familiarity === level ? cursor : undefined,
+    )
+    assertQuerySucceeded(error, 'list words by familiarity')
+    rows.push(...(data ?? []))
+  }
+
+  return rows
+}
+
 export async function findWords(
   db: SupabaseClient<Database>,
   params: WordListQuery,
@@ -229,40 +337,30 @@ export async function findWords(
     return { items: [], nextCursor: null }
   }
 
-  let query = db
-    .from('words')
-    .select(
-      'id, slug, lemma, pos, gender, level, freq_rank, word_morphemes(position, surface, morpheme_id, morphemes(type)), senses(gloss, gloss_language, sort_order)',
+  const familiarityByWordId = params.sort
+    ? new Map(
+        (userId ? await findFamiliarities(db, userId) : []).map(({ wordId, level }) => [
+          wordId,
+          level,
+        ]),
+      )
+    : null
+  let rows: WordListRecord[]
+
+  if (familiarityByWordId) {
+    rows = await findWordRowsByFamiliarity(db, params, filterWordIds, familiarityByWordId)
+  } else {
+    const { data, error } = await queryWordRows(
+      db,
+      params,
+      params.limit + 1,
+      { include: filterWordIds },
+      params.decodedCursor,
     )
-    .eq('language', params.lang)
-    .order('freq_rank', { ascending: true, nullsFirst: false })
-    .order('id', { ascending: true })
-    .limit(params.limit + 1)
-
-  if (params.level) {
-    query = query.eq('level', params.level)
+    assertQuerySucceeded(error, 'list words')
+    rows = data ?? []
   }
 
-  if (params.q) {
-    query = query.ilike('lemma', `%${params.q}%`)
-  }
-
-  if (params.pos) {
-    query = query.eq('pos', params.pos)
-  }
-
-  if (filterWordIds) {
-    query = query.in('id', filterWordIds)
-  }
-
-  if (params.decodedCursor) {
-    query = query.or(getCursorFilter(params.decodedCursor))
-  }
-
-  const { data, error } = await query
-  assertQuerySucceeded(error, 'list words')
-
-  const rows = data ?? []
   const hasNextPage = rows.length > params.limit
   const pageRows = hasNextPage ? rows.slice(0, params.limit) : rows
   const wordIds = pageRows.map(({ id }) => id)
@@ -295,6 +393,7 @@ export async function findWords(
       slug: word.slug,
       lemma: word.lemma,
       pos: word.pos,
+      posDetail: word.posDetail,
       gender: word.gender,
       level: word.level,
       segments,
@@ -308,7 +407,13 @@ export async function findWords(
   const lastWord = pageRows.at(-1)
   const nextCursor =
     hasNextPage && lastWord
-      ? encodeWordCursor({ freqRank: lastWord.freq_rank, id: lastWord.id })
+      ? encodeWordCursor({
+          freqRank: lastWord.freq_rank,
+          id: lastWord.id,
+          ...(familiarityByWordId
+            ? { familiarity: familiarityByWordId.get(lastWord.id) ?? 0 }
+            : {}),
+        })
       : null
 
   return { items, nextCursor }
@@ -318,8 +423,9 @@ export async function findWordFilterOptions(
   db: SupabaseClient<Database>,
   language: string,
 ): Promise<WordFilterOptions> {
-  const [wordsResult, topicsResult] = await Promise.all([
-    db.from('words').select('pos').eq('language', language).order('pos', { ascending: true }),
+  const [wordClassesResult, topicsResult] = await Promise.all([
+    // Distinct values come from the database; selecting every word would stop at the row limit.
+    db.rpc('word_class_options', { p_language: language }),
     db
       .from('word_tags')
       .select('tags!inner(slug, name, type), words!inner(language)')
@@ -327,7 +433,7 @@ export async function findWordFilterOptions(
       .eq('words.language', language),
   ])
 
-  assertQuerySucceeded(wordsResult.error, 'load parts of speech')
+  assertQuerySucceeded(wordClassesResult.error, 'load parts of speech')
   assertQuerySucceeded(topicsResult.error, 'load topic filters')
 
   const topicsBySlug = new Map<string, string>()
@@ -336,7 +442,9 @@ export async function findWordFilterOptions(
   }
 
   return {
-    partsOfSpeech: [...new Set((wordsResult.data ?? []).map(({ pos }) => pos))],
+    partsOfSpeech: [
+      ...new Set((wordClassesResult.data ?? []).map((pos) => normalizePartOfSpeech(pos))),
+    ].toSorted(),
     topics: [...topicsBySlug.entries()]
       .map(([value, label]) => ({ value, label }))
       .toSorted((left, right) => left.label.localeCompare(right.label)),
@@ -374,21 +482,6 @@ async function findCanonicalSlug(
   return word?.slug ?? null
 }
 
-async function findWordForms(
-  db: SupabaseClient<Database>,
-  wordId: number,
-): Promise<WordDetail['forms']> {
-  const { data, error } = await db
-    .from('word_forms')
-    .select('form, form_type')
-    .eq('word_id', wordId)
-    .order('form_type', { ascending: true, nullsFirst: false })
-    .order('form', { ascending: true })
-
-  assertQuerySucceeded(error, 'load word forms')
-  return (data ?? []).map((form) => ({ form: form.form, type: form.form_type }))
-}
-
 async function findWordDetailExamples(
   db: SupabaseClient<Database>,
   wordId: number,
@@ -409,12 +502,12 @@ async function findWordDetailExamples(
   }
 
   const [examplesResult, translationsResult, audioResult] = await Promise.all([
-    db.from('examples').select('id, sentence, level').in('id', exampleIds),
+    db.from('examples').select('id, sentence:example_sentence, level').in('id', exampleIds),
     db
       .from('example_translations')
-      .select('example_id, text')
+      .select('example_id, text:sentence_meaning')
       .in('example_id', exampleIds)
-      .eq('language', explainLanguage),
+      .eq('meaning_language', explainLanguage),
     db
       .from('audio')
       .select('owner_id, path, id')
@@ -495,7 +588,7 @@ async function findRelatedWords(
 
   const { data: words, error: wordsError } = await db
     .from('words')
-    .select('id, slug, lemma, pos, gender, level')
+    .select('id, slug, lemma:word, pos:word_class, posDetail:word_class_detail, gender, level')
     .eq('language', language)
     .in('id', relatedWordIds)
     .order('freq_rank', { ascending: true, nullsFirst: false })
@@ -509,6 +602,7 @@ async function findRelatedWords(
     slug: word.slug,
     lemma: word.lemma,
     pos: word.pos,
+    posDetail: word.posDetail,
     gender: word.gender,
     level: word.level,
     sharedMorphemeIds: [...(sharedMorphemesByWordId.get(word.id) ?? [])],
@@ -525,7 +619,7 @@ export async function findWordBySlug(
   const { data: word, error } = await db
     .from('words')
     .select(
-      'id, slug, lemma, pos, gender, plural, ipa, level, word_morphemes(position, surface, morpheme_id, morphemes(id, slug, text, type, meaning, separable)), senses(gloss, gloss_language, sort_order)',
+      'id, slug, lemma:word, pos:word_class, posDetail:word_class_detail, gender, plural, level, word_morphemes(position, surface:word_part, morpheme_id, morphemes(id, slug, text:morpheme, type:morpheme_type, meaning:morpheme_meaning, separable:is_separable)), senses(gloss:word_meaning, gloss_language:meaning_language, sort_order)',
     )
     .eq('language', language)
     .eq('slug', slug)
@@ -541,8 +635,7 @@ export async function findWordBySlug(
   const rootMorphemeIds = word.word_morphemes.flatMap((segment) =>
     segment.morpheme_id !== null && segment.morphemes?.type === 'root' ? [segment.morpheme_id] : [],
   )
-  const [forms, examples, audioByWordId, favoriteWordIds, relatedWords] = await Promise.all([
-    findWordForms(db, word.id),
+  const [examples, audioByWordId, favoriteWordIds, relatedWords] = await Promise.all([
     findWordDetailExamples(db, word.id, explainLanguage),
     findWordAudio(db, [word.id]),
     findFavoriteWordIds(db, [word.id], userId),
@@ -556,15 +649,14 @@ export async function findWordBySlug(
       slug: word.slug,
       lemma: word.lemma,
       pos: word.pos,
+      posDetail: word.posDetail,
       gender: word.gender,
       plural: word.plural,
-      ipa: word.ipa,
       level: word.level,
       glosses: word.senses
         .filter(({ gloss_language }) => gloss_language === explainLanguage)
         .toSorted((left, right) => left.sort_order - right.sort_order)
         .map(({ gloss }) => gloss),
-      forms,
       segments: word.word_morphemes
         .toSorted((left, right) => left.position - right.position)
         .map((segment) => ({

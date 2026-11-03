@@ -26,7 +26,9 @@ export async function findSearchResults(
 
   const { data: words, error: wordsError } = await db
     .from('words')
-    .select('id, slug, lemma, pos, gender, level, senses(gloss, gloss_language, sort_order)')
+    .select(
+      'id, slug, lemma:word, pos:word_class, posDetail:word_class_detail, gender, level, senses(gloss:word_meaning, gloss_language:meaning_language, sort_order)',
+    )
     .in('id', wordIds)
   assertQuerySucceeded(wordsError, 'load search results')
 

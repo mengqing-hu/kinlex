@@ -104,20 +104,16 @@ export function MorphemeCard({ children, language, morphemeId, labels }: Morphem
           </div>
         ) : (
           <div>
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-lg font-semibold">{state.data.morpheme.text}</p>
-                <p className="mt-1 text-xs font-semibold tracking-wide text-[var(--mute)] uppercase">
-                  {labels.morphemeTypes[state.data.morpheme.type] ?? state.data.morpheme.type}
-                  {state.data.morpheme.separable ? `, ${labels.separable}` : ''}
-                </p>
-              </div>
-            </div>
-            <p className="mt-3 text-sm leading-6 text-[var(--mute)]">
-              {state.data.morpheme.meaning}
+            <p className="flex items-baseline gap-2">
+              <span className="text-base font-semibold">{state.data.morpheme.text}</span>
+              <span className="text-[11px] font-semibold tracking-wide text-[var(--mute)] uppercase">
+                {labels.morphemeTypes[state.data.morpheme.type] ?? state.data.morpheme.type}
+                {state.data.morpheme.separable ? `, ${labels.separable}` : ''}
+              </span>
             </p>
+            <p className="mt-0.5 text-xs text-[var(--mute)]">{state.data.morpheme.meaning}</p>
 
-            <p className="mt-4 border-t border-[var(--line)] pt-3 text-xs font-semibold tracking-wide text-[var(--mute)] uppercase">
+            <p className="mt-3 border-t border-[var(--line)] pt-3 text-[11px] font-semibold tracking-wide text-[var(--mute)] uppercase">
               {labels.relatedWords}
             </p>
             {state.data.words.length > 0 ? (
@@ -125,23 +121,34 @@ export function MorphemeCard({ children, language, morphemeId, labels }: Morphem
                 {state.data.words.map((word) => (
                   <li key={word.id}>
                     <Link
-                      className="flex items-baseline justify-between gap-3 rounded-md px-2 py-1.5 hover:bg-[var(--bg)] focus-visible:outline-2 focus-visible:outline-[var(--info)]"
+                      className="flex items-baseline justify-between gap-3 rounded-md px-2 py-1 text-sm hover:bg-[var(--bg)] focus-visible:outline-2 focus-visible:outline-[var(--info)]"
                       href={`/${encodeURIComponent(language)}/word/${encodeURIComponent(word.slug)}`}
                     >
-                      <span className="font-medium">
-                        {word.gender ? `${word.gender} ` : ''}
-                        {word.lemma}
+                      <span className="shrink-0 font-medium">
+                        {word.segments.length > 0
+                          ? word.segments.map((segment, index) =>
+                              segment.morphemeId === morphemeId ? (
+                                <span
+                                  className="rounded-sm bg-[var(--highlight)] px-0.5"
+                                  key={`${index}-${segment.surface}`}
+                                >
+                                  {segment.surface}
+                                </span>
+                              ) : (
+                                <span key={`${index}-${segment.surface}`}>{segment.surface}</span>
+                              ),
+                            )
+                          : word.lemma}
                       </span>
-                      <span className="text-xs text-[var(--mute)]">
-                        {labels.partsOfSpeech[word.pos] ?? word.pos}
-                        {word.level ? `, ${word.level}` : ''}
+                      <span className="text-right text-xs text-[var(--mute)]">
+                        {word.glosses.join(', ')}
                       </span>
                     </Link>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="mt-2 text-sm text-[var(--mute)]">{labels.noRelatedWords}</p>
+              <p className="mt-2 text-xs text-[var(--mute)]">{labels.noRelatedWords}</p>
             )}
           </div>
         )}

@@ -4,10 +4,12 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react'
 
 import { FilterBar } from '@/components/list/FilterBar'
+import { normalizePartOfSpeech } from '@/lib/utils/partOfSpeech'
 import type { MorphemeCardLabels } from '@/components/word/MorphemeCard'
 import { WordRow } from '@/components/word/WordRow'
 import { fetchApiData } from '@/lib/client/apiClient'
-import { wordLevels } from '@/lib/validation/words'
+import { getBrowserSupabase } from '@/lib/supabase/browser'
+import { wordLevels, wordSorts } from '@/lib/validation/words'
 import type { CursorPage, WordFilterOption, WordFilterOptions, WordListItem } from '@/types/domain'
 
 const FILTER_CHANGE_EVENT = 'kinlex:filters'
@@ -24,6 +26,13 @@ export interface WordListLabels {
   searchPlaceholder: string
   hideMeanings: string
   showMeanings: string
+  sort: string
+  sortDefault: string
+  sortFamiliarityAsc: string
+  sortFamiliarityDesc: string
+  sortSignInHint: string
+  hideActions: string
+  showActions: string
   loadMore: string
   loading: string
   empty: string
@@ -34,6 +43,7 @@ export interface WordListLabels {
   slowAudio: string
   hideWord: string
   showWord: string
+  familiarity: string
   openWord: string
   morphemeTypes: Record<string, string>
   partsOfSpeech: Record<string, string>
@@ -95,6 +105,7 @@ async function fetchWordPage(
   partOfSpeech: string,
   topic: string,
   morpheme: string | undefined,
+  sort: string,
   cursor?: string,
   signal?: AbortSignal,
 ): Promise<CursorPage<WordListItem>> {
@@ -118,6 +129,10 @@ async function fetchWordPage(
 
   if (morpheme) {
     params.set('morpheme', morpheme)
+  }
+
+  if (sort) {
+    params.set('sort', sort)
   }
 
   if (cursor) {
@@ -150,9 +165,13 @@ export function WordList({
   const filters = useMemo(() => {
     const params = new URLSearchParams(search)
     return {
-      partOfSpeech: params.get('pos') ?? '',
+      partOfSpeech: normalizePartOfSpeech(params.get('pos') ?? ''),
       topic: showTopicFilter ? (params.get('topic') ?? '') : (topic ?? ''),
       hideMeanings: params.get('hide') === '1',
+      hideActions: params.get('actions') === '0',
+      sort: (wordSorts as readonly string[]).includes(params.get('sort') ?? '')
+        ? (params.get('sort') ?? '')
+        : '',
     }
   }, [search, showTopicFilter, topic])
   const [state, setState] = useState<WordListState>({
@@ -165,7 +184,16 @@ export function WordList({
   const [hiddenWordIds, setHiddenWordIds] = useState<Set<number>>(() => new Set())
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
-  const queryKey = `${debouncedSearchQuery}:${filters.partOfSpeech}:${filters.topic}:${morpheme ?? ''}`
+  const [signedIn, setSignedIn] = useState(false)
+  // Familiarity sorting needs an account, so guests always get the default order.
+  const sort = signedIn ? filters.sort : ''
+  const queryKey = `${debouncedSearchQuery}:${filters.partOfSpeech}:${filters.topic}:${morpheme ?? ''}:${sort}`
+
+  useEffect(() => {
+    void getBrowserSupabase()
+      .auth.getSession()
+      .then(({ data }) => setSignedIn(Boolean(data.session)))
+  }, [])
 
   useEffect(() => {
     const timer = window.setTimeout(() => setDebouncedSearchQuery(searchQuery.trim()), 250)
@@ -186,6 +214,7 @@ export function WordList({
       filters.partOfSpeech,
       filters.topic,
       morpheme,
+      sort,
       undefined,
       controller.signal,
     )
@@ -210,6 +239,7 @@ export function WordList({
     morpheme,
     queryKey,
     retryVersion,
+    sort,
     state.queryKey,
   ])
 
@@ -233,6 +263,7 @@ export function WordList({
         filters.partOfSpeech,
         filters.topic,
         morpheme,
+        sort,
         state.nextCursor,
       )
       setState((current) => ({
@@ -261,6 +292,9 @@ export function WordList({
         selectedPartOfSpeech={filters.partOfSpeech}
         selectedTopic={filters.topic}
         hideMeanings={filters.hideMeanings}
+        hideActions={filters.hideActions}
+        selectedSort={sort}
+        canSortByFamiliarity={signedIn}
         labels={labels}
         onLevelChange={(value) => {
           router.push(
@@ -270,7 +304,9 @@ export function WordList({
         onSearchQueryChange={setSearchQuery}
         onPartOfSpeechChange={(value) => updateSearchParameter('pos', value)}
         onTopicChange={(value) => updateSearchParameter('topic', value)}
+        onSortChange={(value) => updateSearchParameter('sort', value)}
         onHideMeaningsChange={(checked) => updateSearchParameter('hide', checked ? '1' : '')}
+        onHideActionsChange={(checked) => updateSearchParameter('actions', checked ? '0' : '')}
       />
 
       <div aria-busy={isRefreshing} className={isRefreshing ? 'opacity-50' : undefined}>
@@ -296,6 +332,7 @@ export function WordList({
                   language={language}
                   word={word}
                   hideMeanings={filters.hideMeanings}
+                  hideActions={filters.hideActions}
                   hidden={hiddenWordIds.has(word.id)}
                   key={word.id}
                   labels={{
@@ -304,6 +341,7 @@ export function WordList({
                     slowAudio: labels.slowAudio,
                     hideWord: labels.hideWord,
                     showWord: labels.showWord,
+                    familiarity: labels.familiarity,
                   }}
                   morphemeTypeLabels={labels.morphemeTypes}
                   morphemeCardLabels={{

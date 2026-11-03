@@ -4,6 +4,7 @@ import { languageCodeSchema, limitSchema, optionalLanguageCodeSchema } from './c
 
 const filterSchema = z.string().trim().min(1).max(100)
 export const wordLevels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as const
+export const wordSorts = ['familiarity_asc', 'familiarity_desc'] as const
 
 export const wordListParamsSchema = z.object({
   lang: languageCodeSchema,
@@ -13,6 +14,7 @@ export const wordListParamsSchema = z.object({
   pos: filterSchema.optional(),
   topic: filterSchema.optional(),
   morpheme: filterSchema.optional(),
+  sort: z.enum(wordSorts).optional(),
   cursor: z.string().trim().min(1, 'cursor cannot be empty').max(500).optional(),
   limit: limitSchema,
 })

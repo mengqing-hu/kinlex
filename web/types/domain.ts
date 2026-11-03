@@ -18,8 +18,11 @@ export interface MorphemeWord {
   slug: string
   lemma: string
   pos: string
+  posDetail: string | null
   gender: string | null
   level: string | null
+  segments: WordSegment[]
+  glosses: string[]
 }
 
 export interface MorphemeWordCollection {
@@ -30,11 +33,6 @@ export interface MorphemeWordCollection {
 export interface WordDetailSegment {
   surface: string
   morpheme: MorphemeSummary | null
-}
-
-export interface WordForm {
-  form: string
-  type: string | null
 }
 
 export interface WordExample {
@@ -48,11 +46,17 @@ export interface WordDetailExample extends WordExample {
   level: string | null
 }
 
+export interface WordFamiliarity {
+  wordId: number
+  level: number
+}
+
 export interface RelatedWord {
   id: number
   slug: string
   lemma: string
   pos: string
+  posDetail: string | null
   gender: string | null
   level: string | null
   sharedMorphemeIds: number[]
@@ -63,6 +67,7 @@ export interface WordListItem {
   slug: string
   lemma: string
   pos: string
+  posDetail: string | null
   gender: string | null
   level: string | null
   segments: WordSegment[]
@@ -110,6 +115,7 @@ export interface SearchResult {
   slug: string
   lemma: string
   pos: string
+  posDetail: string | null
   gender: string | null
   level: string | null
   gloss: string | null
@@ -120,6 +126,7 @@ export interface FavoriteWord {
   slug: string
   lemma: string
   pos: string
+  posDetail: string | null
   gender: string | null
   level: string | null
 }
@@ -153,12 +160,11 @@ export interface WordDetail {
   slug: string
   lemma: string
   pos: string
+  posDetail: string | null
   gender: string | null
   plural: string | null
-  ipa: string | null
   level: string | null
   glosses: string[]
-  forms: WordForm[]
   segments: WordDetailSegment[]
   examples: WordDetailExample[]
   relatedWords: RelatedWord[]

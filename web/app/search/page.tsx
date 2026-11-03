@@ -7,7 +7,7 @@ import { getPublicSupabase } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
   title: 'Search German vocabulary',
-  description: 'Search German words, inflected forms and approximate spellings.',
+  description: 'Search German words and approximate spellings.',
 }
 
 interface SearchPageProps {
@@ -34,7 +34,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       <header className="mt-10 max-w-2xl">
         <h1 className="text-4xl font-semibold tracking-tight">Search German vocabulary</h1>
         <p className="mt-4 text-[var(--mute)]">
-          Search by dictionary form, inflected form or approximate spelling.
+          Search by dictionary form or approximate spelling.
         </p>
       </header>
       <div className="mt-8 max-w-xl">
@@ -57,7 +57,6 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                   >
                     <span>
                       <strong className="text-lg text-[var(--ink)]">
-                        {word.gender ? `${word.gender} ` : ''}
                         {word.lemma}
                       </strong>
                       <span className="mt-1 block text-sm text-[var(--mute)]">
