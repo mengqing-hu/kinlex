@@ -18,13 +18,13 @@ interface FamiliarityMeterProps {
 
 const MAX_LEVEL = 5
 
-// The badge takes the colour of its level, running from red (new) to green (known).
+// The ring and number take the colour of the level, running from red (new) to green (known).
 const levelClasses: Record<number, string> = {
-  1: 'border-[var(--familiarity-1)] bg-[var(--familiarity-1)]',
-  2: 'border-[var(--familiarity-2)] bg-[var(--familiarity-2)]',
-  3: 'border-[var(--familiarity-3)] bg-[var(--familiarity-3)]',
-  4: 'border-[var(--familiarity-4)] bg-[var(--familiarity-4)]',
-  5: 'border-[var(--familiarity-5)] bg-[var(--familiarity-5)]',
+  1: 'border-[var(--familiarity-1)] text-[var(--familiarity-1)]',
+  2: 'border-[var(--familiarity-2)] text-[var(--familiarity-2)]',
+  3: 'border-[var(--familiarity-3)] text-[var(--familiarity-3)]',
+  4: 'border-[var(--familiarity-4)] text-[var(--familiarity-4)]',
+  5: 'border-[var(--familiarity-5)] text-[var(--familiarity-5)]',
 }
 
 export function FamiliarityMeter({ wordId, label }: FamiliarityMeterProps) {
@@ -79,7 +79,7 @@ export function FamiliarityMeter({ wordId, label }: FamiliarityMeterProps) {
       aria-label={levelLabel}
       className={`flex size-5 items-center justify-center rounded-full border text-[11px] leading-none font-semibold tabular-nums transition-colors disabled:cursor-wait ${
         level > 0
-          ? `${levelClasses[level]} text-[var(--card)]`
+          ? levelClasses[level]
           : 'border-dashed border-[var(--mute)] text-[var(--mute)] hover:border-[var(--ink)] hover:text-[var(--ink)]'
       }`}
       disabled={pending}
