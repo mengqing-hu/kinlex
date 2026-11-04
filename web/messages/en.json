@@ -110,6 +110,8 @@
     "partOfSpeech": "Word type",
     "allTopics": "All topics",
     "topic": "Topic",
+    "otherTopic": "Other",
+    "otherTopicHint": "Words without a topic",
     "searchWords": "Search",
     "searchPlaceholder": "Search German words",
     "hideMeanings": "Hide meanings",

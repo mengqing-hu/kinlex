@@ -51,17 +51,6 @@ function intersectIds(collections: number[][]): number[] | undefined {
     )
 }
 
-async function findTopicWordIds(db: SupabaseClient<Database>, topic: string): Promise<number[]> {
-  const { data, error } = await db
-    .from('word_tags')
-    .select('word_id, tags!inner(slug, type)')
-    .eq('tags.slug', topic)
-    .eq('tags.type', 'topic')
-
-  assertQuerySucceeded(error, 'filter words by topic')
-  return (data ?? []).map(({ word_id }) => word_id)
-}
-
 async function findMorphemeWordIds(
   db: SupabaseClient<Database>,
   morpheme: string,
@@ -102,10 +91,6 @@ async function findFilterWordIds(
 
   if (params.favorites) {
     lookups.push(findAllFavoriteWordIds(db, userId))
-  }
-
-  if (params.topic) {
-    lookups.push(findTopicWordIds(db, params.topic))
   }
 
   if (params.morpheme) {
@@ -422,6 +407,7 @@ async function findSortedWordIds(
     p_query: params.q,
     p_word_class_patterns: params.pos ? getWordClassPatterns(params.pos) : undefined,
     p_word_ids: filterWordIds,
+    p_topic: params.topic,
     p_offset: offset,
     p_limit: params.limit + 1,
   })
@@ -495,29 +481,22 @@ export async function findWordFilterOptions(
   language: string,
 ): Promise<WordFilterOptions> {
   const [wordClassesResult, topicsResult] = await Promise.all([
-    // Distinct values come from the database; selecting every word would stop at the row limit.
+    // Distinct values and counts come from the database; selecting every row would stop at the
+    // API row limit (1000).
     db.rpc('word_class_options', { p_language: language }),
-    db
-      .from('word_tags')
-      .select('tags!inner(slug, name, type), words!inner(language)')
-      .eq('tags.type', 'topic')
-      .eq('words.language', language),
+    db.rpc('topic_counts', { p_language: language }),
   ])
 
   assertQuerySucceeded(wordClassesResult.error, 'load parts of speech')
   assertQuerySucceeded(topicsResult.error, 'load topic filters')
 
-  const topicsBySlug = new Map<string, string>()
-  for (const row of topicsResult.data ?? []) {
-    topicsBySlug.set(row.tags.slug, row.tags.name)
-  }
-
   return {
     partsOfSpeech: [
       ...new Set((wordClassesResult.data ?? []).map((pos) => normalizePartOfSpeech(pos))),
     ].toSorted(),
-    topics: [...topicsBySlug.entries()]
-      .map(([value, label]) => ({ value, label }))
+    topics: (topicsResult.data ?? [])
+      .filter((topic) => topic.word_count > 0)
+      .map((topic) => ({ value: topic.slug, label: topic.name }))
       .toSorted((left, right) => left.label.localeCompare(right.label)),
   }
 }

@@ -1,7 +1,7 @@
 import { FilterSelect } from '@/components/list/FilterSelect'
 import { HideMeaningsToggle } from '@/components/list/HideMeaningsToggle'
 import { SortSelect, type SortSelectLabels } from '@/components/list/SortSelect'
-import type { SortOrder, WordSort } from '@/lib/constants'
+import { OTHER_TOPIC, type SortOrder, type WordSort } from '@/lib/constants'
 import type { WordFilterOption } from '@/types/domain'
 
 interface FilterBarLabels {
@@ -11,6 +11,8 @@ interface FilterBarLabels {
   partOfSpeech: string
   allTopics: string
   topic: string
+  otherTopic: string
+  otherTopicHint: string
   searchWords: string
   searchPlaceholder: string
   hideMeanings: string
@@ -86,10 +88,20 @@ export function FilterBar({
           value={selectedPartOfSpeech}
           onChange={onPartOfSpeechChange}
         />
-        {showTopicFilter ? (
+        {/* Hidden until words have been sorted into topics, unless a link already chose one. */}
+        {showTopicFilter && (topics.length > 0 || selectedTopic) ? (
           <FilterSelect
             label={labels.topic}
-            options={[{ value: '', label: labels.allTopics }, ...topics]}
+            options={[
+              { value: '', label: labels.allTopics },
+              ...topics,
+              {
+                value: OTHER_TOPIC,
+                label: labels.otherTopic,
+                hint: labels.otherTopicHint,
+                separated: true,
+              },
+            ]}
             value={selectedTopic}
             onChange={onTopicChange}
           />
@@ -101,7 +113,7 @@ export function FilterBar({
           sort={selectedSort}
           onChange={onSortChange}
         />
-        <label className="relative w-full sm:w-auto sm:max-w-64 sm:min-w-44 sm:flex-1">
+        <label className="relative w-full sm:w-auto sm:max-w-64 sm:min-w-40 sm:flex-1">
           <span className="sr-only">{labels.searchWords}</span>
           <svg
             aria-hidden="true"

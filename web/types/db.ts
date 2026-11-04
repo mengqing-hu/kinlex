@@ -758,6 +758,7 @@ export type Database = {
           p_offset?: number
           p_query?: string
           p_sort: string
+          p_topic?: string
           p_word_class_patterns?: string[]
           p_word_ids?: number[]
         }
@@ -828,6 +829,16 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
+      }
+      topic_counts: {
+        Args: { p_language: string }
+        Returns: {
+          icon: string
+          id: number
+          name: string
+          slug: string
+          word_count: number
+        }[]
       }
       update_daily_study_time: {
         Args: {

@@ -14,25 +14,15 @@ export async function findTopics(
   db: SupabaseClient<Database>,
   language: string,
 ): Promise<TopicSummary[]> {
-  const [topicsResult, relationsResult] = await Promise.all([
-    db
-      .from('tags')
-      .select('id, slug, name, icon')
-      .eq('type', 'topic')
-      .order('name', { ascending: true }),
-    db.from('word_tags').select('tag_id, words!inner(language)').eq('words.language', language),
-  ])
+  // Counted in the database: reading every word-topic row would stop at the API row limit.
+  const { data, error } = await db.rpc('topic_counts', { p_language: language })
+  assertQuerySucceeded(error, 'load topics')
 
-  assertQuerySucceeded(topicsResult.error, 'load topics')
-  assertQuerySucceeded(relationsResult.error, 'count topic words')
-
-  const wordCountByTopicId = new Map<number, number>()
-  for (const relation of relationsResult.data ?? []) {
-    wordCountByTopicId.set(relation.tag_id, (wordCountByTopicId.get(relation.tag_id) ?? 0) + 1)
-  }
-
-  return (topicsResult.data ?? []).map((topic) => ({
-    ...topic,
-    wordCount: wordCountByTopicId.get(topic.id) ?? 0,
+  return (data ?? []).map((topic) => ({
+    id: topic.id,
+    slug: topic.slug,
+    name: topic.name,
+    icon: topic.icon,
+    wordCount: topic.word_count,
   }))
 }

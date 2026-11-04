@@ -37,6 +37,8 @@ export interface WordListLabels {
   partOfSpeech: string
   allTopics: string
   topic: string
+  otherTopic: string
+  otherTopicHint: string
   searchWords: string
   searchPlaceholder: string
   hideMeanings: string

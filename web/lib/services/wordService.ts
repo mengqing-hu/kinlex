@@ -27,8 +27,11 @@ export async function listWords(
   const allowed = params.sort && (userId || !personalWordSorts.includes(params.sort))
   const sort = allowed && params.sort ? params.sort : 'frequency'
   const order = (allowed ? params.order : undefined) ?? defaultSortOrders[sort]
+  // Topics are filtered in the database's sorting function, so a topic always pages through it.
   const ordering =
-    sort === 'frequency' && order === 'asc' ? undefined : { sort, descending: order === 'desc' }
+    sort === 'frequency' && order === 'asc' && !params.topic
+      ? undefined
+      : { sort, descending: order === 'desc' }
   if (decodedCursor && (ordering !== undefined) !== 'offset' in decodedCursor) {
     throw new InvalidParamsError('cursor does not match the sort order')
   }

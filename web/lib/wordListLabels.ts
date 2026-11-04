@@ -26,6 +26,8 @@ export async function getWordListLabels(): Promise<WordListLabels> {
     partOfSpeech: t('partOfSpeech'),
     allTopics: t('allTopics'),
     topic: t('topic'),
+    otherTopic: t('otherTopic'),
+    otherTopicHint: t('otherTopicHint'),
     searchWords: t('searchWords'),
     searchPlaceholder: t('searchPlaceholder'),
     hideMeanings: t('hideMeanings'),

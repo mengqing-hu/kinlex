@@ -1,16 +1,23 @@
 'use client'
 
+import { Fragment } from 'react'
+
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu'
 
 export interface FilterSelectOption {
   value: string
   label: string
+  // A second, quieter line under the label in the menu.
+  hint?: string
+  // Sets the option apart from the ones above it.
+  separated?: boolean
   disabled?: boolean
 }
 
@@ -43,13 +50,14 @@ export function FilterSelect({ label, options, value, title, onChange }: FilterS
             ? 'border-[var(--root)]/50 bg-[var(--root)]/15 text-[var(--ink)] hover:border-[var(--root)]/70 data-[state=open]:border-[var(--root)]/70'
             : 'border-[var(--line)] bg-[var(--card)] text-[var(--mute)] hover:border-[var(--mute)] hover:text-[var(--ink)] data-[state=open]:border-[var(--mute)]'
         }`}
-        title={title}
+        title={title ?? (active ? selected.label : undefined)}
       >
-        <span className="inline-grid text-left">
+        {/* Capped, so a long topic name does not push the other filters to a new row. */}
+        <span className="inline-grid max-w-24 text-left">
           {texts.map((text) => (
             <span
               aria-hidden="true"
-              className={`col-start-1 row-start-1 whitespace-nowrap ${text === shown ? '' : 'invisible'}`}
+              className={`col-start-1 row-start-1 truncate ${text === shown ? '' : 'invisible'}`}
               key={text}
             >
               {text}
@@ -72,13 +80,19 @@ export function FilterSelect({ label, options, value, title, onChange }: FilterS
       <DropdownMenuContent className="max-h-80 overflow-y-auto">
         <DropdownMenuRadioGroup value={value} onValueChange={onChange}>
           {options.map((option) => (
-            <DropdownMenuRadioItem
-              disabled={option.disabled}
-              key={option.value || 'all'}
-              value={option.value}
-            >
-              {option.label}
-            </DropdownMenuRadioItem>
+            <Fragment key={option.value || 'all'}>
+              {option.separated ? <DropdownMenuSeparator /> : null}
+              <DropdownMenuRadioItem disabled={option.disabled} value={option.value}>
+                <span>
+                  {option.label}
+                  {option.hint ? (
+                    <span className="block text-xs font-normal text-[var(--mute)]">
+                      {option.hint}
+                    </span>
+                  ) : null}
+                </span>
+              </DropdownMenuRadioItem>
+            </Fragment>
           ))}
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>

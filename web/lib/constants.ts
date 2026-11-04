@@ -3,6 +3,9 @@
 export const wordLevels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as const
 export type WordLevel = (typeof wordLevels)[number]
 
+// The topic filter's value for words without any topic; no topic is called this.
+export const OTHER_TOPIC = 'other'
+
 // 'frequency' is the default order: the most common words first.
 export const wordSorts = [
   'frequency',
