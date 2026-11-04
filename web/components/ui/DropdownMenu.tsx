@@ -92,3 +92,37 @@ export function DropdownMenuRadioItem({
     </DropdownMenuPrimitive.RadioItem>
   )
 }
+
+type DropdownMenuCheckboxItemProps = ComponentPropsWithoutRef<
+  typeof DropdownMenuPrimitive.CheckboxItem
+>
+
+// An option that can be on or off independently of the others; a ticked one shows a check mark.
+export function DropdownMenuCheckboxItem({
+  children,
+  className = '',
+  ...props
+}: DropdownMenuCheckboxItemProps) {
+  return (
+    <DropdownMenuPrimitive.CheckboxItem
+      className={`relative flex cursor-default items-center rounded-lg py-2 pr-3 pl-8 text-sm outline-none select-none focus:bg-[var(--bg)] data-[disabled]:pointer-events-none data-[disabled]:opacity-50 ${className}`}
+      {...props}
+    >
+      <DropdownMenuPrimitive.ItemIndicator className="absolute left-2.5 inline-flex">
+        <svg
+          aria-hidden="true"
+          className="size-4"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2.2"
+          viewBox="0 0 24 24"
+        >
+          <path d="m5 12.5 4.5 4.5L19 7.5" />
+        </svg>
+      </DropdownMenuPrimitive.ItemIndicator>
+      {children}
+    </DropdownMenuPrimitive.CheckboxItem>
+  )
+}

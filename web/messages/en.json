@@ -114,10 +114,6 @@
     "otherTopicHint": "Words without a topic",
     "searchWords": "Search",
     "searchPlaceholder": "Search German words",
-    "hideMeanings": "Hide meanings",
-    "showMeanings": "Show meanings",
-    "hideActions": "Hide actions",
-    "showActions": "Show actions",
     "loadMore": "Load more",
     "loading": "Loading words",
     "empty": "No words match these filters.",
@@ -171,6 +167,16 @@
           "desc": "Z to A"
         }
       }
+    },
+    "views": {
+      "view": "View",
+      "list": "List",
+      "cards": "Cards"
+    },
+    "hiding": {
+      "hide": "Hide",
+      "meanings": "Meanings",
+      "actions": "Actions"
     }
   },
   "morphemeCard": {

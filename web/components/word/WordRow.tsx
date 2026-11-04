@@ -6,7 +6,7 @@ import { MorphemeText } from '@/components/word/MorphemeText'
 import { ExampleSentence } from '@/components/word/ExampleLine'
 import type { WordListItem } from '@/types/domain'
 
-interface WordRowLabels {
+export interface WordRowLabels {
   playWord: string
   playExample: string
   slowAudio: string
@@ -28,7 +28,7 @@ interface WordRowProps {
   onOpen: () => void
 }
 
-const hiddenMeaningClassName = 'select-none blur-sm transition-[filter]'
+export const hiddenMeaningClassName = 'select-none blur-sm transition-[filter]'
 
 export function WordRow({
   language,

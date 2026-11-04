@@ -30,8 +30,16 @@ export async function getWordListLabels(): Promise<WordListLabels> {
     otherTopicHint: t('otherTopicHint'),
     searchWords: t('searchWords'),
     searchPlaceholder: t('searchPlaceholder'),
-    hideMeanings: t('hideMeanings'),
-    showMeanings: t('showMeanings'),
+    views: {
+      view: t('views.view'),
+      list: t('views.list'),
+      cards: t('views.cards'),
+    },
+    hiding: {
+      hide: t('hiding.hide'),
+      meanings: t('hiding.meanings'),
+      actions: t('hiding.actions'),
+    },
     sorting: {
       sort: t('sorting.sort'),
       sortBy: t('sorting.sortBy'),
@@ -40,8 +48,6 @@ export async function getWordListLabels(): Promise<WordListLabels> {
       sorts: t.raw('sorting.sorts') as SortSelectLabels['sorts'],
       orders: t.raw('sorting.orders') as SortSelectLabels['orders'],
     },
-    hideActions: t('hideActions'),
-    showActions: t('showActions'),
     loadMore: t('loadMore'),
     loading: t('loading'),
     empty: t('empty'),

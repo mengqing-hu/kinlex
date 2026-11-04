@@ -1,6 +1,7 @@
 import { FilterSelect } from '@/components/list/FilterSelect'
-import { HideMeaningsToggle } from '@/components/list/HideMeaningsToggle'
+import { HideMenu, type HideMenuLabels } from '@/components/list/HideMenu'
 import { SortSelect, type SortSelectLabels } from '@/components/list/SortSelect'
+import { ViewToggle, type ViewToggleLabels, type WordListView } from '@/components/list/ViewToggle'
 import { OTHER_TOPIC, type SortOrder, type WordSort } from '@/lib/constants'
 import type { WordFilterOption } from '@/types/domain'
 
@@ -15,11 +16,9 @@ interface FilterBarLabels {
   otherTopicHint: string
   searchWords: string
   searchPlaceholder: string
-  hideMeanings: string
-  showMeanings: string
   sorting: SortSelectLabels
-  hideActions: string
-  showActions: string
+  hiding: HideMenuLabels
+  views: ViewToggleLabels
 }
 
 interface FilterBarProps {
@@ -37,12 +36,14 @@ interface FilterBarProps {
   selectedSort: WordSort
   selectedOrder: SortOrder
   canUsePersonalSorts: boolean
+  view: WordListView
   labels: FilterBarLabels
   onLevelChange?: (value: string) => void
   onSearchQueryChange: (value: string) => void
   onPartOfSpeechChange: (value: string) => void
   onTopicChange: (value: string) => void
   onSortChange: (sort: WordSort, order: SortOrder) => void
+  onViewChange: (view: WordListView) => void
   onHideMeaningsChange: (checked: boolean) => void
   onHideActionsChange: (checked: boolean) => void
 }
@@ -62,12 +63,14 @@ export function FilterBar({
   selectedSort,
   selectedOrder,
   canUsePersonalSorts,
+  view,
   labels,
   onLevelChange,
   onSearchQueryChange,
   onPartOfSpeechChange,
   onTopicChange,
   onSortChange,
+  onViewChange,
   onHideMeaningsChange,
   onHideActionsChange,
 }: FilterBarProps) {
@@ -139,18 +142,14 @@ export function FilterBar({
         </label>
       </div>
 
-      <div className="flex flex-wrap gap-x-5 gap-y-2">
-        <HideMeaningsToggle
-          checked={hideMeanings}
-          hideLabel={labels.hideMeanings}
-          showLabel={labels.showMeanings}
-          onChange={onHideMeaningsChange}
-        />
-        <HideMeaningsToggle
-          checked={hideActions}
-          hideLabel={labels.hideActions}
-          showLabel={labels.showActions}
-          onChange={onHideActionsChange}
+      <div className="flex flex-wrap items-center gap-2">
+        <ViewToggle labels={labels.views} view={view} onChange={onViewChange} />
+        <HideMenu
+          hideActions={hideActions}
+          hideMeanings={hideMeanings}
+          labels={labels.hiding}
+          onHideActionsChange={onHideActionsChange}
+          onHideMeaningsChange={onHideMeaningsChange}
         />
       </div>
     </div>

@@ -4,10 +4,13 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 
 import { FilterBar } from '@/components/list/FilterBar'
+import type { HideMenuLabels } from '@/components/list/HideMenu'
 import type { SortSelectLabels } from '@/components/list/SortSelect'
+import { type ViewToggleLabels, wordListViews } from '@/components/list/ViewToggle'
 import { normalizePartOfSpeech } from '@/lib/utils/partOfSpeech'
 import type { MorphemeCardLabels } from '@/components/word/MorphemeCard'
 import { WordDetailPanel, type WordPanelLabels } from '@/components/word/WordDetailPanel'
+import { WordCard } from '@/components/word/WordCard'
 import { WordRow } from '@/components/word/WordRow'
 import { fetchApiData } from '@/lib/client/apiClient'
 import {
@@ -41,11 +44,9 @@ export interface WordListLabels {
   otherTopicHint: string
   searchWords: string
   searchPlaceholder: string
-  hideMeanings: string
-  showMeanings: string
   sorting: SortSelectLabels
-  hideActions: string
-  showActions: string
+  hiding: HideMenuLabels
+  views: ViewToggleLabels
   loadMore: string
   loading: string
   empty: string
@@ -177,6 +178,7 @@ export function WordList({
       topic: showTopicFilter ? (params.get('topic') ?? '') : (topic ?? ''),
       hideMeanings: params.get('hide') === '1',
       hideActions: params.get('actions') === '0',
+      view: wordListViews.find((option) => option === params.get('view')) ?? 'list',
       // The word open in the side panel, kept in the URL so Back closes it and it can be shared.
       openWord: params.get('word') ?? '',
       sort: wordSorts.find((option) => option === params.get('sort')) ?? 'frequency',
@@ -305,6 +307,29 @@ export function WordList({
   }, [state.queryKey])
   const closeWordPanel = useCallback(() => updateSearchParameter('word', ''), [])
 
+  // What a word needs to show as a row or a card.
+  const itemProps = (word: WordListItem) => ({
+    language,
+    word,
+    hideMeanings: filters.hideMeanings,
+    hideActions: filters.hideActions,
+    selected: filters.openWord === word.slug,
+    labels: {
+      playWord: labels.playWord.replace('{word}', word.lemma),
+      playExample: labels.playExample,
+      slowAudio: labels.slowAudio,
+      familiarity: labels.familiarity,
+      openWord: labels.openWord.replace('{word}', word.lemma),
+    },
+    morphemeTypeLabels: labels.morphemeTypes,
+    morphemeCardLabels: {
+      ...labels.morphemeCard,
+      morphemeTypes: labels.morphemeTypes,
+      partsOfSpeech: labels.partsOfSpeech,
+    },
+    onOpen: () => updateSearchParameter('word', word.slug),
+  })
+
   const partOfSpeechOptions: WordFilterOption[] = filterOptions.partsOfSpeech.map((value) => ({
     value,
     label: labels.partsOfSpeech[value] ?? value,
@@ -384,6 +409,7 @@ export function WordList({
         selectedSort={sort}
         selectedOrder={order}
         canUsePersonalSorts={signedIn}
+        view={filters.view}
         labels={labels}
         onLevelChange={(value) => {
           router.push(
@@ -401,6 +427,8 @@ export function WordList({
               : { sort: nextSort, order: nextOrder },
           )
         }
+        // The list is the default, so it leaves the URL clean.
+        onViewChange={(view) => updateSearchParameter('view', view === 'list' ? '' : view)}
         onHideMeaningsChange={(checked) => updateSearchParameter('hide', checked ? '1' : '')}
         onHideActionsChange={(checked) => updateSearchParameter('actions', checked ? '0' : '')}
       />
@@ -426,35 +454,27 @@ export function WordList({
               </button>
             </div>
           ) : state.items.length > 0 ? (
-            <div className="overflow-x-auto">
-              <ul className={filters.openWord ? 'min-w-sm' : 'min-w-5xl'}>
+            filters.view === 'cards' ? (
+              <ul
+                className={`grid gap-4 p-1 sm:grid-cols-2 ${filters.openWord ? '2xl:grid-cols-3' : 'xl:grid-cols-3'}`}
+              >
                 {state.items.map((word) => (
-                  <WordRow
-                    language={language}
-                    word={word}
-                    hideMeanings={filters.hideMeanings}
-                    hideActions={filters.hideActions}
-                    selected={filters.openWord === word.slug}
-                    compact={Boolean(filters.openWord)}
-                    key={word.id}
-                    labels={{
-                      playWord: labels.playWord.replace('{word}', word.lemma),
-                      playExample: labels.playExample,
-                      slowAudio: labels.slowAudio,
-                      familiarity: labels.familiarity,
-                      openWord: labels.openWord.replace('{word}', word.lemma),
-                    }}
-                    morphemeTypeLabels={labels.morphemeTypes}
-                    morphemeCardLabels={{
-                      ...labels.morphemeCard,
-                      morphemeTypes: labels.morphemeTypes,
-                      partsOfSpeech: labels.partsOfSpeech,
-                    }}
-                    onOpen={() => updateSearchParameter('word', word.slug)}
-                  />
+                  <WordCard key={word.id} {...itemProps(word)} />
                 ))}
               </ul>
-            </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <ul className={filters.openWord ? 'min-w-sm' : 'min-w-5xl'}>
+                  {state.items.map((word) => (
+                    <WordRow
+                      key={word.id}
+                      {...itemProps(word)}
+                      compact={Boolean(filters.openWord)}
+                    />
+                  ))}
+                </ul>
+              </div>
+            )
           ) : (
             <p className="py-12 text-center text-[var(--mute)]">{labels.empty}</p>
           )}
