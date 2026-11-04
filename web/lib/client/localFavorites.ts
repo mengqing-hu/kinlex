@@ -59,3 +59,11 @@ export function updateRemoteFavorite(wordId: number, favorited: boolean): void {
     else ids.delete(wordId)
   })
 }
+
+// Removes these words from the favorites kept in this browser; returns the ids that were there.
+export function clearLocalFavorites(wordIds: number[]): number[] {
+  const ids = new Set(readIds())
+  const cleared = wordIds.filter((wordId) => ids.delete(wordId))
+  window.localStorage.setItem(FAVORITES_KEY, JSON.stringify([...ids]))
+  return cleared
+}

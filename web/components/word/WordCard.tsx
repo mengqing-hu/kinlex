@@ -4,12 +4,13 @@ import { ExampleSentence } from '@/components/word/ExampleLine'
 import { FamiliarityMeter } from '@/components/word/FamiliarityMeter'
 import type { MorphemeCardLabels } from '@/components/word/MorphemeCard'
 import { MorphemeText } from '@/components/word/MorphemeText'
-import { hiddenMeaningClassName, type WordRowLabels } from '@/components/word/WordRow'
+import { hiddenTextClassName, type WordRowLabels } from '@/components/word/WordRow'
 import type { WordListItem } from '@/types/domain'
 
 interface WordCardProps {
   language: string
   word: WordListItem
+  hideWord: boolean
   hideMeanings: boolean
   hideActions: boolean
   selected: boolean
@@ -23,6 +24,7 @@ interface WordCardProps {
 export function WordCard({
   language,
   word,
+  hideWord,
   hideMeanings,
   hideActions,
   selected,
@@ -56,7 +58,8 @@ export function WordCard({
       <div className="flex items-center gap-2">
         <div className="flex min-w-0 flex-1 items-center gap-0.5">
           <span
-            className="truncate text-xl font-semibold tracking-tight text-[var(--ink)]"
+            aria-hidden={hideWord}
+            className={`truncate text-xl font-semibold tracking-tight text-[var(--ink)] ${hideWord ? hiddenTextClassName : ''}`}
             title={word.lemma}
           >
             <MorphemeText
@@ -86,7 +89,7 @@ export function WordCard({
 
       <p
         aria-hidden={hideMeanings}
-        className={`mt-2 line-clamp-2 text-[var(--mute)] ${hideMeanings ? hiddenMeaningClassName : ''}`}
+        className={`mt-2 line-clamp-2 text-[var(--mute)] ${hideMeanings ? hiddenTextClassName : ''}`}
       >
         {word.glosses.join(', ')}
       </p>
@@ -94,7 +97,9 @@ export function WordCard({
       {word.example ? (
         <div className="mt-3 text-sm">
           <p className="line-clamp-2 text-[var(--ink)]">
-            <ExampleSentence example={word.example} highlightTarget={false} />
+            <span aria-hidden={hideWord} className={hideWord ? hiddenTextClassName : ''}>
+              <ExampleSentence example={word.example} highlightTarget={false} />
+            </span>
             <span className="ml-1 inline-flex align-middle">
               <AudioButton
                 url={word.example.audioUrl}
@@ -105,7 +110,7 @@ export function WordCard({
           </p>
           <p
             aria-hidden={hideMeanings}
-            className={`mt-0.5 line-clamp-2 text-xs text-[var(--mute)] italic ${hideMeanings ? hiddenMeaningClassName : ''}`}
+            className={`mt-0.5 line-clamp-2 text-xs text-[var(--mute)] italic ${hideMeanings ? hiddenTextClassName : ''}`}
           >
             {word.example.translation}
           </p>

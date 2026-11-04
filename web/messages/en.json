@@ -173,10 +173,26 @@
       "list": "List",
       "cards": "Cards"
     },
-    "hiding": {
-      "hide": "Hide",
-      "meanings": "Meanings",
-      "actions": "Actions"
+    "listOptions": {
+      "listOptions": "List options",
+      "testYourself": "Test yourself",
+      "off": "Off",
+      "hideWord": "Hide word",
+      "hideMeaning": "Hide meaning",
+      "display": "Display",
+      "showActions": "Familiarity and favorites",
+      "actionsHidden": "Familiarity and favorites hidden",
+      "thisList": "This list",
+      "resetFamiliarity": "Reset familiarity",
+      "clearFavorites": "Clear favorites",
+      "confirmResetFamiliarity": "Reset the familiarity of {count} words in this list? This can't be undone.",
+      "confirmClearFavorites": "Remove {count} words in this list from your favorites? This can't be undone.",
+      "cancel": "Cancel",
+      "reset": "Reset",
+      "remove": "Remove",
+      "familiarityReset": "Familiarity reset on {count} words.",
+      "favoritesCleared": "{count} words removed from favorites.",
+      "resetFailed": "That didn't work. Please try again."
     }
   },
   "morphemeCard": {

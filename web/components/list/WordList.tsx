@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 
 import { FilterBar } from '@/components/list/FilterBar'
-import type { HideMenuLabels } from '@/components/list/HideMenu'
+import { hiddenSides, type ListOptionsLabels } from '@/components/list/ListOptions'
 import type { SortSelectLabels } from '@/components/list/SortSelect'
 import { type ViewToggleLabels, wordListViews } from '@/components/list/ViewToggle'
 import { normalizePartOfSpeech } from '@/lib/utils/partOfSpeech'
@@ -18,6 +18,11 @@ import {
   updateSearchParameter,
   updateSearchParameters,
 } from '@/lib/client/searchParams'
+import {
+  findMarkedWordIds,
+  resetWordState,
+  type ResettableWordState,
+} from '@/lib/client/wordStateReset'
 import { getBrowserSupabase } from '@/lib/supabase/browser'
 import {
   defaultSortOrders,
@@ -45,7 +50,7 @@ export interface WordListLabels {
   searchWords: string
   searchPlaceholder: string
   sorting: SortSelectLabels
-  hiding: HideMenuLabels
+  listOptions: ListOptionsLabels
   views: ViewToggleLabels
   loadMore: string
   loading: string
@@ -99,20 +104,17 @@ function getServerSearchParamsSnapshot(): string {
   return ''
 }
 
-async function fetchWordPage(
+// The filters of a word list, as the words API takes them.
+function listFilterParams(
   language: string,
   level: string | undefined,
   query: string,
   partOfSpeech: string,
   topic: string,
   morpheme: string | undefined,
-  sort: WordSort,
-  order: SortOrder,
   favoritesOnly: boolean,
-  cursor?: string,
-  signal?: AbortSignal,
-): Promise<CursorPage<WordListItem>> {
-  const params = new URLSearchParams({ lang: language, limit: String(PAGE_SIZE) })
+): URLSearchParams {
+  const params = new URLSearchParams({ lang: language })
 
   if (favoritesOnly) {
     params.set('favorites', '1')
@@ -137,6 +139,33 @@ async function fetchWordPage(
   if (morpheme) {
     params.set('morpheme', morpheme)
   }
+
+  return params
+}
+
+async function fetchWordPage(
+  language: string,
+  level: string | undefined,
+  query: string,
+  partOfSpeech: string,
+  topic: string,
+  morpheme: string | undefined,
+  sort: WordSort,
+  order: SortOrder,
+  favoritesOnly: boolean,
+  cursor?: string,
+  signal?: AbortSignal,
+): Promise<CursorPage<WordListItem>> {
+  const params = listFilterParams(
+    language,
+    level,
+    query,
+    partOfSpeech,
+    topic,
+    morpheme,
+    favoritesOnly,
+  )
+  params.set('limit', String(PAGE_SIZE))
 
   if (sort !== 'frequency' || order !== defaultSortOrders.frequency) {
     params.set('sort', sort)
@@ -176,7 +205,7 @@ export function WordList({
     return {
       partOfSpeech: normalizePartOfSpeech(params.get('pos') ?? ''),
       topic: showTopicFilter ? (params.get('topic') ?? '') : (topic ?? ''),
-      hideMeanings: params.get('hide') === '1',
+      hidden: hiddenSides.find((side) => side === params.get('hide')) ?? null,
       hideActions: params.get('actions') === '0',
       view: wordListViews.find((option) => option === params.get('view')) ?? 'list',
       // The word open in the side panel, kept in the URL so Back closes it and it can be shared.
@@ -191,6 +220,8 @@ export function WordList({
     error: false,
   })
   const [retryVersion, setRetryVersion] = useState(0)
+  // Raised after a reset, so the list loads again and its words show their new state.
+  const [dataVersion, setDataVersion] = useState(0)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
@@ -203,7 +234,7 @@ export function WordList({
   const sortAllowed = signedIn || !personalWordSorts.includes(filters.sort)
   const sort: WordSort = sortAllowed ? filters.sort : 'frequency'
   const order: SortOrder = (sortAllowed ? filters.order : undefined) ?? defaultSortOrders[sort]
-  const queryKey = `${debouncedSearchQuery}:${filters.partOfSpeech}:${filters.topic}:${morpheme ?? ''}:${sort}:${order}`
+  const queryKey = `${debouncedSearchQuery}:${filters.partOfSpeech}:${filters.topic}:${morpheme ?? ''}:${sort}:${order}:${dataVersion}`
 
   useEffect(() => {
     void getBrowserSupabase()
@@ -311,7 +342,8 @@ export function WordList({
   const itemProps = (word: WordListItem) => ({
     language,
     word,
-    hideMeanings: filters.hideMeanings,
+    hideWord: filters.hidden === 'word',
+    hideMeanings: filters.hidden === 'meaning',
     hideActions: filters.hideActions,
     selected: filters.openWord === word.slug,
     labels: {
@@ -404,7 +436,7 @@ export function WordList({
         searchQuery={searchQuery}
         selectedPartOfSpeech={filters.partOfSpeech}
         selectedTopic={filters.topic}
-        hideMeanings={filters.hideMeanings}
+        hidden={filters.hidden}
         hideActions={filters.hideActions}
         selectedSort={sort}
         selectedOrder={order}
@@ -429,8 +461,27 @@ export function WordList({
         }
         // The list is the default, so it leaves the URL clean.
         onViewChange={(view) => updateSearchParameter('view', view === 'list' ? '' : view)}
-        onHideMeaningsChange={(checked) => updateSearchParameter('hide', checked ? '1' : '')}
+        onHiddenChange={(hidden) => updateSearchParameter('hide', hidden ?? '')}
         onHideActionsChange={(checked) => updateSearchParameter('actions', checked ? '0' : '')}
+        loadMarkedWordIds={() =>
+          findMarkedWordIds(
+            listFilterParams(
+              language,
+              level,
+              debouncedSearchQuery,
+              filters.partOfSpeech,
+              filters.topic,
+              morpheme,
+              favoritesOnly,
+            ),
+            signedIn,
+          )
+        }
+        onReset={async (field: ResettableWordState, wordIds: number[]) => {
+          const changed = await resetWordState(field, wordIds, signedIn)
+          if (changed.length > 0) setDataVersion((version) => version + 1)
+          return changed.length
+        }}
       />
 
       <div
@@ -459,7 +510,7 @@ export function WordList({
                 className={`grid gap-4 p-1 sm:grid-cols-2 ${filters.openWord ? '2xl:grid-cols-3' : 'xl:grid-cols-3'}`}
               >
                 {state.items.map((word) => (
-                  <WordCard key={word.id} {...itemProps(word)} />
+                  <WordCard key={`${dataVersion}:${word.id}`} {...itemProps(word)} />
                 ))}
               </ul>
             ) : (
@@ -467,7 +518,7 @@ export function WordList({
                 <ul className={filters.openWord ? 'min-w-sm' : 'min-w-5xl'}>
                   {state.items.map((word) => (
                     <WordRow
-                      key={word.id}
+                      key={`${dataVersion}:${word.id}`}
                       {...itemProps(word)}
                       compact={Boolean(filters.openWord)}
                     />

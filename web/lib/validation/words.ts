@@ -28,6 +28,13 @@ export const wordListParamsSchema = z.object({
 
 export type WordListParams = z.infer<typeof wordListParamsSchema>
 
+export const wordIdsParamsSchema = wordListParamsSchema.extend({
+  // Only the words the user has given a familiarity or marked as a favorite.
+  marked: z.enum(['familiarity', 'favorites']).optional(),
+})
+
+export type WordIdsParams = z.infer<typeof wordIdsParamsSchema>
+
 export const wordDetailParamsSchema = z.object({
   lang: languageCodeSchema,
   explain: optionalLanguageCodeSchema.default('en'),

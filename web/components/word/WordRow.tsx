@@ -17,6 +17,7 @@ export interface WordRowLabels {
 interface WordRowProps {
   language: string
   word: WordListItem
+  hideWord: boolean
   hideMeanings: boolean
   hideActions: boolean
   selected: boolean
@@ -28,11 +29,14 @@ interface WordRowProps {
   onOpen: () => void
 }
 
-export const hiddenMeaningClassName = 'select-none blur-sm transition-[filter]'
+// Hidden text stays in place, blurred, and ignores the pointer so no tooltip or word card gives it
+// away.
+export const hiddenTextClassName = 'pointer-events-none select-none blur-sm transition-[filter]'
 
 export function WordRow({
   language,
   word,
+  hideWord,
   hideMeanings,
   hideActions,
   selected,
@@ -68,7 +72,11 @@ export function WordRow({
       }}
     >
       <div className="flex min-w-0 items-center gap-0.5">
-        <span className="truncate text-sm font-semibold text-[var(--ink)]" title={displayWord}>
+        <span
+          aria-hidden={hideWord}
+          className={`truncate text-sm font-semibold text-[var(--ink)] ${hideWord ? hiddenTextClassName : ''}`}
+          title={displayWord}
+        >
           <MorphemeText
             segments={word.segments}
             fallback={word.lemma}
@@ -80,14 +88,17 @@ export function WordRow({
       </div>
       <p
         aria-hidden={hideMeanings}
-        className={`line-clamp-2 text-sm leading-5 text-[var(--ink)] ${hideMeanings ? hiddenMeaningClassName : ''}`}
+        className={`line-clamp-2 text-sm leading-5 text-[var(--ink)] ${hideMeanings ? hiddenTextClassName : ''}`}
         title={word.glosses.join(', ')}
       >
         {word.glosses.join(', ')}
       </p>
       {compact ? null : word.example ? (
         <div className="flex min-w-0 items-center gap-1">
-          <span className="min-w-0 truncate text-sm text-[var(--ink)]">
+          <span
+            aria-hidden={hideWord}
+            className={`min-w-0 truncate text-sm text-[var(--ink)] ${hideWord ? hiddenTextClassName : ''}`}
+          >
             <ExampleSentence example={word.example} highlightTarget={false} />
           </span>
           <AudioButton
@@ -97,7 +108,7 @@ export function WordRow({
           />
           <span
             aria-hidden={hideMeanings}
-            className={`min-w-0 flex-1 truncate text-xs text-[var(--mute)] ${hideMeanings ? hiddenMeaningClassName : ''}`}
+            className={`min-w-0 flex-1 truncate text-xs text-[var(--mute)] ${hideMeanings ? hiddenTextClassName : ''}`}
             title={hideMeanings ? undefined : word.example.translation}
           >
             — {word.example.translation}

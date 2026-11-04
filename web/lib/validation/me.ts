@@ -31,6 +31,11 @@ export const familiarityMergeSchema = z.object({
     .max(500),
 })
 
+export const wordStateResetSchema = z.object({
+  field: z.enum(['familiarity', 'favorites']),
+  wordIds: z.array(z.number().int().positive()).max(20000),
+})
+
 export const flashcardDeckParamsSchema = z.object({
   lang: languageCodeSchema,
   explain: optionalLanguageCodeSchema.default('en'),

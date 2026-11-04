@@ -1,7 +1,8 @@
 import { FilterSelect } from '@/components/list/FilterSelect'
-import { HideMenu, type HideMenuLabels } from '@/components/list/HideMenu'
+import { type HiddenSide, ListOptions, type ListOptionsLabels } from '@/components/list/ListOptions'
 import { SortSelect, type SortSelectLabels } from '@/components/list/SortSelect'
 import { ViewToggle, type ViewToggleLabels, type WordListView } from '@/components/list/ViewToggle'
+import type { MarkedWordIds, ResettableWordState } from '@/lib/client/wordStateReset'
 import { OTHER_TOPIC, type SortOrder, type WordSort } from '@/lib/constants'
 import type { WordFilterOption } from '@/types/domain'
 
@@ -17,7 +18,7 @@ interface FilterBarLabels {
   searchWords: string
   searchPlaceholder: string
   sorting: SortSelectLabels
-  hiding: HideMenuLabels
+  listOptions: ListOptionsLabels
   views: ViewToggleLabels
 }
 
@@ -31,7 +32,7 @@ interface FilterBarProps {
   searchQuery: string
   selectedPartOfSpeech: string
   selectedTopic: string
-  hideMeanings: boolean
+  hidden: HiddenSide | null
   hideActions: boolean
   selectedSort: WordSort
   selectedOrder: SortOrder
@@ -44,8 +45,10 @@ interface FilterBarProps {
   onTopicChange: (value: string) => void
   onSortChange: (sort: WordSort, order: SortOrder) => void
   onViewChange: (view: WordListView) => void
-  onHideMeaningsChange: (checked: boolean) => void
+  onHiddenChange: (hidden: HiddenSide | null) => void
   onHideActionsChange: (checked: boolean) => void
+  loadMarkedWordIds: () => Promise<MarkedWordIds>
+  onReset: (field: ResettableWordState, wordIds: number[]) => Promise<number>
 }
 
 export function FilterBar({
@@ -58,7 +61,7 @@ export function FilterBar({
   searchQuery,
   selectedPartOfSpeech,
   selectedTopic,
-  hideMeanings,
+  hidden,
   hideActions,
   selectedSort,
   selectedOrder,
@@ -71,8 +74,10 @@ export function FilterBar({
   onTopicChange,
   onSortChange,
   onViewChange,
-  onHideMeaningsChange,
+  onHiddenChange,
   onHideActionsChange,
+  loadMarkedWordIds,
+  onReset,
 }: FilterBarProps) {
   return (
     <div className="flex flex-col gap-3 border-y border-[var(--line)] py-4 lg:flex-row lg:items-center">
@@ -144,12 +149,14 @@ export function FilterBar({
 
       <div className="flex flex-wrap items-center gap-2">
         <ViewToggle labels={labels.views} view={view} onChange={onViewChange} />
-        <HideMenu
+        <ListOptions
+          hidden={hidden}
           hideActions={hideActions}
-          hideMeanings={hideMeanings}
-          labels={labels.hiding}
+          labels={labels.listOptions}
+          loadMarkedWordIds={loadMarkedWordIds}
+          onReset={onReset}
+          onHiddenChange={onHiddenChange}
           onHideActionsChange={onHideActionsChange}
-          onHideMeaningsChange={onHideMeaningsChange}
         />
       </div>
     </div>

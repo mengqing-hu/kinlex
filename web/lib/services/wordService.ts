@@ -3,9 +3,14 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { defaultSortOrders, personalWordSorts } from '@/lib/constants'
 import { InvalidParamsError, NotFoundError, UnsupportedLanguageError } from '@/lib/errors'
 import { isSupportedLanguage } from '@/lib/languages'
-import { findWordBySlug, findWordFilterOptions, findWords } from '@/lib/repositories/wordRepository'
+import {
+  findAllWordIds,
+  findWordBySlug,
+  findWordFilterOptions,
+  findWords,
+} from '@/lib/repositories/wordRepository'
 import { decodeWordCursor } from '@/lib/utils/cursor'
-import type { WordDetailParams, WordListParams } from '@/lib/validation/words'
+import type { WordDetailParams, WordIdsParams, WordListParams } from '@/lib/validation/words'
 import type { Database } from '@/types/db'
 import type { CursorPage, WordDetail, WordFilterOptions, WordListItem } from '@/types/domain'
 
@@ -37,6 +42,18 @@ export async function listWords(
   }
 
   return findWords(db, { ...params, decodedCursor, ordering }, userId)
+}
+
+export async function listAllWordIds(
+  db: SupabaseClient<Database>,
+  params: WordIdsParams,
+  userId?: string,
+): Promise<number[]> {
+  if (!isSupportedLanguage(params.lang)) {
+    throw new UnsupportedLanguageError(params.lang)
+  }
+
+  return findAllWordIds(db, params, userId)
 }
 
 export async function listWordFilterOptions(

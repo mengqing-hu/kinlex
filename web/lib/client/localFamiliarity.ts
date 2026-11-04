@@ -31,6 +31,8 @@ function writeLevels(levels: Map<number, number>): void {
 
 export const getLocalFamiliarity = (wordId: number): number => readLevels().get(wordId) ?? 0
 
+export const getLocalFamiliarityIds = (): number[] => [...readLevels().keys()]
+
 export function setLocalFamiliarity(wordId: number, level: number): void {
   const levels = readLevels()
   if (level > 0) levels.set(wordId, level)
@@ -68,4 +70,12 @@ export function updateRemoteFamiliarity(wordId: number, level: number): void {
     if (level > 0) levels.set(wordId, level)
     else levels.delete(wordId)
   })
+}
+
+// Clears the levels of these words kept in this browser; returns the ids that had one.
+export function clearLocalFamiliarity(wordIds: number[]): number[] {
+  const levels = readLevels()
+  const cleared = wordIds.filter((wordId) => levels.delete(wordId))
+  writeLevels(levels)
+  return cleared
 }

@@ -749,6 +749,18 @@ export type Database = {
         }
         Returns: number[]
       }
+      list_all_word_ids: {
+        Args: {
+          p_language: string
+          p_level?: string
+          p_marked?: string
+          p_query?: string
+          p_topic?: string
+          p_word_class_patterns?: string[]
+          p_word_ids?: number[]
+        }
+        Returns: number[]
+      }
       list_word_ids: {
         Args: {
           p_descending: boolean
@@ -802,6 +814,10 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      reset_word_state: {
+        Args: { p_field: string; p_word_ids: number[] }
+        Returns: number[]
       }
       search_words_fuzzy: {
         Args: { p_language: string; p_limit?: number; p_query: string }

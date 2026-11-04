@@ -4,7 +4,7 @@ import { RepositoryError } from '@/lib/errors'
 import { getAudioUrl } from '@/lib/utils/audioUrl'
 import { encodeWordCursor, type WordCursor } from '@/lib/utils/cursor'
 import { normalizePartOfSpeech, partOfSpeechPrefixes } from '@/lib/utils/partOfSpeech'
-import type { WordListParams } from '@/lib/validation/words'
+import type { WordIdsParams, WordListParams } from '@/lib/validation/words'
 import type { WordSort } from '@/lib/constants'
 import type { Database } from '@/types/db'
 import type {
@@ -412,6 +412,30 @@ async function findSortedWordIds(
     p_limit: params.limit + 1,
   })
   assertQuerySucceeded(error, 'sort words')
+  return data ?? []
+}
+
+// Every word the list's filters match, in no particular order.
+export async function findAllWordIds(
+  db: SupabaseClient<Database>,
+  params: WordIdsParams,
+  userId?: string,
+): Promise<number[]> {
+  const filterWordIds = await findFilterWordIds(db, params, userId)
+  if (filterWordIds?.length === 0) {
+    return []
+  }
+
+  const { data, error } = await db.rpc('list_all_word_ids', {
+    p_language: params.lang,
+    p_level: params.level,
+    p_query: params.q,
+    p_word_class_patterns: params.pos ? getWordClassPatterns(params.pos) : undefined,
+    p_word_ids: filterWordIds,
+    p_topic: params.topic,
+    p_marked: params.marked,
+  })
+  assertQuerySucceeded(error, 'list word ids')
   return data ?? []
 }
 
