@@ -63,7 +63,7 @@ def _source_rows(path: Path) -> dict[str, dict[str, str]]:
 def _write_index(records: list[dict[str, object]], output_dir: Path) -> None:
     rows = []
     for record in records:
-        number = int(record["number"])
+        number = html.escape(str(record["number"]))
         word = html.escape(str(record["word"]))
         example = html.escape(str(record["example_sentence"]))
         focus = html.escape(str(record["focus"]))
@@ -76,10 +76,16 @@ def _write_index(records: list[dict[str, object]], output_dir: Path) -> None:
             <tr>
               <td>{number}</td><td><strong>{word}</strong><br><small>{focus}</small></td>
               <td>{example}</td>
-              <td><label>Word<audio controls preload="none" src="{omni_word}"></audio></label>
-                  <label>Example<audio controls preload="none" src="{omni_example}"></audio></label></td>
-              <td><label>Word<audio controls preload="none" src="{hd_word}"></audio></label>
-                  <label>Example<audio controls preload="none" src="{hd_example}"></audio></label></td>
+              <td>
+                <label>Word<audio controls preload="none" src="{omni_word}"></audio></label>
+                <label>Example
+                  <audio controls preload="none" src="{omni_example}"></audio></label>
+              </td>
+              <td>
+                <label>Word<audio controls preload="none" src="{hd_word}"></audio></label>
+                <label>Example
+                  <audio controls preload="none" src="{hd_example}"></audio></label>
+              </td>
             </tr>
             """
         )
@@ -103,8 +109,10 @@ def _write_index(records: list[dict[str, object]], output_dir: Path) -> None:
   <h1>German TTS comparison</h1>
   <p>Compare the same 20 words and example sentences using OmniVoice and tts-1-hd.</p>
   <table>
-    <thead><tr><th>#</th><th>Word and focus</th><th>Example</th><th>OmniVoice</th><th>tts-1-hd</th></tr></thead>
-    <tbody>{''.join(rows)}</tbody>
+    <thead>
+      <tr><th>#</th><th>Word and focus</th><th>Example</th><th>OmniVoice</th><th>tts-1-hd</th></tr>
+    </thead>
+    <tbody>{"".join(rows)}</tbody>
   </table>
 </body>
 </html>
