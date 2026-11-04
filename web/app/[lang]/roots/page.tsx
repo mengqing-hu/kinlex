@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 
-import { RootDirectory } from '@/components/root/RootDirectory'
+import { RootDirectory, type RootDirectoryLabels } from '@/components/root/RootDirectory'
 import { config } from '@/lib/config'
 import { isSupportedLanguage, supportedLanguageCodes } from '@/lib/languages'
 import { listMorphemes } from '@/lib/services/morphemeService'
@@ -46,11 +46,25 @@ export default async function RootsPage({ params }: RootsPageProps) {
         items={items}
         language={lang}
         labels={{
+          allTypes: t('allTypes'),
           empty: t('empty'),
+          type: t('type'),
           types: {
             prefix: t('types.prefix'),
             root: t('types.root'),
             suffix: t('types.suffix'),
+          },
+          sorting: {
+            sort: t('sorting.sort'),
+            sortBy: t('sorting.sortBy'),
+            reverse: t('sorting.reverse'),
+            sorts: t.raw('sorting.sorts') as RootDirectoryLabels['sorting']['sorts'],
+            orders: t.raw('sorting.orders') as RootDirectoryLabels['sorting']['orders'],
+          },
+          views: {
+            view: t('views.view'),
+            list: t('views.list'),
+            cards: t('views.cards'),
           },
           word: t('word'),
           words: t('words'),

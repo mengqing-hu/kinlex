@@ -20,6 +20,8 @@
     "copyright": "Copyright {year} Kinlex"
   },
   "rootsPage": {
+    "type": "Word part",
+    "allTypes": "All word parts",
     "empty": "No word parts are available yet.",
     "word": "word",
     "words": "words",
@@ -29,7 +31,31 @@
       "suffix": "Suffixes"
     },
     "metadataTitle": "German roots, prefixes and suffixes",
-    "metadataDescription": "Explore German word families through roots, prefixes and suffixes."
+    "metadataDescription": "Explore German word families through roots, prefixes and suffixes.",
+    "views": {
+      "view": "View",
+      "list": "List",
+      "cards": "Cards"
+    },
+    "sorting": {
+      "sort": "Sort",
+      "sortBy": "Sort by",
+      "reverse": "Reverse the order",
+      "sorts": {
+        "alphabetical": "A–Z",
+        "words": "Word count"
+      },
+      "orders": {
+        "alphabetical": {
+          "asc": "A to Z",
+          "desc": "Z to A"
+        },
+        "words": {
+          "asc": "Fewest words first",
+          "desc": "Most words first"
+        }
+      }
+    }
   },
   "rootPage": {
     "allRoots": "All word parts",

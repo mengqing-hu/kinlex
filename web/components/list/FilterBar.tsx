@@ -3,7 +3,14 @@ import { type HiddenSide, ListOptions, type ListOptionsLabels } from '@/componen
 import { SortSelect, type SortSelectLabels } from '@/components/list/SortSelect'
 import { ViewToggle, type ViewToggleLabels, type WordListView } from '@/components/list/ViewToggle'
 import type { MarkedWordIds, ResettableWordState } from '@/lib/client/wordStateReset'
-import { OTHER_TOPIC, type SortOrder, type WordSort } from '@/lib/constants'
+import {
+  defaultSortOrders,
+  OTHER_TOPIC,
+  personalWordSorts,
+  type SortOrder,
+  type WordSort,
+  wordSorts,
+} from '@/lib/constants'
 import type { WordFilterCounts, WordFilterOption } from '@/types/domain'
 
 interface FilterBarLabels {
@@ -119,8 +126,11 @@ export function FilterBar({
           />
         ) : null}
         <SortSelect
-          canUsePersonalSorts={canUsePersonalSorts}
+          defaultOrders={defaultSortOrders}
+          defaultSort="frequency"
+          disabledSorts={canUsePersonalSorts ? [] : personalWordSorts}
           labels={labels.sorting}
+          sorts={wordSorts}
           order={selectedOrder}
           sort={selectedSort}
           onChange={onSortChange}

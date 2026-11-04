@@ -8,32 +8,31 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu'
-import {
-  defaultSortOrders,
-  personalWordSorts,
-  type SortOrder,
-  type WordSort,
-  wordSorts,
-} from '@/lib/constants'
+import type { SortOrder, WordSort } from '@/lib/constants'
 
-export interface SortSelectLabels {
+export interface SortSelectLabels<S extends string = WordSort> {
   sort: string
   sortBy: string
   // Spoken after the current direction on the direction button.
   reverse: string
-  // Sorting by what the learner did needs an account.
-  signInHint: string
-  sorts: Record<WordSort, string>
+  // Why some sorts cannot be chosen, such as sorting by what the learner did without an account.
+  disabledHint?: string
+  sorts: Record<S, string>
   // What each direction means for each sort, such as "Most viewed first".
-  orders: Record<WordSort, Record<SortOrder, string>>
+  orders: Record<S, Record<SortOrder, string>>
 }
 
-interface SortSelectProps {
-  sort: WordSort
+interface SortSelectProps<S extends string> {
+  sorts: readonly S[]
+  // The list's usual order; any other sort or direction highlights the pill.
+  defaultSort: S
+  // The direction each sort starts in when chosen.
+  defaultOrders: Record<S, SortOrder>
+  disabledSorts?: readonly S[]
+  sort: S
   order: SortOrder
-  canUsePersonalSorts: boolean
-  labels: SortSelectLabels
-  onChange: (sort: WordSort, order: SortOrder) => void
+  labels: SortSelectLabels<S>
+  onChange: (sort: S, order: SortOrder) => void
 }
 
 function ArrowIcon({ order }: { order: SortOrder }) {
@@ -53,21 +52,24 @@ function ArrowIcon({ order }: { order: SortOrder }) {
   )
 }
 
-export function SortSelect({
+export function SortSelect<S extends string>({
+  sorts,
+  defaultSort,
+  defaultOrders,
+  disabledSorts = [],
   sort,
   order,
-  canUsePersonalSorts,
   labels,
   onChange,
-}: SortSelectProps) {
-  const active = sort !== 'frequency' || order !== defaultSortOrders.frequency
+}: SortSelectProps<S>) {
+  const active = sort !== defaultSort || order !== defaultOrders[defaultSort]
   const shown = active ? labels.sorts[sort] : labels.sort
   // Every text the pill can show, stacked in one grid cell, so it keeps the width of the longest.
-  const texts = [labels.sort, ...wordSorts.map((option) => labels.sorts[option])]
+  const texts = [labels.sort, ...sorts.map((option) => labels.sorts[option])]
 
   const nextOrder: SortOrder = order === 'asc' ? 'desc' : 'asc'
   // The menu lists the sorts by name, so it follows the interface language.
-  const menuSorts = wordSorts.toSorted((left, right) =>
+  const menuSorts = sorts.toSorted((left, right) =>
     labels.sorts[left].localeCompare(labels.sorts[right]),
   )
   const segmentClassName =
@@ -89,7 +91,7 @@ export function SortSelect({
         <DropdownMenuTrigger
           aria-label={`${labels.sort}: ${labels.sorts[sort]}`}
           className={`${segmentClassName} ${segmentHoverClassName} gap-1.5 rounded-l-full pr-2.5 pl-3.5`}
-          title={canUsePersonalSorts ? undefined : labels.signInHint}
+          title={disabledSorts.length > 0 ? labels.disabledHint : undefined}
         >
           <span className="inline-grid text-left">
             {texts.map((text) => (
@@ -120,13 +122,11 @@ export function SortSelect({
           <DropdownMenuRadioGroup
             value={sort}
             // A new sort starts in its own usual direction.
-            onValueChange={(value) =>
-              onChange(value as WordSort, defaultSortOrders[value as WordSort])
-            }
+            onValueChange={(value) => onChange(value as S, defaultOrders[value as S])}
           >
             {menuSorts.map((option) => (
               <DropdownMenuRadioItem
-                disabled={!canUsePersonalSorts && personalWordSorts.includes(option)}
+                disabled={disabledSorts.includes(option)}
                 key={option}
                 value={option}
               >
