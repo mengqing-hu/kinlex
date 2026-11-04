@@ -105,7 +105,7 @@ function PanelWord({
             initialFavorited={word.favorited}
             language={language}
             wordId={word.id}
-            small
+            size="sm"
           />
           {actions}
         </div>

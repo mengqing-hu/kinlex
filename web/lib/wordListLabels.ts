@@ -50,8 +50,6 @@ export async function getWordListLabels(): Promise<WordListLabels> {
     playWord: t.raw('playWord') as string,
     playExample: t('playExample'),
     slowAudio: t('slowAudio'),
-    hideWord: t('hideWord'),
-    showWord: t('showWord'),
     familiarity: t.raw('familiarity') as string,
     openWord: t.raw('openWord') as string,
     morphemeTypes,

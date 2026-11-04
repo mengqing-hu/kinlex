@@ -77,7 +77,7 @@ export function FamiliarityMeter({ wordId, label }: FamiliarityMeterProps) {
   return (
     <button
       aria-label={levelLabel}
-      className={`flex size-5 items-center justify-center rounded-full border text-[11px] leading-none font-semibold tabular-nums transition-colors disabled:cursor-wait ${
+      className={`flex size-4 items-center justify-center rounded-full border text-[10px] leading-none font-semibold tabular-nums transition-colors disabled:cursor-wait ${
         level > 0
           ? levelClasses[level]
           : 'border-dashed border-[var(--mute)] text-[var(--mute)] hover:border-[var(--ink)] hover:text-[var(--ink)]'

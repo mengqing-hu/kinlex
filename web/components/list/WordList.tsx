@@ -54,8 +54,6 @@ export interface WordListLabels {
   playWord: string
   playExample: string
   slowAudio: string
-  hideWord: string
-  showWord: string
   familiarity: string
   openWord: string
   morphemeTypes: Record<string, string>
@@ -192,7 +190,6 @@ export function WordList({
   })
   const [retryVersion, setRetryVersion] = useState(0)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
-  const [hiddenWordIds, setHiddenWordIds] = useState<Set<number>>(() => new Set())
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
   const [signedIn, setSignedIn] = useState(false)
@@ -437,7 +434,6 @@ export function WordList({
                     word={word}
                     hideMeanings={filters.hideMeanings}
                     hideActions={filters.hideActions}
-                    hidden={hiddenWordIds.has(word.id)}
                     selected={filters.openWord === word.slug}
                     compact={Boolean(filters.openWord)}
                     key={word.id}
@@ -445,8 +441,6 @@ export function WordList({
                       playWord: labels.playWord.replace('{word}', word.lemma),
                       playExample: labels.playExample,
                       slowAudio: labels.slowAudio,
-                      hideWord: labels.hideWord,
-                      showWord: labels.showWord,
                       familiarity: labels.familiarity,
                       openWord: labels.openWord.replace('{word}', word.lemma),
                     }}
@@ -456,21 +450,7 @@ export function WordList({
                       morphemeTypes: labels.morphemeTypes,
                       partsOfSpeech: labels.partsOfSpeech,
                     }}
-                    partOfSpeechLabels={labels.partsOfSpeech}
                     onOpen={() => updateSearchParameter('word', word.slug)}
-                    onToggleHidden={() => {
-                      setHiddenWordIds((current) => {
-                        const next = new Set(current)
-
-                        if (next.has(word.id)) {
-                          next.delete(word.id)
-                        } else {
-                          next.add(word.id)
-                        }
-
-                        return next
-                      })
-                    }}
                   />
                 ))}
               </ul>

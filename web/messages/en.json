@@ -126,8 +126,6 @@
     "playWord": "Play pronunciation of {word}",
     "playExample": "Play example sentence",
     "slowAudio": "Replay at a slower speed",
-    "hideWord": "Hide word",
-    "showWord": "Show word",
     "familiarity": "Familiarity {level} of 5",
     "openWord": "Open details for {word}",
     "metadataTitle": "German {level} vocabulary",
