@@ -14,6 +14,7 @@ import type {
   WordDetail,
   WordDetailExample,
   WordExample,
+  WordFilterCounts,
   WordFilterOptions,
   WordListItem,
   WordSegment,
@@ -84,7 +85,7 @@ async function findAllFavoriteWordIds(
 
 async function findFilterWordIds(
   db: SupabaseClient<Database>,
-  params: WordListQuery,
+  params: Pick<WordListQuery, 'favorites' | 'morpheme'>,
   userId?: string,
 ): Promise<number[] | undefined> {
   const lookups: Array<Promise<number[]>> = []
@@ -500,15 +501,21 @@ export async function findWords(
   return { items, nextCursor }
 }
 
+// The words a list page shows before any filter is chosen.
+export type WordFilterScope = Pick<WordListParams, 'level' | 'topic' | 'morpheme' | 'favorites'>
+
 export async function findWordFilterOptions(
   db: SupabaseClient<Database>,
   language: string,
+  scope: WordFilterScope,
+  userId?: string,
 ): Promise<WordFilterOptions> {
-  const [wordClassesResult, topicsResult] = await Promise.all([
+  const [wordClassesResult, topicsResult, counts] = await Promise.all([
     // Distinct values and counts come from the database; selecting every row would stop at the
     // API row limit (1000).
     db.rpc('word_class_options', { p_language: language }),
     db.rpc('topic_counts', { p_language: language }),
+    findWordFilterCounts(db, language, scope, userId),
   ])
 
   assertQuerySucceeded(wordClassesResult.error, 'load parts of speech')
@@ -522,7 +529,52 @@ export async function findWordFilterOptions(
       .filter((topic) => topic.word_count > 0)
       .map((topic) => ({ value: topic.slug, label: topic.name }))
       .toSorted((left, right) => left.label.localeCompare(right.label)),
+    counts,
   }
+}
+
+async function findWordFilterCounts(
+  db: SupabaseClient<Database>,
+  language: string,
+  scope: WordFilterScope,
+  userId?: string,
+): Promise<WordFilterCounts> {
+  const counts: WordFilterCounts = {
+    levels: {},
+    partsOfSpeech: {},
+    topics: {},
+    allLevels: 0,
+    total: 0,
+  }
+  const filterWordIds = await findFilterWordIds(db, scope, userId)
+  if (filterWordIds?.length === 0) {
+    return counts
+  }
+
+  const { data, error } = await db.rpc('word_filter_counts', {
+    p_language: language,
+    p_level: scope.level,
+    p_topic: scope.topic,
+    p_word_ids: filterWordIds,
+  })
+  assertQuerySucceeded(error, 'count words per filter')
+
+  for (const { facet, value, word_count: count } of data ?? []) {
+    if (facet === 'level') {
+      // Words without a level only count towards all levels.
+      if (value) counts.levels[value] = count
+      counts.allLevels += count
+    } else if (facet === 'word_class') {
+      // Several word classes in the data, such as "Nomen" and "noun", are one part of speech.
+      const partOfSpeech = normalizePartOfSpeech(value)
+      counts.partsOfSpeech[partOfSpeech] = (counts.partsOfSpeech[partOfSpeech] ?? 0) + count
+      counts.total += count
+    } else if (facet === 'topic') {
+      counts.topics[value] = count
+    }
+  }
+
+  return counts
 }
 
 export type WordDetailLookupResult =

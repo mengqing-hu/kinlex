@@ -90,7 +90,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
 
   const [initialPage, filterOptions, t, labels] = await Promise.all([
     listWords(db, { lang, explain: 'en', topic: topic.slug, limit: PAGE_SIZE }),
-    listWordFilterOptions(db, lang),
+    listWordFilterOptions(db, lang, { topic: topic.slug }),
     getTranslations('topicPage'),
     getWordListLabels(),
   ])

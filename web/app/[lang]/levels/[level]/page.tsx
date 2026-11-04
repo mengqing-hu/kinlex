@@ -97,7 +97,7 @@ export default async function LevelPage({ params }: LevelPageProps) {
   try {
     ;[initialPage, filterOptions] = await Promise.all([
       listWords(db, { lang, explain: 'en', level, limit: PAGE_SIZE }),
-      listWordFilterOptions(db, lang),
+      listWordFilterOptions(db, lang, { level }),
     ])
   } catch (error) {
     if (error instanceof UnsupportedLanguageError) {

@@ -4,7 +4,7 @@ import { SortSelect, type SortSelectLabels } from '@/components/list/SortSelect'
 import { ViewToggle, type ViewToggleLabels, type WordListView } from '@/components/list/ViewToggle'
 import type { MarkedWordIds, ResettableWordState } from '@/lib/client/wordStateReset'
 import { OTHER_TOPIC, type SortOrder, type WordSort } from '@/lib/constants'
-import type { WordFilterOption } from '@/types/domain'
+import type { WordFilterCounts, WordFilterOption } from '@/types/domain'
 
 interface FilterBarLabels {
   allLevels: string
@@ -23,6 +23,7 @@ interface FilterBarLabels {
 }
 
 interface FilterBarProps {
+  counts: WordFilterCounts
   levels?: WordFilterOption[]
   partsOfSpeech: WordFilterOption[]
   topics: WordFilterOption[]
@@ -52,6 +53,7 @@ interface FilterBarProps {
 }
 
 export function FilterBar({
+  counts,
   levels = [],
   partsOfSpeech,
   topics,
@@ -85,14 +87,17 @@ export function FilterBar({
         {showLevelFilter && onLevelChange ? (
           <FilterSelect
             label={labels.level}
-            options={[{ value: '', label: labels.allLevels }, ...levels]}
+            options={[{ value: '', label: labels.allLevels, count: counts.allLevels }, ...levels]}
             value={selectedLevel}
             onChange={onLevelChange}
           />
         ) : null}
         <FilterSelect
           label={labels.partOfSpeech}
-          options={[{ value: '', label: labels.allPartsOfSpeech }, ...partsOfSpeech]}
+          options={[
+            { value: '', label: labels.allPartsOfSpeech, count: counts.total },
+            ...partsOfSpeech,
+          ]}
           value={selectedPartOfSpeech}
           onChange={onPartOfSpeechChange}
         />
@@ -101,12 +106,13 @@ export function FilterBar({
           <FilterSelect
             label={labels.topic}
             options={[
-              { value: '', label: labels.allTopics },
+              { value: '', label: labels.allTopics, count: counts.total },
               ...topics,
               {
                 value: OTHER_TOPIC,
                 label: labels.otherTopic,
                 hint: labels.otherTopicHint,
+                count: counts.topics[OTHER_TOPIC] ?? 0,
                 separated: true,
               },
             ]}

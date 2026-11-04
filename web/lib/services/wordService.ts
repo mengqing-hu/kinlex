@@ -8,6 +8,7 @@ import {
   findWordBySlug,
   findWordFilterOptions,
   findWords,
+  type WordFilterScope,
 } from '@/lib/repositories/wordRepository'
 import { decodeWordCursor } from '@/lib/utils/cursor'
 import type { WordDetailParams, WordIdsParams, WordListParams } from '@/lib/validation/words'
@@ -59,12 +60,14 @@ export async function listAllWordIds(
 export async function listWordFilterOptions(
   db: SupabaseClient<Database>,
   language: string,
+  scope: WordFilterScope = {},
+  userId?: string,
 ): Promise<WordFilterOptions> {
   if (!isSupportedLanguage(language)) {
     throw new UnsupportedLanguageError(language)
   }
 
-  return findWordFilterOptions(db, language)
+  return findWordFilterOptions(db, language, scope, userId)
 }
 
 export type GetWordDetailResult =

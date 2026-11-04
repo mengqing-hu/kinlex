@@ -362,9 +362,15 @@ export function WordList({
     onOpen: () => updateSearchParameter('word', word.slug),
   })
 
+  const { counts } = filterOptions
   const partOfSpeechOptions: WordFilterOption[] = filterOptions.partsOfSpeech.map((value) => ({
     value,
     label: labels.partsOfSpeech[value] ?? value,
+    count: counts.partsOfSpeech[value] ?? 0,
+  }))
+  const topicOptions: WordFilterOption[] = filterOptions.topics.map((option) => ({
+    ...option,
+    count: counts.topics[option.value] ?? 0,
   }))
   async function loadMore() {
     if (!state.nextCursor || isLoadingMore || isRefreshing) {
@@ -427,9 +433,14 @@ export function WordList({
   return (
     <div>
       <FilterBar
-        levels={wordLevels.map((value) => ({ value, label: value }))}
+        counts={counts}
+        levels={wordLevels.map((value) => ({
+          value,
+          label: value,
+          count: counts.levels[value] ?? 0,
+        }))}
         partsOfSpeech={partOfSpeechOptions}
-        topics={filterOptions.topics}
+        topics={topicOptions}
         showLevelFilter={showLevelFilter}
         showTopicFilter={showTopicFilter}
         selectedLevel={level ?? ''}

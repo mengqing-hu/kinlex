@@ -29,7 +29,7 @@ export default async function FavoritesPage({ params }: FavoritesPageProps) {
   const { supabase, user } = await requireUser(`/${lang}/favorites`)
   const [initialPage, filterOptions, t, labels] = await Promise.all([
     listWords(supabase, { lang, explain: 'en', favorites: true, limit: PAGE_SIZE }, user.id),
-    listWordFilterOptions(supabase, lang),
+    listWordFilterOptions(supabase, lang, { favorites: true }, user.id),
     getTranslations('favoritesPage'),
     getWordListLabels(),
   ])

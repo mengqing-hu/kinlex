@@ -61,7 +61,7 @@ export default async function RootPage({ params }: RootPageProps) {
   const db = getPublicSupabase()
   const [initialPage, filterOptions, t, labels] = await Promise.all([
     listWords(db, { lang, explain: 'en', morpheme: morpheme.slug, limit: PAGE_SIZE }),
-    listWordFilterOptions(db, lang),
+    listWordFilterOptions(db, lang, { morpheme: morpheme.slug }),
     getTranslations('rootPage'),
     getWordListLabels(),
   ])

@@ -100,11 +100,24 @@ export interface CursorPage<T> {
 export interface WordFilterOption {
   value: string
   label: string
+  // How many words of the page's list the option holds.
+  count?: number
+}
+
+export interface WordFilterCounts {
+  // By level across every level, and by part of speech and topic (including 'other') within the
+  // page's level.
+  levels: Record<string, number>
+  partsOfSpeech: Record<string, number>
+  topics: Record<string, number>
+  allLevels: number
+  total: number
 }
 
 export interface WordFilterOptions {
   partsOfSpeech: string[]
   topics: WordFilterOption[]
+  counts: WordFilterCounts
 }
 
 export interface TopicSummary {

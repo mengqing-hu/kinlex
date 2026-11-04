@@ -16,6 +16,8 @@ export interface FilterSelectOption {
   label: string
   // A second, quieter line under the label in the menu.
   hint?: string
+  // Shown after the label in the menu, not on the closed pill.
+  count?: number
   // Sets the option apart from the ones above it.
   separated?: boolean
   disabled?: boolean
@@ -83,7 +85,7 @@ export function FilterSelect({ label, options, value, title, onChange }: FilterS
             <Fragment key={option.value || 'all'}>
               {option.separated ? <DropdownMenuSeparator /> : null}
               <DropdownMenuRadioItem disabled={option.disabled} value={option.value}>
-                <span>
+                <span className="flex-1">
                   {option.label}
                   {option.hint ? (
                     <span className="block text-xs font-normal text-[var(--mute)]">
@@ -91,6 +93,11 @@ export function FilterSelect({ label, options, value, title, onChange }: FilterS
                     </span>
                   ) : null}
                 </span>
+                {option.count === undefined ? null : (
+                  <span className="ml-4 self-start text-xs leading-5 font-normal text-[var(--mute)] tabular-nums">
+                    {option.count}
+                  </span>
+                )}
               </DropdownMenuRadioItem>
             </Fragment>
           ))}

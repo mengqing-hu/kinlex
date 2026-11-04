@@ -879,6 +879,19 @@ export type Database = {
         }
       }
       word_class_options: { Args: { p_language: string }; Returns: string[] }
+      word_filter_counts: {
+        Args: {
+          p_language: string
+          p_level?: string
+          p_topic?: string
+          p_word_ids?: number[]
+        }
+        Returns: {
+          facet: string
+          value: string
+          word_count: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
