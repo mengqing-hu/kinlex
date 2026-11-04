@@ -35,10 +35,23 @@ export interface WordDetailSegment {
   morpheme: MorphemeSummary | null
 }
 
+// One word of an example sentence; start and end are character offsets into it, end exclusive.
+export interface ExampleToken {
+  start: number
+  end: number
+  lemma: string
+  // What the word means in this sentence; null until the pipeline has annotated it.
+  gloss: string | null
+  wordId: number | null
+  wordSlug: string | null
+}
+
 export interface WordExample {
   sentence: string
   translation: string
   audioUrl: string | null
+  // Empty for sentences the pipeline has not split into words yet.
+  tokens: ExampleToken[]
 }
 
 export interface WordDetailExample extends WordExample {

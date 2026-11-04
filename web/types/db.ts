@@ -159,6 +159,83 @@ export type Database = {
           },
         ]
       }
+      example_token_glosses: {
+        Row: {
+          example_id: number
+          gloss: string
+          meaning_language: string
+          position: number
+          source: string
+        }
+        Insert: {
+          example_id: number
+          gloss: string
+          meaning_language: string
+          position: number
+          source: string
+        }
+        Update: {
+          example_id?: number
+          gloss?: string
+          meaning_language?: string
+          position?: number
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "example_token_glosses_example_id_position_fkey"
+            columns: ["example_id", "position"]
+            isOneToOne: false
+            referencedRelation: "example_tokens"
+            referencedColumns: ["example_id", "position"]
+          },
+        ]
+      }
+      example_tokens: {
+        Row: {
+          end_offset: number
+          example_id: number
+          lemma: string
+          position: number
+          start_offset: number
+          surface: string
+          word_id: number | null
+        }
+        Insert: {
+          end_offset: number
+          example_id: number
+          lemma: string
+          position: number
+          start_offset: number
+          surface: string
+          word_id?: number | null
+        }
+        Update: {
+          end_offset?: number
+          example_id?: number
+          lemma?: string
+          position?: number
+          start_offset?: number
+          surface?: string
+          word_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "example_tokens_example_id_fkey"
+            columns: ["example_id"]
+            isOneToOne: false
+            referencedRelation: "examples"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "example_tokens_word_id_fkey"
+            columns: ["word_id"]
+            isOneToOne: false
+            referencedRelation: "words"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       example_translations: {
         Row: {
           example_id: number
@@ -620,7 +697,7 @@ export type Database = {
           updated_at?: string
           word: string
           word_class: string
-          word_class_detail: string | null
+          word_class_detail?: string | null
         }
         Update: {
           created_at?: string
@@ -849,3 +926,4 @@ export const Constants = {
     Enums: {},
   },
 } as const
+

@@ -1,6 +1,6 @@
 import { AudioButton } from '@/components/audio/AudioButton'
 import { parseExampleMarkup } from '@/lib/utils/exampleMarkup'
-import type { WordExample } from '@/types/domain'
+import type { ExampleToken, WordExample } from '@/types/domain'
 
 interface ExampleLineProps {
   example: WordExample
@@ -8,6 +8,8 @@ interface ExampleLineProps {
   slowLabel: string
   // The side panel uses smaller text; the word page uses the default size.
   compact?: boolean
+  // The word the page is about, shown in bold wherever it appears in the sentence.
+  targetWordId?: number
 }
 
 // Renders [bracketed] parts in bold, in the sentence and in its translation alike.
@@ -23,7 +25,60 @@ function MarkedText({ text }: { text: string }) {
   )
 }
 
-export function ExampleLine({ example, playLabel, slowLabel, compact = false }: ExampleLineProps) {
+// Each annotated word shows its meaning in this sentence above it on hover.
+function TokenizedSentence({
+  sentence,
+  tokens,
+  targetWordId,
+}: {
+  sentence: string
+  tokens: ExampleToken[]
+  targetWordId?: number
+}) {
+  const parts = []
+  let offset = 0
+  for (const token of tokens) {
+    if (token.start > offset) {
+      parts.push(<span key={`gap-${offset}`}>{sentence.slice(offset, token.start)}</span>)
+    }
+    const text = sentence.slice(token.start, token.end)
+    const isTarget = targetWordId !== undefined && token.wordId === targetWordId
+    parts.push(
+      token.gloss ? (
+        <span className="group/token relative" key={token.start}>
+          <span
+            className={`cursor-help underline decoration-transparent decoration-2 underline-offset-4 transition-colors group-hover/token:decoration-[var(--ink)] ${isTarget ? 'font-semibold' : ''}`}
+          >
+            {text}
+          </span>
+          <span
+            className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-1.5 -translate-x-1/2 rounded-md bg-[var(--ink)] px-2.5 py-1 text-xs font-semibold whitespace-nowrap text-[var(--card)] not-italic opacity-0 shadow-md transition-opacity group-hover/token:opacity-100"
+            role="tooltip"
+          >
+            {token.gloss}
+          </span>
+        </span>
+      ) : (
+        <span className={isTarget ? 'font-semibold' : undefined} key={token.start}>
+          {text}
+        </span>
+      ),
+    )
+    offset = token.end
+  }
+  if (offset < sentence.length) {
+    parts.push(<span key={`gap-${offset}`}>{sentence.slice(offset)}</span>)
+  }
+  return parts
+}
+
+export function ExampleLine({
+  example,
+  playLabel,
+  slowLabel,
+  compact = false,
+  targetWordId,
+}: ExampleLineProps) {
   return (
     <div
       // The hover background is one step off whatever the example sits on: the white side panel
@@ -39,7 +94,15 @@ export function ExampleLine({ example, playLabel, slowLabel, compact = false }: 
       />
       <div className="min-w-0 flex-1">
         <p className={`text-[var(--ink)] ${compact ? 'text-sm leading-5' : 'text-lg leading-7'}`}>
-          <MarkedText text={example.sentence} />
+          {example.tokens.length > 0 ? (
+            <TokenizedSentence
+              sentence={example.sentence}
+              targetWordId={targetWordId}
+              tokens={example.tokens}
+            />
+          ) : (
+            <MarkedText text={example.sentence} />
+          )}
         </p>
         <p
           className={`text-[var(--mute)] italic ${compact ? 'text-xs leading-4' : 'mt-1 text-base leading-6'}`}

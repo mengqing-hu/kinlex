@@ -140,6 +140,7 @@ function PanelWord({
                 <ExampleLine
                   compact
                   example={example}
+                  targetWordId={word.id}
                   playLabel={labels.playExample}
                   slowLabel={labels.slowAudio}
                 />
@@ -183,6 +184,7 @@ function PanelWord({
                     <ExampleLine
                       compact
                       example={related.example}
+                      targetWordId={related.id}
                       playLabel={labels.playExample}
                       slowLabel={labels.slowAudio}
                     />

@@ -9,6 +9,7 @@ import type { WordListParams } from '@/lib/validation/words'
 import type { Database } from '@/types/db'
 import type {
   CursorPage,
+  ExampleToken,
   RelatedWord,
   WordDetail,
   WordDetailExample,
@@ -122,6 +123,39 @@ function getCursorFilter(cursor: WordCursor): string {
   ].join(',')
 }
 
+async function findExampleTokens(
+  db: SupabaseClient<Database>,
+  exampleIds: number[],
+  explainLanguage: string,
+): Promise<Map<number, ExampleToken[]>> {
+  const { data, error } = await db
+    .from('example_tokens')
+    .select(
+      'example_id, position, start_offset, end_offset, lemma, word_id, words(slug), example_token_glosses(gloss)',
+    )
+    .in('example_id', exampleIds)
+    .eq('example_token_glosses.meaning_language', explainLanguage)
+    .order('example_id', { ascending: true })
+    .order('position', { ascending: true })
+
+  assertQuerySucceeded(error, 'load example tokens')
+
+  const result = new Map<number, ExampleToken[]>()
+  for (const token of data ?? []) {
+    const tokens = result.get(token.example_id) ?? []
+    tokens.push({
+      start: token.start_offset,
+      end: token.end_offset,
+      lemma: token.lemma,
+      gloss: token.example_token_glosses[0]?.gloss ?? null,
+      wordId: token.word_id,
+      wordSlug: token.words?.slug ?? null,
+    })
+    result.set(token.example_id, tokens)
+  }
+  return result
+}
+
 async function findExamples(
   db: SupabaseClient<Database>,
   wordIds: number[],
@@ -149,7 +183,7 @@ async function findExamples(
     return new Map()
   }
 
-  const [examplesResult, translationsResult, audioResult] = await Promise.all([
+  const [examplesResult, translationsResult, audioResult, tokensByExampleId] = await Promise.all([
     db.from('examples').select('id, sentence:example_sentence').in('id', exampleIds),
     db
       .from('example_translations')
@@ -162,6 +196,7 @@ async function findExamples(
       .eq('owner_type', 'example')
       .in('owner_id', exampleIds)
       .order('id', { ascending: true }),
+    findExampleTokens(db, exampleIds, explainLanguage),
   ])
 
   assertQuerySucceeded(examplesResult.error, 'load examples')
@@ -194,6 +229,7 @@ async function findExamples(
         sentence: example.sentence,
         translation,
         audioUrl: getAudioUrl(audioByExampleId.get(exampleId)),
+        tokens: tokensByExampleId.get(exampleId) ?? [],
       })
     }
   }
@@ -524,7 +560,7 @@ async function findWordDetailExamples(
     return []
   }
 
-  const [examplesResult, translationsResult, audioResult] = await Promise.all([
+  const [examplesResult, translationsResult, audioResult, tokensByExampleId] = await Promise.all([
     db.from('examples').select('id, sentence:example_sentence, level').in('id', exampleIds),
     db
       .from('example_translations')
@@ -537,6 +573,7 @@ async function findWordDetailExamples(
       .eq('owner_type', 'example')
       .in('owner_id', exampleIds)
       .order('id', { ascending: true }),
+    findExampleTokens(db, exampleIds, explainLanguage),
   ])
 
   assertQuerySucceeded(examplesResult.error, 'load word detail examples')
@@ -569,6 +606,7 @@ async function findWordDetailExamples(
             translation,
             level: example.level,
             audioUrl: getAudioUrl(audioById.get(example.id)),
+            tokens: tokensByExampleId.get(example.id) ?? [],
           },
         ]
       : []

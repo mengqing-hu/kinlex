@@ -75,6 +75,7 @@ export function WordDetails({ language, word, labels }: WordDetailsProps) {
               <li key={example.id}>
                 <ExampleLine
                   example={example}
+                  targetWordId={word.id}
                   playLabel={labels.playExample}
                   slowLabel={labels.slowAudio}
                 />
