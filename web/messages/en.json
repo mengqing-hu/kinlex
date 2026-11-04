@@ -70,6 +70,8 @@
     "playWord": "Play pronunciation of {word}",
     "playExample": "Play example sentence",
     "slowAudio": "Replay at a slower speed",
+    "closePanel": "Close details",
+    "openFullPage": "Open full page",
     "morphemeTypes": {
       "prefix": "Prefix",
       "root": "Root",

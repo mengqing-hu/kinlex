@@ -21,7 +21,7 @@ export function RelatedWords({
   }
 
   return (
-    <ul className="grid gap-2 sm:grid-cols-2">
+    <ul className="grid gap-2 @sm:grid-cols-2">
       {words.map((word) => (
         <li key={word.id}>
           <Link

@@ -4,7 +4,8 @@ import { notFound } from 'next/navigation'
 import { cache } from 'react'
 import { getTranslations } from 'next-intl/server'
 
-import { WordList, type WordListLabels } from '@/components/list/WordList'
+import { WordList } from '@/components/list/WordList'
+import { getWordListLabels } from '@/lib/wordListLabels'
 import { config } from '@/lib/config'
 import { NotFoundError, UnsupportedLanguageError } from '@/lib/errors'
 import { supportedLanguageCodes } from '@/lib/languages'
@@ -87,59 +88,12 @@ export default async function TopicPage({ params }: TopicPageProps) {
   const topic = await loadTopicOrNotFound(lang, slug)
   const db = getPublicSupabase()
 
-  const [initialPage, filterOptions, t, listT, wordT, morphemeT] = await Promise.all([
+  const [initialPage, filterOptions, t, labels] = await Promise.all([
     listWords(db, { lang, explain: 'en', topic: topic.slug, limit: PAGE_SIZE }),
     listWordFilterOptions(db, lang),
     getTranslations('topicPage'),
-    getTranslations('levelPage'),
-    getTranslations('wordDetail'),
-    getTranslations('morphemeCard'),
+    getWordListLabels(),
   ])
-  const labels: WordListLabels = {
-    allLevels: listT('allLevels'),
-    level: listT('levelFilter'),
-    allPartsOfSpeech: listT('allPartsOfSpeech'),
-    partOfSpeech: listT('partOfSpeech'),
-    allTopics: listT('allTopics'),
-    topic: listT('topic'),
-    searchWords: listT('searchWords'),
-    searchPlaceholder: listT('searchPlaceholder'),
-    hideMeanings: listT('hideMeanings'),
-    showMeanings: listT('showMeanings'),
-    sort: listT('sort'),
-    sortDefault: listT('sortDefault'),
-    sortFamiliarityAsc: listT('sortFamiliarityAsc'),
-    sortFamiliarityDesc: listT('sortFamiliarityDesc'),
-    sortSignInHint: listT('sortSignInHint'),
-    hideActions: listT('hideActions'),
-    showActions: listT('showActions'),
-    loadMore: listT('loadMore'),
-    loading: listT('loading'),
-    empty: listT('empty'),
-    loadError: listT('loadError'),
-    retry: listT('retry'),
-    playWord: listT.raw('playWord') as string,
-    playExample: listT('playExample'),
-    slowAudio: listT('slowAudio'),
-    hideWord: listT('hideWord'),
-    showWord: listT('showWord'),
-    familiarity: listT.raw('familiarity') as string,
-    openWord: listT.raw('openWord') as string,
-    morphemeTypes: {
-      prefix: wordT('morphemeTypes.prefix'),
-      root: wordT('morphemeTypes.root'),
-      suffix: wordT('morphemeTypes.suffix'),
-    },
-    partsOfSpeech: wordT.raw('partsOfSpeech') as Record<string, string>,
-    morphemeCard: {
-      loading: morphemeT('loading'),
-      loadError: morphemeT('loadError'),
-      retry: morphemeT('retry'),
-      relatedWords: morphemeT('relatedWords'),
-      noRelatedWords: morphemeT('noRelatedWords'),
-      separable: morphemeT('separable'),
-    },
-  }
 
   return (
     <main className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-12">

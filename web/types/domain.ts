@@ -60,6 +60,8 @@ export interface RelatedWord {
   gender: string | null
   level: string | null
   sharedMorphemeIds: number[]
+  glosses: string[]
+  example: WordExample | null
 }
 
 export interface WordListItem {

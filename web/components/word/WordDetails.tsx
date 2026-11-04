@@ -26,7 +26,8 @@ const headingClassName = 'mb-3 text-lg font-semibold tracking-tight text-[var(--
 
 export function WordDetails({ language, word, labels }: WordDetailsProps) {
   return (
-    <div>
+    // Grids size by the space they get, so they fit both the full page and the side panel.
+    <div className="@container">
       <section className={sectionClassName}>
         <h2 className={headingClassName}>{labels.meaning}</h2>
         <ol className="space-y-1 pl-5 text-base leading-6 text-[var(--ink)] marker:text-[var(--mute)]">
@@ -41,7 +42,7 @@ export function WordDetails({ language, word, labels }: WordDetailsProps) {
       {word.segments.some(({ morpheme }) => morpheme !== null) ? (
         <section className={sectionClassName}>
           <h2 className={headingClassName}>{labels.structure}</h2>
-          <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="grid gap-2 @sm:grid-cols-2 @3xl:grid-cols-3">
             {word.segments.flatMap((segment, index) =>
               segment.morpheme
                 ? [
@@ -69,14 +70,15 @@ export function WordDetails({ language, word, labels }: WordDetailsProps) {
       <section className={sectionClassName}>
         <h2 className={headingClassName}>{labels.examples}</h2>
         {word.examples.length > 0 ? (
-          <ul className="space-y-2">
+          <ul className="space-y-1">
             {word.examples.map((example) => (
-              <ExampleLine
-                example={example}
-                key={example.id}
-                playLabel={labels.playExample}
-                slowLabel={labels.slowAudio}
-              />
+              <li key={example.id}>
+                <ExampleLine
+                  example={example}
+                  playLabel={labels.playExample}
+                  slowLabel={labels.slowAudio}
+                />
+              </li>
             ))}
           </ul>
         ) : (

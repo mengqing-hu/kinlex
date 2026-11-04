@@ -14,6 +14,7 @@ interface WordRowLabels {
   hideWord: string
   showWord: string
   familiarity: string
+  openWord: string
 }
 
 interface WordRowProps {
@@ -22,10 +23,14 @@ interface WordRowProps {
   hideMeanings: boolean
   hideActions: boolean
   hidden: boolean
+  selected: boolean
+  // Drops the example column, for when the detail panel narrows the list; the panel shows it.
+  compact: boolean
   labels: WordRowLabels
   morphemeTypeLabels: Record<string, string>
   morphemeCardLabels: MorphemeCardLabels
   partOfSpeechLabels: Record<string, string>
+  onOpen: () => void
   onToggleHidden: () => void
 }
 
@@ -40,10 +45,13 @@ export function WordRow({
   hideMeanings,
   hideActions,
   hidden,
+  selected,
+  compact,
   labels,
   morphemeTypeLabels,
   morphemeCardLabels,
   partOfSpeechLabels,
+  onOpen,
   onToggleHidden,
 }: WordRowProps) {
   const displayWord = word.lemma
@@ -53,7 +61,19 @@ export function WordRow({
 
   return (
     <li
-      className={`grid min-h-9 grid-cols-[9rem_10rem_minmax(12rem,1fr)_minmax(20rem,1.8fr)_auto] items-center gap-x-1 rounded-md border-b border-[var(--line)] px-2 py-1 transition-colors last:border-b-0 hover:bg-[var(--row-hover)]`}
+      aria-current={selected || undefined}
+      className={`grid min-h-9 cursor-pointer ${compact ? 'grid-cols-[9rem_minmax(8rem,1fr)_auto] xl:grid-cols-[9rem_8rem_minmax(10rem,1fr)_auto]' : 'grid-cols-[9rem_10rem_minmax(12rem,1fr)_minmax(20rem,1.8fr)_auto]'} items-center gap-x-1 rounded-md border-b border-[var(--line)] px-2 py-1 transition-colors last:border-b-0 hover:bg-[var(--row-hover)] ${selected ? 'bg-[var(--row-hover)]' : ''}`}
+      // A click anywhere on the row opens the details, except on its own controls (audio,
+      // favorite, morpheme cards, ...). Keyboard users have the open button at the end.
+      onClick={(event) => {
+        if (
+          !hidden &&
+          event.target instanceof Element &&
+          !event.target.closest('button, a, input, [role="button"], [role="menuitem"]')
+        ) {
+          onOpen()
+        }
+      }}
     >
       <div aria-hidden={hidden} className={`flex min-w-0 items-center gap-0.5 ${contentClassName}`}>
         <span className="truncate text-sm font-semibold text-[var(--ink)]" title={displayWord}>
@@ -68,7 +88,7 @@ export function WordRow({
       </div>
       <p
         aria-hidden={hidden}
-        className={`truncate text-xs text-[var(--mute)] ${contentClassName}`}
+        className={`truncate text-xs text-[var(--mute)] ${compact ? 'hidden xl:block' : ''} ${contentClassName}`}
         title={partOfSpeech}
       >
         {partOfSpeech}
@@ -80,7 +100,7 @@ export function WordRow({
       >
         {word.glosses.join(', ')}
       </p>
-      {word.example ? (
+      {compact ? null : word.example ? (
         <div
           aria-hidden={hidden}
           className={`flex min-w-0 items-center gap-1 ${contentClassName}`}
@@ -114,28 +134,64 @@ export function WordRow({
       )}
       {/* Collapsed actions stay in the layout (just invisible) so the other columns keep their
           width and long meanings do not rewrap, which would change the row heights. */}
-      <div
-        aria-hidden={hideActions || undefined}
-        className={`flex shrink-0 items-center gap-0.5 ${hideActions ? 'invisible' : ''}`}
-      >
-        <div aria-hidden={hidden} className={`mr-1 ${contentClassName}`}>
-          <FamiliarityMeter wordId={word.id} label={labels.familiarity} />
-        </div>
-        <div aria-hidden={hidden} className={contentClassName}>
-          <FavoriteButton
-            initialFavorited={word.favorited}
-            language={language}
-            wordId={word.id}
-            small
-          />
+      <div className="flex shrink-0 items-center gap-0.5">
+        <div
+          aria-hidden={hideActions || undefined}
+          className={`flex shrink-0 items-center gap-0.5 ${hideActions ? 'invisible' : ''}`}
+        >
+          <div aria-hidden={hidden} className={`mr-1 ${contentClassName}`}>
+            <FamiliarityMeter wordId={word.id} label={labels.familiarity} />
+          </div>
+          <div aria-hidden={hidden} className={contentClassName}>
+            <FavoriteButton
+              initialFavorited={word.favorited}
+              language={language}
+              wordId={word.id}
+              small
+            />
+          </div>
+          <button
+            aria-label={visibilityLabel}
+            aria-pressed={hidden}
+            className="inline-flex size-7 items-center justify-center rounded-full text-[var(--mute)] hover:bg-[var(--bg)] hover:text-[var(--ink)]"
+            title={visibilityLabel}
+            type="button"
+            onClick={onToggleHidden}
+          >
+            <svg
+              aria-hidden="true"
+              className="size-4"
+              fill="none"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.7"
+              viewBox="0 0 24 24"
+            >
+              {hidden ? (
+                <>
+                  <path d="M2.5 12s3.5-5.5 9.5-5.5 9.5 5.5 9.5 5.5-3.5 5.5-9.5 5.5S2.5 12 2.5 12Z" />
+                  <circle cx="12" cy="12" r="2.5" />
+                </>
+              ) : (
+                <>
+                  <path d="m3 3 18 18" />
+                  <path d="M10.6 10.7a2 2 0 0 0 2.7 2.7" />
+                  <path d="M9.9 4.2A10.8 10.8 0 0 1 12 4c5.5 0 9 5.5 9 5.5a16 16 0 0 1-2.1 2.7" />
+                  <path d="M6.6 6.6C4.4 8.1 3 10 3 10s3.5 5.5 9 5.5c1 0 1.9-.2 2.7-.5" />
+                </>
+              )}
+            </svg>
+          </button>
         </div>
         <button
-          aria-label={visibilityLabel}
-          aria-pressed={hidden}
-          className="inline-flex size-7 items-center justify-center rounded-full text-[var(--mute)] hover:bg-[var(--bg)] hover:text-[var(--ink)]"
-          title={visibilityLabel}
+          aria-expanded={selected}
+          aria-label={labels.openWord}
+          className={`inline-flex size-7 items-center justify-center rounded-full hover:bg-[var(--bg)] hover:text-[var(--ink)] ${selected ? 'text-[var(--ink)]' : 'text-[var(--mute)]'}`}
+          disabled={hidden}
+          title={labels.openWord}
           type="button"
-          onClick={onToggleHidden}
+          onClick={onOpen}
         >
           <svg
             aria-hidden="true"
@@ -144,22 +200,10 @@ export function WordRow({
             stroke="currentColor"
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth="1.7"
+            strokeWidth="1.8"
             viewBox="0 0 24 24"
           >
-            {hidden ? (
-              <>
-                <path d="M2.5 12s3.5-5.5 9.5-5.5 9.5 5.5 9.5 5.5-3.5 5.5-9.5 5.5S2.5 12 2.5 12Z" />
-                <circle cx="12" cy="12" r="2.5" />
-              </>
-            ) : (
-              <>
-                <path d="m3 3 18 18" />
-                <path d="M10.6 10.7a2 2 0 0 0 2.7 2.7" />
-                <path d="M9.9 4.2A10.8 10.8 0 0 1 12 4c5.5 0 9 5.5 9 5.5a16 16 0 0 1-2.1 2.7" />
-                <path d="M6.6 6.6C4.4 8.1 3 10 3 10s3.5 5.5 9 5.5c1 0 1.9-.2 2.7-.5" />
-              </>
-            )}
+            <path d="m9 6 6 6-6 6" />
           </svg>
         </button>
       </div>

@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import { notFound, permanentRedirect } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 
-import { WordList, type WordListLabels } from '@/components/list/WordList'
+import { WordList } from '@/components/list/WordList'
+import { getWordListLabels } from '@/lib/wordListLabels'
 import { config } from '@/lib/config'
 import { UnsupportedLanguageError } from '@/lib/errors'
 import { supportedLanguageCodes } from '@/lib/languages'
@@ -106,56 +107,7 @@ export default async function LevelPage({ params }: LevelPageProps) {
     throw error
   }
 
-  const [t, wordT, morphemeT] = await Promise.all([
-    getTranslations('levelPage'),
-    getTranslations('wordDetail'),
-    getTranslations('morphemeCard'),
-  ])
-  const labels: WordListLabels = {
-    allLevels: t('allLevels'),
-    level: t('levelFilter'),
-    allPartsOfSpeech: t('allPartsOfSpeech'),
-    partOfSpeech: t('partOfSpeech'),
-    allTopics: t('allTopics'),
-    topic: t('topic'),
-    searchWords: t('searchWords'),
-    searchPlaceholder: t('searchPlaceholder'),
-    hideMeanings: t('hideMeanings'),
-    showMeanings: t('showMeanings'),
-    sort: t('sort'),
-    sortDefault: t('sortDefault'),
-    sortFamiliarityAsc: t('sortFamiliarityAsc'),
-    sortFamiliarityDesc: t('sortFamiliarityDesc'),
-    sortSignInHint: t('sortSignInHint'),
-    hideActions: t('hideActions'),
-    showActions: t('showActions'),
-    loadMore: t('loadMore'),
-    loading: t('loading'),
-    empty: t('empty'),
-    loadError: t('loadError'),
-    retry: t('retry'),
-    playWord: t.raw('playWord') as string,
-    playExample: t('playExample'),
-    slowAudio: t('slowAudio'),
-    hideWord: t('hideWord'),
-    showWord: t('showWord'),
-    familiarity: t.raw('familiarity') as string,
-    openWord: t.raw('openWord') as string,
-    morphemeTypes: {
-      prefix: wordT('morphemeTypes.prefix'),
-      root: wordT('morphemeTypes.root'),
-      suffix: wordT('morphemeTypes.suffix'),
-    },
-    partsOfSpeech: wordT.raw('partsOfSpeech') as Record<string, string>,
-    morphemeCard: {
-      loading: morphemeT('loading'),
-      loadError: morphemeT('loadError'),
-      retry: morphemeT('retry'),
-      relatedWords: morphemeT('relatedWords'),
-      noRelatedWords: morphemeT('noRelatedWords'),
-      separable: morphemeT('separable'),
-    },
-  }
+  const [t, labels] = await Promise.all([getTranslations('levelPage'), getWordListLabels()])
   const pageTitle = level ? t('title', { level }) : t('allLevelsTitle')
 
   return (

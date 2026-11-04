@@ -2,7 +2,12 @@ import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 
 import { AppError } from '@/lib/errors'
-import { CONTENT_CACHE_CONTROL, contentErrorResponse, contentResponse } from '@/lib/http'
+import {
+  CONTENT_CACHE_CONTROL,
+  contentErrorResponse,
+  contentResponse,
+  privateResponse,
+} from '@/lib/http'
 import { getWordDetail } from '@/lib/services/wordService'
 import { getSupabase } from '@/lib/supabase/server'
 import { formatValidationError } from '@/lib/validation/common'
@@ -43,7 +48,8 @@ export async function GET(request: NextRequest, context: WordDetailRouteContext)
       })
     }
 
-    return contentResponse(result.word)
+    // Signed-in results carry the user's favorite flag, so they must not land in a shared cache.
+    return user ? privateResponse(result.word) : contentResponse(result.word)
   } catch (error) {
     if (error instanceof AppError) {
       return contentErrorResponse(error.code, error.message, error.status)

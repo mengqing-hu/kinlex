@@ -580,6 +580,7 @@ async function findRelatedWords(
   wordId: number,
   rootMorphemeIds: number[],
   language: string,
+  explainLanguage: string,
 ): Promise<RelatedWord[]> {
   if (rootMorphemeIds.length === 0) {
     return []
@@ -611,7 +612,9 @@ async function findRelatedWords(
 
   const { data: words, error: wordsError } = await db
     .from('words')
-    .select('id, slug, lemma:word, pos:word_class, posDetail:word_class_detail, gender, level')
+    .select(
+      'id, slug, lemma:word, pos:word_class, posDetail:word_class_detail, gender, level, senses(gloss:word_meaning, gloss_language:meaning_language, sort_order)',
+    )
     .eq('language', language)
     .in('id', relatedWordIds)
     .order('freq_rank', { ascending: true, nullsFirst: false })
@@ -619,6 +622,15 @@ async function findRelatedWords(
     .limit(8)
 
   assertQuerySucceeded(wordsError, 'load related words')
+
+  const examplesByWordId =
+    words && words.length > 0
+      ? await findExamples(
+          db,
+          words.map(({ id }) => id),
+          explainLanguage,
+        )
+      : new Map<number, WordExample>()
 
   return (words ?? []).map((word) => ({
     id: word.id,
@@ -629,6 +641,11 @@ async function findRelatedWords(
     gender: word.gender,
     level: word.level,
     sharedMorphemeIds: [...(sharedMorphemesByWordId.get(word.id) ?? [])],
+    glosses: word.senses
+      .filter(({ gloss_language }) => gloss_language === explainLanguage)
+      .toSorted((left, right) => left.sort_order - right.sort_order)
+      .map(({ gloss }) => gloss),
+    example: examplesByWordId.get(word.id) ?? null,
   }))
 }
 
@@ -662,7 +679,7 @@ export async function findWordBySlug(
     findWordDetailExamples(db, word.id, explainLanguage),
     findWordAudio(db, [word.id]),
     findFavoriteWordIds(db, [word.id], userId),
-    findRelatedWords(db, word.id, rootMorphemeIds, language),
+    findRelatedWords(db, word.id, rootMorphemeIds, language, explainLanguage),
   ])
 
   return {

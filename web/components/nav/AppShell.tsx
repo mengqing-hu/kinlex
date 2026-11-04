@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { getTranslations } from 'next-intl/server'
 
 import { Sidebar, type SidebarLink } from '@/components/nav/Sidebar'
+import { WORD_PANEL_SLOT_ID } from '@/lib/wordPanel'
 import { getLanguageDefinition, type SupportedLanguageCode } from '@/lib/languages'
 
 interface AppShellProps {
@@ -40,6 +41,8 @@ export async function AppShell({ children, language }: AppShellProps) {
         links={links}
       />
       <div className="flex min-w-0 flex-1 flex-col">{children}</div>
+      {/* The word detail panel portals in here, becoming the third column on wide screens. */}
+      <div className="contents" id={WORD_PANEL_SLOT_ID} />
     </div>
   )
 }
