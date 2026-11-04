@@ -33,6 +33,8 @@ export async function getWordListLabels(): Promise<WordListLabels> {
     sortDefault: t('sortDefault'),
     sortFamiliarityAsc: t('sortFamiliarityAsc'),
     sortFamiliarityDesc: t('sortFamiliarityDesc'),
+    sortFamiliarityAscShort: t('sortFamiliarityAscShort'),
+    sortFamiliarityDescShort: t('sortFamiliarityDescShort'),
     sortSignInHint: t('sortSignInHint'),
     hideActions: t('hideActions'),
     showActions: t('showActions'),

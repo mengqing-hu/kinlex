@@ -47,3 +47,37 @@ export function DropdownMenuSeparator({ className = '', ...props }: DropdownMenu
     />
   )
 }
+
+export const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup
+
+type DropdownMenuRadioItemProps = ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.RadioItem>
+
+// A choice in a single-select menu; the chosen one shows a check mark.
+export function DropdownMenuRadioItem({
+  children,
+  className = '',
+  ...props
+}: DropdownMenuRadioItemProps) {
+  return (
+    <DropdownMenuPrimitive.RadioItem
+      className={`relative flex cursor-default items-center rounded-lg py-2 pr-3 pl-8 text-sm outline-none select-none focus:bg-[var(--bg)] data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[state=checked]:font-semibold ${className}`}
+      {...props}
+    >
+      <DropdownMenuPrimitive.ItemIndicator className="absolute left-2.5 inline-flex">
+        <svg
+          aria-hidden="true"
+          className="size-4"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2.2"
+          viewBox="0 0 24 24"
+        >
+          <path d="m5 12.5 4.5 4.5L19 7.5" />
+        </svg>
+      </DropdownMenuPrimitive.ItemIndicator>
+      {children}
+    </DropdownMenuPrimitive.RadioItem>
+  )
+}

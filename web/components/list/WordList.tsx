@@ -32,6 +32,8 @@ export interface WordListLabels {
   sortDefault: string
   sortFamiliarityAsc: string
   sortFamiliarityDesc: string
+  sortFamiliarityAscShort: string
+  sortFamiliarityDescShort: string
   sortSignInHint: string
   hideActions: string
   showActions: string

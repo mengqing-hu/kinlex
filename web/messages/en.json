@@ -118,6 +118,8 @@
     "sortDefault": "Default order",
     "sortFamiliarityAsc": "Familiarity: low → high",
     "sortFamiliarityDesc": "Familiarity: high → low",
+    "sortFamiliarityAscShort": "Least familiar",
+    "sortFamiliarityDescShort": "Most familiar",
     "sortSignInHint": "Sign in to sort by familiarity",
     "hideActions": "Hide actions",
     "showActions": "Show actions",

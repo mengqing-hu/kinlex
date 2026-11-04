@@ -1,3 +1,4 @@
+import { FilterSelect } from '@/components/list/FilterSelect'
 import { HideMeaningsToggle } from '@/components/list/HideMeaningsToggle'
 import type { WordFilterOption } from '@/types/domain'
 
@@ -16,6 +17,8 @@ interface FilterBarLabels {
   sortDefault: string
   sortFamiliarityAsc: string
   sortFamiliarityDesc: string
+  sortFamiliarityAscShort: string
+  sortFamiliarityDescShort: string
   sortSignInHint: string
   hideActions: string
   showActions: string
@@ -45,9 +48,6 @@ interface FilterBarProps {
   onHideActionsChange: (checked: boolean) => void
 }
 
-const selectClassName =
-  'min-h-10 rounded-lg border border-[var(--line)] bg-[var(--card)] px-3 text-sm text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--info)]'
-
 export function FilterBar({
   levels = [],
   partsOfSpeech,
@@ -72,93 +72,78 @@ export function FilterBar({
   onHideActionsChange,
 }: FilterBarProps) {
   return (
-    <div className="flex flex-col gap-4 border-y border-[var(--line)] py-5 sm:flex-row sm:flex-wrap sm:items-end">
-      {showLevelFilter && onLevelChange ? (
-        <label className="flex flex-col gap-1.5 text-xs font-semibold tracking-wide text-[var(--mute)] uppercase">
-          {labels.level}
-          <select
-            className={selectClassName}
+    <div className="flex flex-col gap-3 border-y border-[var(--line)] py-4 lg:flex-row lg:items-center">
+      <div className="flex flex-1 flex-wrap items-center gap-2">
+        {showLevelFilter && onLevelChange ? (
+          <FilterSelect
+            label={labels.level}
+            options={[{ value: '', label: labels.allLevels }, ...levels]}
             value={selectedLevel}
-            onChange={(event) => onLevelChange(event.target.value)}
-          >
-            <option value="">{labels.allLevels}</option>
-            {levels.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
-      ) : null}
-
-      <label className="flex flex-col gap-1.5 text-xs font-semibold tracking-wide text-[var(--mute)] uppercase">
-        {labels.partOfSpeech}
-        <select
-          className={selectClassName}
+            onChange={onLevelChange}
+          />
+        ) : null}
+        <FilterSelect
+          label={labels.partOfSpeech}
+          options={[{ value: '', label: labels.allPartsOfSpeech }, ...partsOfSpeech]}
           value={selectedPartOfSpeech}
-          onChange={(event) => onPartOfSpeechChange(event.target.value)}
-        >
-          <option value="">{labels.allPartsOfSpeech}</option>
-          {partsOfSpeech.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </label>
-
-      {showTopicFilter ? (
-        <label className="flex flex-col gap-1.5 text-xs font-semibold tracking-wide text-[var(--mute)] uppercase">
-          {labels.topic}
-          <select
-            className={selectClassName}
-            value={selectedTopic}
-            onChange={(event) => onTopicChange(event.target.value)}
-          >
-            <option value="">{labels.allTopics}</option>
-            {topics.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
-      ) : null}
-
-      <label
-        className="flex flex-col gap-1.5 text-xs font-semibold tracking-wide text-[var(--mute)] uppercase"
-        title={canSortByFamiliarity ? undefined : labels.sortSignInHint}
-      >
-        {labels.sort}
-        <select
-          className={selectClassName}
-          value={canSortByFamiliarity ? selectedSort : ''}
-          onChange={(event) => onSortChange(event.target.value)}
-        >
-          <option value="">{labels.sortDefault}</option>
-          <option disabled={!canSortByFamiliarity} value="familiarity_asc">
-            {labels.sortFamiliarityAsc}
-          </option>
-          <option disabled={!canSortByFamiliarity} value="familiarity_desc">
-            {labels.sortFamiliarityDesc}
-          </option>
-        </select>
-      </label>
-
-      <label className="flex w-full flex-col gap-1.5 text-xs font-semibold tracking-wide text-[var(--mute)] uppercase sm:w-56">
-        {labels.searchWords}
-        <input
-          aria-label={labels.searchWords}
-          className={`${selectClassName} w-full font-normal normal-case`}
-          maxLength={100}
-          placeholder={labels.searchPlaceholder}
-          type="search"
-          value={searchQuery}
-          onChange={(event) => onSearchQueryChange(event.target.value)}
+          onChange={onPartOfSpeechChange}
         />
-      </label>
+        {showTopicFilter ? (
+          <FilterSelect
+            label={labels.topic}
+            options={[{ value: '', label: labels.allTopics }, ...topics]}
+            value={selectedTopic}
+            onChange={onTopicChange}
+          />
+        ) : null}
+        <FilterSelect
+          label={labels.sort}
+          options={[
+            { value: '', label: labels.sortDefault },
+            {
+              value: 'familiarity_asc',
+              label: labels.sortFamiliarityAsc,
+              shortLabel: labels.sortFamiliarityAscShort,
+              disabled: !canSortByFamiliarity,
+            },
+            {
+              value: 'familiarity_desc',
+              label: labels.sortFamiliarityDesc,
+              shortLabel: labels.sortFamiliarityDescShort,
+              disabled: !canSortByFamiliarity,
+            },
+          ]}
+          title={canSortByFamiliarity ? undefined : labels.sortSignInHint}
+          value={canSortByFamiliarity ? selectedSort : ''}
+          onChange={onSortChange}
+        />
+        <label className="relative w-full sm:w-auto sm:max-w-64 sm:min-w-44 sm:flex-1">
+          <span className="sr-only">{labels.searchWords}</span>
+          <svg
+            aria-hidden="true"
+            className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-[var(--mute)]"
+            fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.5-3.5" />
+          </svg>
+          <input
+            className="h-9 w-full rounded-full border border-[var(--line)] bg-[var(--card)] pr-3.5 pl-9 text-sm text-[var(--ink)] transition-colors placeholder:text-[var(--mute)] hover:border-[var(--mute)] focus-visible:border-[var(--mute)] focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none"
+            maxLength={100}
+            placeholder={labels.searchPlaceholder}
+            type="search"
+            value={searchQuery}
+            onChange={(event) => onSearchQueryChange(event.target.value)}
+          />
+        </label>
+      </div>
 
-      <div className="flex flex-col gap-2 pb-2 sm:ml-auto">
+      <div className="flex flex-wrap gap-x-5 gap-y-2">
         <HideMeaningsToggle
           checked={hideMeanings}
           hideLabel={labels.hideMeanings}
