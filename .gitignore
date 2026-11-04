@@ -1,0 +1,74 @@
+# Local project notes
+Notes/
+
+# Environment variables and local secrets
+.env
+.env.*
+!.env.example
+!**/.env.example
+
+# Node.js and Next.js
+node_modules/
+.pnpm-store/
+.next/
+out/
+dist/
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+blob-report/
+.turbo/
+.vercel/
+*.tsbuildinfo
+next-env.d.ts
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.hypothesis/
+.ipynb_checkpoints/
+.coverage
+coverage.xml
+htmlcov/
+build/
+
+# Generated audio
+*.aac
+*.flac
+*.m4a
+*.mp3
+*.ogg
+*.wav
+
+# Supabase local state
+supabase/.branches/
+supabase/.temp/
+
+# Logs, caches, and temporary files
+*.log
+*.cache
+*.pid
+*.pid.lock
+*.pem
+.cache/
+.eslintcache
+tmp/
+temp/
+
+# Editors and operating systems
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+data/
