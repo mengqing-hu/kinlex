@@ -386,6 +386,74 @@ async function findWordRowsByFamiliarity(
   return rows
 }
 
+async function toWordListItems(
+  db: SupabaseClient<Database>,
+  rows: WordListRecord[],
+  explainLanguage: string,
+  userId?: string,
+): Promise<WordListItem[]> {
+  const wordIds = rows.map(({ id }) => id)
+  const [examplesByWordId, audioByWordId, favoriteWordIds] = await Promise.all([
+    findExamples(db, wordIds, explainLanguage),
+    findWordAudio(db, wordIds),
+    findFavoriteWordIds(db, wordIds, userId),
+  ])
+
+  return rows.map<WordListItem>((word) => {
+    const segments: WordSegment[] = word.word_morphemes
+      .toSorted((left, right) => left.position - right.position)
+      .map((segment) => ({
+        surface: segment.surface,
+        morphemeId: segment.morpheme_id,
+        type: segment.morphemes?.type ?? null,
+      }))
+    const glosses = word.senses
+      .filter(({ gloss_language }) => gloss_language === explainLanguage)
+      .toSorted((left, right) => left.sort_order - right.sort_order)
+      .map(({ gloss }) => gloss)
+
+    return {
+      id: word.id,
+      slug: word.slug,
+      lemma: word.lemma,
+      pos: word.pos,
+      posDetail: word.posDetail,
+      gender: word.gender,
+      level: word.level,
+      segments,
+      glosses,
+      example: examplesByWordId.get(word.id) ?? null,
+      audioUrl: getAudioUrl(audioByWordId.get(word.id)),
+      favorited: favoriteWordIds.has(word.id),
+    }
+  })
+}
+
+// Returns the words in the order of wordIds, skipping any that are not found.
+export async function findWordsByIds(
+  db: SupabaseClient<Database>,
+  language: string,
+  explainLanguage: string,
+  wordIds: number[],
+  userId?: string,
+): Promise<WordListItem[]> {
+  if (wordIds.length === 0) {
+    return []
+  }
+
+  const { data, error } = await queryWordRows(
+    db,
+    { lang: language, explain: explainLanguage, limit: wordIds.length },
+    wordIds.length,
+    { include: wordIds },
+  )
+  assertQuerySucceeded(error, 'load words by id')
+
+  const items = await toWordListItems(db, data ?? [], explainLanguage, userId)
+  const itemsById = new Map(items.map((item) => [item.id, item]))
+  return wordIds.flatMap((id) => itemsById.get(id) ?? [])
+}
+
 export async function findWords(
   db: SupabaseClient<Database>,
   params: WordListQuery,
@@ -422,46 +490,12 @@ export async function findWords(
 
   const hasNextPage = rows.length > params.limit
   const pageRows = hasNextPage ? rows.slice(0, params.limit) : rows
-  const wordIds = pageRows.map(({ id }) => id)
 
-  if (wordIds.length === 0) {
+  if (pageRows.length === 0) {
     return { items: [], nextCursor: null }
   }
 
-  const [examplesByWordId, audioByWordId, favoriteWordIds] = await Promise.all([
-    findExamples(db, wordIds, params.explain),
-    findWordAudio(db, wordIds),
-    findFavoriteWordIds(db, wordIds, userId),
-  ])
-
-  const items = pageRows.map<WordListItem>((word) => {
-    const segments: WordSegment[] = word.word_morphemes
-      .toSorted((left, right) => left.position - right.position)
-      .map((segment) => ({
-        surface: segment.surface,
-        morphemeId: segment.morpheme_id,
-        type: segment.morphemes?.type ?? null,
-      }))
-    const glosses = word.senses
-      .filter(({ gloss_language }) => gloss_language === params.explain)
-      .toSorted((left, right) => left.sort_order - right.sort_order)
-      .map(({ gloss }) => gloss)
-
-    return {
-      id: word.id,
-      slug: word.slug,
-      lemma: word.lemma,
-      pos: word.pos,
-      posDetail: word.posDetail,
-      gender: word.gender,
-      level: word.level,
-      segments,
-      glosses,
-      example: examplesByWordId.get(word.id) ?? null,
-      audioUrl: getAudioUrl(audioByWordId.get(word.id)),
-      favorited: favoriteWordIds.has(word.id),
-    }
-  })
+  const items = await toWordListItems(db, pageRows, params.explain, userId)
 
   const lastWord = pageRows.at(-1)
   const nextCursor =

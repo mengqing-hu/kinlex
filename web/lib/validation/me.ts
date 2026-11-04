@@ -1,6 +1,8 @@
 import { z } from 'zod'
 
-import { languageCodeSchema } from './common'
+import { FLASHCARD_DEFAULT_COUNT, FLASHCARD_MAX_COUNT } from '@/lib/flashcards'
+
+import { languageCodeSchema, optionalLanguageCodeSchema } from './common'
 
 export const profileUpdateSchema = z.object({
   displayName: z.string().trim().min(1).max(80).nullable(),
@@ -28,6 +30,23 @@ export const familiarityMergeSchema = z.object({
     .max(500),
 })
 
+export const flashcardDeckParamsSchema = z.object({
+  lang: languageCodeSchema,
+  explain: optionalLanguageCodeSchema.default('en'),
+  limit: z.coerce
+    .number()
+    .int('limit must be an integer')
+    .min(1, 'limit must be at least 1')
+    .max(FLASHCARD_MAX_COUNT, `limit must be at most ${FLASHCARD_MAX_COUNT}`)
+    .default(FLASHCARD_DEFAULT_COUNT),
+})
+
+export const flashcardResults = ['know', 'learning'] as const
+
+export const flashcardReviewSchema = z.object({
+  result: z.enum(flashcardResults),
+})
+
 export const activityEventSchema = z.object({
   clientEventId: z.uuid(),
   language: languageCodeSchema,
@@ -50,4 +69,6 @@ export const activityBatchSchema = z.object({
 })
 
 export type ProfileUpdate = z.infer<typeof profileUpdateSchema>
+export type FlashcardDeckParams = z.infer<typeof flashcardDeckParamsSchema>
+export type FlashcardResult = (typeof flashcardResults)[number]
 export type ActivityEventInput = z.infer<typeof activityEventSchema>

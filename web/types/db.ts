@@ -511,6 +511,9 @@ export type Database = {
           due_at: string | null
           familiarity: number
           favorited: boolean
+          know_count: number
+          last_reviewed_at: string | null
+          learning_count: number
           status: string
           updated_at: string
           user_id: string
@@ -520,6 +523,9 @@ export type Database = {
           due_at?: string | null
           familiarity?: number
           favorited?: boolean
+          know_count?: number
+          last_reviewed_at?: string | null
+          learning_count?: number
           status?: string
           updated_at?: string
           user_id: string
@@ -529,6 +535,9 @@ export type Database = {
           due_at?: string | null
           familiarity?: number
           favorited?: boolean
+          know_count?: number
+          last_reviewed_at?: string | null
+          learning_count?: number
           status?: string
           updated_at?: string
           user_id?: string
@@ -725,6 +734,31 @@ export type Database = {
     }
     Functions: {
       delete_current_user: { Args: never; Returns: undefined }
+      flashcard_deck: {
+        Args: { p_language: string; p_limit?: number }
+        Returns: number[]
+      }
+      record_flashcard_review: {
+        Args: { p_result: string; p_word_id: number }
+        Returns: {
+          due_at: string | null
+          familiarity: number
+          favorited: boolean
+          know_count: number
+          last_reviewed_at: string | null
+          learning_count: number
+          status: string
+          updated_at: string
+          user_id: string
+          word_id: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "user_word_state"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       refresh_user_stats: {
         Args: { p_today: string; p_user_id: string }
         Returns: {
