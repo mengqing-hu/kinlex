@@ -33,11 +33,21 @@ export function WordFace({ card, labels }: FaceProps) {
           />
         </span>
       </p>
-      {card.level ? (
-        <p className="mt-3 text-xs font-semibold tracking-widest text-[var(--root)] uppercase">
-          {card.level}
-        </p>
-      ) : null}
+      <p className="mt-3 flex items-center gap-2 text-xs">
+        {card.level ? (
+          <span className="font-semibold tracking-widest text-[var(--root)] uppercase">
+            {card.level}
+          </span>
+        ) : null}
+        {card.level ? (
+          <span aria-hidden="true" className="text-[var(--mute)]">
+            ·
+          </span>
+        ) : null}
+        <span className="text-[var(--mute)]">
+          {formatPartOfSpeech(labels.partsOfSpeech, card.pos, card.posDetail)}
+        </span>
+      </p>
     </div>
   )
 }
@@ -45,10 +55,7 @@ export function WordFace({ card, labels }: FaceProps) {
 export function MeaningFace({ card, labels }: FaceProps) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
-      <p className="text-xs text-[var(--mute)]">
-        {formatPartOfSpeech(labels.partsOfSpeech, card.pos, card.posDetail)}
-      </p>
-      <p className="mt-3 text-2xl leading-snug font-semibold text-[var(--ink)] sm:text-3xl">
+      <p className="text-2xl leading-snug font-semibold text-[var(--ink)] sm:text-3xl">
         {card.glosses.length > 0 ? card.glosses.join(', ') : labels.noMeaning}
       </p>
     </div>
