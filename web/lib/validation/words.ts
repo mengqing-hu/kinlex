@@ -1,13 +1,12 @@
 import { z } from 'zod'
 
-import { wordLevels } from '@/lib/constants'
+import { sortOrders, wordLevels, wordSorts } from '@/lib/constants'
 
 import { languageCodeSchema, limitSchema, optionalLanguageCodeSchema } from './common'
 
-export { wordLevels }
+export { wordLevels, wordSorts }
 
 const filterSchema = z.string().trim().min(1).max(100)
-export const wordSorts = ['familiarity_asc', 'familiarity_desc'] as const
 
 export const wordListParamsSchema = z.object({
   lang: languageCodeSchema,
@@ -18,6 +17,7 @@ export const wordListParamsSchema = z.object({
   topic: filterSchema.optional(),
   morpheme: filterSchema.optional(),
   sort: z.enum(wordSorts).optional(),
+  order: z.enum(sortOrders).optional(),
   favorites: z
     .literal('1')
     .transform(() => true)

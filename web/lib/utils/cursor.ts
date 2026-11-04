@@ -1,9 +1,9 @@
-export interface WordCursor {
-  freqRank: number | null
-  id: number
-  /** Familiarity group of the last word, present only when the list is sorted by familiarity. */
-  familiarity?: number
-}
+// The default order pages by the last word's frequency rank and id; every other sort pages by how
+// many words came before.
+export type WordCursor = { freqRank: number | null; id: number } | { offset: number }
+
+const isPositiveInteger = (value: unknown) =>
+  typeof value === 'number' && Number.isInteger(value) && value > 0
 
 function isWordCursor(value: unknown): value is WordCursor {
   if (!value || typeof value !== 'object') {
@@ -11,25 +11,13 @@ function isWordCursor(value: unknown): value is WordCursor {
   }
 
   const candidate = value as Record<string, unknown>
-  const validRank =
-    candidate.freqRank === null ||
-    (typeof candidate.freqRank === 'number' &&
-      Number.isInteger(candidate.freqRank) &&
-      candidate.freqRank > 0)
-
-  const validFamiliarity =
-    candidate.familiarity === undefined ||
-    (typeof candidate.familiarity === 'number' &&
-      Number.isInteger(candidate.familiarity) &&
-      candidate.familiarity >= 0 &&
-      candidate.familiarity <= 5)
+  if ('offset' in candidate) {
+    return isPositiveInteger(candidate.offset)
+  }
 
   return (
-    validRank &&
-    validFamiliarity &&
-    typeof candidate.id === 'number' &&
-    Number.isInteger(candidate.id) &&
-    candidate.id > 0
+    (candidate.freqRank === null || isPositiveInteger(candidate.freqRank)) &&
+    isPositiveInteger(candidate.id)
   )
 }
 

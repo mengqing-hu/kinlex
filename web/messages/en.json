@@ -114,13 +114,6 @@
     "searchPlaceholder": "Search German words",
     "hideMeanings": "Hide meanings",
     "showMeanings": "Show meanings",
-    "sort": "Sort",
-    "sortDefault": "Default order",
-    "sortFamiliarityAsc": "Familiarity: low → high",
-    "sortFamiliarityDesc": "Familiarity: high → low",
-    "sortFamiliarityAscShort": "Least familiar",
-    "sortFamiliarityDescShort": "Most familiar",
-    "sortSignInHint": "Sign in to sort by familiarity",
     "hideActions": "Hide actions",
     "showActions": "Show actions",
     "loadMore": "Load more",
@@ -138,7 +131,47 @@
     "metadataTitle": "German {level} vocabulary",
     "metadataDescription": "Learn German {level} vocabulary with meanings, examples and word structure.",
     "allLevelsMetadataTitle": "German vocabulary",
-    "allLevelsMetadataDescription": "Learn German vocabulary across all CEFR levels with meanings, examples and word structure."
+    "allLevelsMetadataDescription": "Learn German vocabulary across all CEFR levels with meanings, examples and word structure.",
+    "sorting": {
+      "sort": "Sort",
+      "sortBy": "Sort by",
+      "reverse": "Reverse the order",
+      "signInHint": "Sign in to sort by what you have studied",
+      "sorts": {
+        "frequency": "Frequency",
+        "views": "Views",
+        "familiarity": "Familiarity",
+        "last_viewed": "Last viewed",
+        "mistakes": "Mistakes",
+        "alphabetical": "A–Z"
+      },
+      "orders": {
+        "frequency": {
+          "asc": "Most common first",
+          "desc": "Least common first"
+        },
+        "views": {
+          "asc": "Least viewed first",
+          "desc": "Most viewed first"
+        },
+        "familiarity": {
+          "asc": "Least familiar first",
+          "desc": "Most familiar first"
+        },
+        "last_viewed": {
+          "asc": "Viewed longest ago first",
+          "desc": "Viewed most recently first"
+        },
+        "mistakes": {
+          "asc": "Fewest flashcard mistakes first",
+          "desc": "Most flashcard mistakes first"
+        },
+        "alphabetical": {
+          "asc": "A to Z",
+          "desc": "Z to A"
+        }
+      }
+    }
   },
   "morphemeCard": {
     "loading": "Loading word family",

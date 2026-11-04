@@ -4,14 +4,27 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 
 import { FilterBar } from '@/components/list/FilterBar'
+import type { SortSelectLabels } from '@/components/list/SortSelect'
 import { normalizePartOfSpeech } from '@/lib/utils/partOfSpeech'
 import type { MorphemeCardLabels } from '@/components/word/MorphemeCard'
 import { WordDetailPanel, type WordPanelLabels } from '@/components/word/WordDetailPanel'
 import { WordRow } from '@/components/word/WordRow'
 import { fetchApiData } from '@/lib/client/apiClient'
-import { SEARCH_PARAMS_CHANGE_EVENT, updateSearchParameter } from '@/lib/client/searchParams'
+import {
+  SEARCH_PARAMS_CHANGE_EVENT,
+  updateSearchParameter,
+  updateSearchParameters,
+} from '@/lib/client/searchParams'
 import { getBrowserSupabase } from '@/lib/supabase/browser'
-import { wordLevels, wordSorts } from '@/lib/validation/words'
+import {
+  defaultSortOrders,
+  personalWordSorts,
+  sortOrders,
+  type SortOrder,
+  type WordSort,
+  wordLevels,
+  wordSorts,
+} from '@/lib/constants'
 import type { CursorPage, WordFilterOption, WordFilterOptions, WordListItem } from '@/types/domain'
 
 const PAGE_SIZE = 20
@@ -28,13 +41,7 @@ export interface WordListLabels {
   searchPlaceholder: string
   hideMeanings: string
   showMeanings: string
-  sort: string
-  sortDefault: string
-  sortFamiliarityAsc: string
-  sortFamiliarityDesc: string
-  sortFamiliarityAscShort: string
-  sortFamiliarityDescShort: string
-  sortSignInHint: string
+  sorting: SortSelectLabels
   hideActions: string
   showActions: string
   loadMore: string
@@ -98,7 +105,8 @@ async function fetchWordPage(
   partOfSpeech: string,
   topic: string,
   morpheme: string | undefined,
-  sort: string,
+  sort: WordSort,
+  order: SortOrder,
   favoritesOnly: boolean,
   cursor?: string,
   signal?: AbortSignal,
@@ -129,8 +137,9 @@ async function fetchWordPage(
     params.set('morpheme', morpheme)
   }
 
-  if (sort) {
+  if (sort !== 'frequency' || order !== defaultSortOrders.frequency) {
     params.set('sort', sort)
+    params.set('order', order)
   }
 
   if (cursor) {
@@ -170,9 +179,8 @@ export function WordList({
       hideActions: params.get('actions') === '0',
       // The word open in the side panel, kept in the URL so Back closes it and it can be shared.
       openWord: params.get('word') ?? '',
-      sort: (wordSorts as readonly string[]).includes(params.get('sort') ?? '')
-        ? (params.get('sort') ?? '')
-        : '',
+      sort: wordSorts.find((option) => option === params.get('sort')) ?? 'frequency',
+      order: sortOrders.find((option) => option === params.get('order')),
     }
   }, [search, showTopicFilter, topic])
   const [state, setState] = useState<WordListState>({
@@ -190,9 +198,11 @@ export function WordList({
   const loadMoreSentinelRef = useRef<HTMLDivElement>(null)
   const loadMoreRef = useRef<() => Promise<void>>(async () => undefined)
   const [scrollAreaHeight, setScrollAreaHeight] = useState<number | null>(null)
-  // Familiarity sorting needs an account, so guests always get the default order.
-  const sort = signedIn ? filters.sort : ''
-  const queryKey = `${debouncedSearchQuery}:${filters.partOfSpeech}:${filters.topic}:${morpheme ?? ''}:${sort}`
+  // Sorts by what one learner did need an account, so guests get the default order instead.
+  const sortAllowed = signedIn || !personalWordSorts.includes(filters.sort)
+  const sort: WordSort = sortAllowed ? filters.sort : 'frequency'
+  const order: SortOrder = (sortAllowed ? filters.order : undefined) ?? defaultSortOrders[sort]
+  const queryKey = `${debouncedSearchQuery}:${filters.partOfSpeech}:${filters.topic}:${morpheme ?? ''}:${sort}:${order}`
 
   useEffect(() => {
     void getBrowserSupabase()
@@ -220,6 +230,7 @@ export function WordList({
       filters.topic,
       morpheme,
       sort,
+      order,
       favoritesOnly,
       undefined,
       controller.signal,
@@ -244,6 +255,7 @@ export function WordList({
     language,
     level,
     morpheme,
+    order,
     queryKey,
     retryVersion,
     sort,
@@ -314,6 +326,7 @@ export function WordList({
         filters.topic,
         morpheme,
         sort,
+        order,
         favoritesOnly,
         state.nextCursor,
       )
@@ -370,7 +383,8 @@ export function WordList({
         hideMeanings={filters.hideMeanings}
         hideActions={filters.hideActions}
         selectedSort={sort}
-        canSortByFamiliarity={signedIn}
+        selectedOrder={order}
+        canUsePersonalSorts={signedIn}
         labels={labels}
         onLevelChange={(value) => {
           router.push(
@@ -380,7 +394,14 @@ export function WordList({
         onSearchQueryChange={setSearchQuery}
         onPartOfSpeechChange={(value) => updateSearchParameter('pos', value)}
         onTopicChange={(value) => updateSearchParameter('topic', value)}
-        onSortChange={(value) => updateSearchParameter('sort', value)}
+        onSortChange={(nextSort, nextOrder) =>
+          updateSearchParameters(
+            // The default order keeps the URL clean.
+            nextSort === 'frequency' && nextOrder === defaultSortOrders.frequency
+              ? { sort: '', order: '' }
+              : { sort: nextSort, order: nextOrder },
+          )
+        }
         onHideMeaningsChange={(checked) => updateSearchParameter('hide', checked ? '1' : '')}
         onHideActionsChange={(checked) => updateSearchParameter('actions', checked ? '0' : '')}
       />

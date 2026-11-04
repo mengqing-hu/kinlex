@@ -1,5 +1,7 @@
 import { FilterSelect } from '@/components/list/FilterSelect'
 import { HideMeaningsToggle } from '@/components/list/HideMeaningsToggle'
+import { SortSelect, type SortSelectLabels } from '@/components/list/SortSelect'
+import type { SortOrder, WordSort } from '@/lib/constants'
 import type { WordFilterOption } from '@/types/domain'
 
 interface FilterBarLabels {
@@ -13,13 +15,7 @@ interface FilterBarLabels {
   searchPlaceholder: string
   hideMeanings: string
   showMeanings: string
-  sort: string
-  sortDefault: string
-  sortFamiliarityAsc: string
-  sortFamiliarityDesc: string
-  sortFamiliarityAscShort: string
-  sortFamiliarityDescShort: string
-  sortSignInHint: string
+  sorting: SortSelectLabels
   hideActions: string
   showActions: string
 }
@@ -36,14 +32,15 @@ interface FilterBarProps {
   selectedTopic: string
   hideMeanings: boolean
   hideActions: boolean
-  selectedSort: string
-  canSortByFamiliarity: boolean
+  selectedSort: WordSort
+  selectedOrder: SortOrder
+  canUsePersonalSorts: boolean
   labels: FilterBarLabels
   onLevelChange?: (value: string) => void
   onSearchQueryChange: (value: string) => void
   onPartOfSpeechChange: (value: string) => void
   onTopicChange: (value: string) => void
-  onSortChange: (value: string) => void
+  onSortChange: (sort: WordSort, order: SortOrder) => void
   onHideMeaningsChange: (checked: boolean) => void
   onHideActionsChange: (checked: boolean) => void
 }
@@ -61,7 +58,8 @@ export function FilterBar({
   hideMeanings,
   hideActions,
   selectedSort,
-  canSortByFamiliarity,
+  selectedOrder,
+  canUsePersonalSorts,
   labels,
   onLevelChange,
   onSearchQueryChange,
@@ -96,25 +94,11 @@ export function FilterBar({
             onChange={onTopicChange}
           />
         ) : null}
-        <FilterSelect
-          label={labels.sort}
-          options={[
-            { value: '', label: labels.sortDefault },
-            {
-              value: 'familiarity_asc',
-              label: labels.sortFamiliarityAsc,
-              shortLabel: labels.sortFamiliarityAscShort,
-              disabled: !canSortByFamiliarity,
-            },
-            {
-              value: 'familiarity_desc',
-              label: labels.sortFamiliarityDesc,
-              shortLabel: labels.sortFamiliarityDescShort,
-              disabled: !canSortByFamiliarity,
-            },
-          ]}
-          title={canSortByFamiliarity ? undefined : labels.sortSignInHint}
-          value={canSortByFamiliarity ? selectedSort : ''}
+        <SortSelect
+          canUsePersonalSorts={canUsePersonalSorts}
+          labels={labels.sorting}
+          order={selectedOrder}
+          sort={selectedSort}
           onChange={onSortChange}
         />
         <label className="relative w-full sm:w-auto sm:max-w-64 sm:min-w-44 sm:flex-1">

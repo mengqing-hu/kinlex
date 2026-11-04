@@ -2,17 +2,24 @@
 // through history.pushState, which fires no event of its own, so this one tells listeners.
 export const SEARCH_PARAMS_CHANGE_EVENT = 'kinlex:filters'
 
-export function updateSearchParameter(name: string, value: string): void {
+// Sets several parameters as one history entry; an empty value removes that parameter.
+export function updateSearchParameters(changes: Record<string, string>): void {
   const url = new URL(window.location.href)
 
-  if (value) {
-    url.searchParams.set(name, value)
-  } else {
-    url.searchParams.delete(name)
+  for (const [name, value] of Object.entries(changes)) {
+    if (value) {
+      url.searchParams.set(name, value)
+    } else {
+      url.searchParams.delete(name)
+    }
   }
 
   window.history.pushState(null, '', url)
   window.dispatchEvent(new Event(SEARCH_PARAMS_CHANGE_EVENT))
+}
+
+export function updateSearchParameter(name: string, value: string): void {
+  updateSearchParameters({ [name]: value })
 }
 
 // Shows a word in the side panel of the list on this page, without leaving it.

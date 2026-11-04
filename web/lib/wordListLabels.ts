@@ -2,6 +2,7 @@ import 'server-only'
 
 import { getTranslations } from 'next-intl/server'
 
+import type { SortSelectLabels } from '@/components/list/SortSelect'
 import type { WordListLabels } from '@/components/list/WordList'
 
 export async function getWordListLabels(): Promise<WordListLabels> {
@@ -29,13 +30,14 @@ export async function getWordListLabels(): Promise<WordListLabels> {
     searchPlaceholder: t('searchPlaceholder'),
     hideMeanings: t('hideMeanings'),
     showMeanings: t('showMeanings'),
-    sort: t('sort'),
-    sortDefault: t('sortDefault'),
-    sortFamiliarityAsc: t('sortFamiliarityAsc'),
-    sortFamiliarityDesc: t('sortFamiliarityDesc'),
-    sortFamiliarityAscShort: t('sortFamiliarityAscShort'),
-    sortFamiliarityDescShort: t('sortFamiliarityDescShort'),
-    sortSignInHint: t('sortSignInHint'),
+    sorting: {
+      sort: t('sorting.sort'),
+      sortBy: t('sorting.sortBy'),
+      reverse: t('sorting.reverse'),
+      signInHint: t('sorting.signInHint'),
+      sorts: t.raw('sorting.sorts') as SortSelectLabels['sorts'],
+      orders: t.raw('sorting.orders') as SortSelectLabels['orders'],
+    },
     hideActions: t('hideActions'),
     showActions: t('showActions'),
     loadMore: t('loadMore'),

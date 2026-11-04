@@ -513,10 +513,12 @@ export type Database = {
           favorited: boolean
           know_count: number
           last_reviewed_at: string | null
+          last_viewed_at: string | null
           learning_count: number
           status: string
           updated_at: string
           user_id: string
+          view_count: number
           word_id: number
         }
         Insert: {
@@ -525,10 +527,12 @@ export type Database = {
           favorited?: boolean
           know_count?: number
           last_reviewed_at?: string | null
+          last_viewed_at?: string | null
           learning_count?: number
           status?: string
           updated_at?: string
           user_id: string
+          view_count?: number
           word_id: number
         }
         Update: {
@@ -537,10 +541,12 @@ export type Database = {
           favorited?: boolean
           know_count?: number
           last_reviewed_at?: string | null
+          last_viewed_at?: string | null
           learning_count?: number
           status?: string
           updated_at?: string
           user_id?: string
+          view_count?: number
           word_id?: number
         }
         Relationships: [
@@ -743,6 +749,20 @@ export type Database = {
         }
         Returns: number[]
       }
+      list_word_ids: {
+        Args: {
+          p_descending: boolean
+          p_language: string
+          p_level?: string
+          p_limit?: number
+          p_offset?: number
+          p_query?: string
+          p_sort: string
+          p_word_class_patterns?: string[]
+          p_word_ids?: number[]
+        }
+        Returns: number[]
+      }
       record_flashcard_review: {
         Args: { p_result: string; p_word_id: number }
         Returns: {
@@ -751,10 +771,12 @@ export type Database = {
           favorited: boolean
           know_count: number
           last_reviewed_at: string | null
+          last_viewed_at: string | null
           learning_count: number
           status: string
           updated_at: string
           user_id: string
+          view_count: number
           word_id: number
         }
         SetofOptions: {

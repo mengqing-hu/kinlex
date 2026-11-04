@@ -1,5 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 
+import { defaultSortOrders, personalWordSorts } from '@/lib/constants'
 import { InvalidParamsError, NotFoundError, UnsupportedLanguageError } from '@/lib/errors'
 import { isSupportedLanguage } from '@/lib/languages'
 import { findWordBySlug, findWordFilterOptions, findWords } from '@/lib/repositories/wordRepository'
@@ -21,13 +22,18 @@ export async function listWords(
   if (params.cursor && !decodedCursor) {
     throw new InvalidParamsError('cursor is invalid')
   }
-  // Familiarity is per user, so the sort only applies when someone is signed in.
-  const sort = userId ? params.sort : undefined
-  if (decodedCursor && (sort !== undefined) !== (decodedCursor.familiarity !== undefined)) {
+
+  // Sorts by what one learner did only apply when someone is signed in; guests get the default.
+  const allowed = params.sort && (userId || !personalWordSorts.includes(params.sort))
+  const sort = allowed && params.sort ? params.sort : 'frequency'
+  const order = (allowed ? params.order : undefined) ?? defaultSortOrders[sort]
+  const ordering =
+    sort === 'frequency' && order === 'asc' ? undefined : { sort, descending: order === 'desc' }
+  if (decodedCursor && (ordering !== undefined) !== 'offset' in decodedCursor) {
     throw new InvalidParamsError('cursor does not match the sort order')
   }
 
-  return findWords(db, { ...params, sort, decodedCursor }, userId)
+  return findWords(db, { ...params, decodedCursor, ordering }, userId)
 }
 
 export async function listWordFilterOptions(

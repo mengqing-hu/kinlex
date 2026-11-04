@@ -2,10 +2,10 @@ import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js'
 
 import { RepositoryError } from '@/lib/errors'
 import { getAudioUrl } from '@/lib/utils/audioUrl'
-import { findFamiliarities } from '@/lib/repositories/familiarityRepository'
 import { encodeWordCursor, type WordCursor } from '@/lib/utils/cursor'
 import { normalizePartOfSpeech, partOfSpeechPrefixes } from '@/lib/utils/partOfSpeech'
 import type { WordListParams } from '@/lib/validation/words'
+import type { WordSort } from '@/lib/constants'
 import type { Database } from '@/types/db'
 import type {
   CursorPage,
@@ -19,8 +19,12 @@ import type {
   WordSegment,
 } from '@/types/domain'
 
-interface WordListQuery extends WordListParams {
+type KeysetCursor = Extract<WordCursor, { id: number }>
+
+interface WordListQuery extends Omit<WordListParams, 'sort' | 'order'> {
   decodedCursor?: WordCursor
+  // Any order but the default, most common first; that one pages through queryWordRows instead.
+  ordering?: { sort: WordSort; descending: boolean }
 }
 
 interface ExampleRecord {
@@ -111,7 +115,7 @@ async function findFilterWordIds(
   return intersectIds(await Promise.all(lookups))
 }
 
-function getCursorFilter(cursor: WordCursor): string {
+function getCursorFilter(cursor: KeysetCursor): string {
   if (cursor.freqRank === null) {
     return `and(freq_rank.is.null,id.gt.${cursor.id})`
   }
@@ -282,7 +286,12 @@ async function findFavoriteWordIds(
 
 interface WordIdFilter {
   include?: number[]
-  exclude?: number[]
+}
+
+// ilike patterns matching the stored word classes a part-of-speech filter stands for.
+function getWordClassPatterns(pos: string): string[] {
+  const prefixes = partOfSpeechPrefixes[normalizePartOfSpeech(pos)]
+  return prefixes ? prefixes.map((prefix) => `${prefix}%`) : [pos]
 }
 
 function queryWordRows(
@@ -290,7 +299,7 @@ function queryWordRows(
   params: WordListQuery,
   limit: number,
   idFilter: WordIdFilter,
-  cursor?: WordCursor,
+  cursor?: KeysetCursor,
 ) {
   let query = db
     .from('words')
@@ -311,22 +320,15 @@ function queryWordRows(
   }
 
   if (params.pos) {
-    const prefixes = partOfSpeechPrefixes[normalizePartOfSpeech(params.pos)]
-    if (!prefixes) {
-      query = query.eq('word_class', params.pos)
-    } else if (prefixes.length === 1) {
-      query = query.ilike('word_class', `${prefixes[0]}%`)
-    } else {
-      query = query.or(prefixes.map((prefix) => `word_class.ilike.${prefix}%`).join(','))
-    }
+    query = query.or(
+      getWordClassPatterns(params.pos)
+        .map((pattern) => `word_class.ilike.${pattern}`)
+        .join(','),
+    )
   }
 
   if (idFilter.include) {
     query = query.in('id', idFilter.include)
-  }
-
-  if (idFilter.exclude && idFilter.exclude.length > 0) {
-    query = query.not('id', 'in', `(${idFilter.exclude.join(',')})`)
   }
 
   if (cursor) {
@@ -337,54 +339,6 @@ function queryWordRows(
 }
 
 type WordListRecord = NonNullable<Awaited<ReturnType<typeof queryWordRows>>['data']>[number]
-
-// Familiarity lives in user_word_state, which PostgREST cannot sort words by, so each familiarity
-// group is read in turn (keeping the usual frequency order inside a group) until the page is full.
-async function findWordRowsByFamiliarity(
-  db: SupabaseClient<Database>,
-  params: WordListQuery,
-  filterWordIds: number[] | undefined,
-  familiarityByWordId: Map<number, number>,
-): Promise<WordListRecord[]> {
-  const levels = params.sort === 'familiarity_desc' ? [5, 4, 3, 2, 1, 0] : [0, 1, 2, 3, 4, 5]
-  const cursor = params.decodedCursor
-  const ratedIds = [...familiarityByWordId.keys()]
-  const filterIdSet = filterWordIds ? new Set(filterWordIds) : null
-  const rows: WordListRecord[] = []
-
-  for (const level of levels.slice(cursor ? levels.indexOf(cursor.familiarity ?? 0) : 0)) {
-    const remaining = params.limit + 1 - rows.length
-    if (remaining <= 0) {
-      break
-    }
-
-    let idFilter: WordIdFilter
-    if (level > 0) {
-      const levelIds = ratedIds.filter((id) => familiarityByWordId.get(id) === level)
-      idFilter = { include: filterIdSet ? levelIds.filter((id) => filterIdSet.has(id)) : levelIds }
-    } else if (filterWordIds) {
-      idFilter = { include: filterWordIds.filter((id) => !familiarityByWordId.has(id)) }
-    } else {
-      idFilter = { exclude: ratedIds }
-    }
-
-    if (idFilter.include?.length === 0) {
-      continue
-    }
-
-    const { data, error } = await queryWordRows(
-      db,
-      params,
-      remaining,
-      idFilter,
-      cursor?.familiarity === level ? cursor : undefined,
-    )
-    assertQuerySucceeded(error, 'list words by familiarity')
-    rows.push(...(data ?? []))
-  }
-
-  return rows
-}
 
 async function toWordListItems(
   db: SupabaseClient<Database>,
@@ -454,6 +408,27 @@ export async function findWordsByIds(
   return wordIds.flatMap((id) => itemsById.get(id) ?? [])
 }
 
+async function findSortedWordIds(
+  db: SupabaseClient<Database>,
+  params: WordListQuery & Required<Pick<WordListQuery, 'ordering'>>,
+  filterWordIds: number[] | undefined,
+  offset: number,
+): Promise<number[]> {
+  const { data, error } = await db.rpc('list_word_ids', {
+    p_language: params.lang,
+    p_sort: params.ordering.sort,
+    p_descending: params.ordering.descending,
+    p_level: params.level,
+    p_query: params.q,
+    p_word_class_patterns: params.pos ? getWordClassPatterns(params.pos) : undefined,
+    p_word_ids: filterWordIds,
+    p_offset: offset,
+    p_limit: params.limit + 1,
+  })
+  assertQuerySucceeded(error, 'sort words')
+  return data ?? []
+}
+
 export async function findWords(
   db: SupabaseClient<Database>,
   params: WordListQuery,
@@ -464,29 +439,38 @@ export async function findWords(
     return { items: [], nextCursor: null }
   }
 
-  const familiarityByWordId = params.sort
-    ? new Map(
-        (userId ? await findFamiliarities(db, userId) : []).map(({ wordId, level }) => [
-          wordId,
-          level,
-        ]),
-      )
-    : null
-  let rows: WordListRecord[]
-
-  if (familiarityByWordId) {
-    rows = await findWordRowsByFamiliarity(db, params, filterWordIds, familiarityByWordId)
-  } else {
-    const { data, error } = await queryWordRows(
+  const cursor = params.decodedCursor
+  if (params.ordering) {
+    const offset = cursor && 'offset' in cursor ? cursor.offset : 0
+    const ids = await findSortedWordIds(
       db,
-      params,
-      params.limit + 1,
-      { include: filterWordIds },
-      params.decodedCursor,
+      { ...params, ordering: params.ordering },
+      filterWordIds,
+      offset,
     )
-    assertQuerySucceeded(error, 'list words')
-    rows = data ?? []
+    const hasNextPage = ids.length > params.limit
+    const items = await findWordsByIds(
+      db,
+      params.lang,
+      params.explain,
+      ids.slice(0, params.limit),
+      userId,
+    )
+    return {
+      items,
+      nextCursor: hasNextPage ? encodeWordCursor({ offset: offset + params.limit }) : null,
+    }
   }
+
+  const { data, error } = await queryWordRows(
+    db,
+    params,
+    params.limit + 1,
+    { include: filterWordIds },
+    cursor && 'id' in cursor ? cursor : undefined,
+  )
+  assertQuerySucceeded(error, 'list words')
+  const rows = data ?? []
 
   const hasNextPage = rows.length > params.limit
   const pageRows = hasNextPage ? rows.slice(0, params.limit) : rows
@@ -500,13 +484,7 @@ export async function findWords(
   const lastWord = pageRows.at(-1)
   const nextCursor =
     hasNextPage && lastWord
-      ? encodeWordCursor({
-          freqRank: lastWord.freq_rank,
-          id: lastWord.id,
-          ...(familiarityByWordId
-            ? { familiarity: familiarityByWordId.get(lastWord.id) ?? 0 }
-            : {}),
-        })
+      ? encodeWordCursor({ freqRank: lastWord.freq_rank, id: lastWord.id })
       : null
 
   return { items, nextCursor }

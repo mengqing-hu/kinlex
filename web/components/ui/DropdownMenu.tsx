@@ -37,6 +37,17 @@ export function DropdownMenuItem({ className = '', ...props }: DropdownMenuItemP
   )
 }
 
+type DropdownMenuLabelProps = ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Label>
+
+export function DropdownMenuLabel({ className = '', ...props }: DropdownMenuLabelProps) {
+  return (
+    <DropdownMenuPrimitive.Label
+      className={`px-3 pt-1.5 pb-1 text-xs font-semibold tracking-widest text-[var(--mute)] uppercase ${className}`}
+      {...props}
+    />
+  )
+}
+
 type DropdownMenuSeparatorProps = ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Separator>
 
 export function DropdownMenuSeparator({ className = '', ...props }: DropdownMenuSeparatorProps) {

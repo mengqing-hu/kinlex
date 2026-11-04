@@ -11,8 +11,6 @@ import {
 export interface FilterSelectOption {
   value: string
   label: string
-  // Shown on the pill instead of label, for choices too long to fit it.
-  shortLabel?: string
   disabled?: boolean
 }
 
@@ -28,11 +26,13 @@ interface FilterSelectProps {
 export function FilterSelect({ label, options, value, title, onChange }: FilterSelectProps) {
   const selected = options.find((option) => option.value === value)
   const active = value !== '' && selected !== undefined
-  const pillText = (option: FilterSelectOption) => option.shortLabel ?? option.label
-  const shown = active ? pillText(selected) : label
+  const shown = active ? selected.label : label
   // Every text the pill can show, stacked in one grid cell, so it keeps the width of the longest
   // and does not resize when the choice changes.
-  const texts = [label, ...options.filter((option) => option.value !== '').map(pillText)]
+  const texts = [
+    label,
+    ...options.filter((option) => option.value !== '').map(({ label }) => label),
+  ]
 
   return (
     <DropdownMenu>
