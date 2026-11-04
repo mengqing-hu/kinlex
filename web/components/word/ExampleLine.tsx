@@ -8,6 +8,10 @@ interface ExampleLineProps {
   slowLabel: string
   // The word the page is about, shown in bold wherever it appears in the sentence.
   targetWordId?: number
+  // Centred in larger type, for an example that stands on its own, such as on a flashcard.
+  featured?: boolean
+  // Shown on a disabled audio button when the sentence has no recording; without it, no button.
+  unavailableAudioLabel?: string
 }
 
 // Renders [bracketed] parts in bold, in the sentence and in its translation alike.
@@ -70,7 +74,46 @@ function TokenizedSentence({
   return parts
 }
 
-export function ExampleLine({ example, playLabel, slowLabel, targetWordId }: ExampleLineProps) {
+export function ExampleLine({
+  example,
+  playLabel,
+  slowLabel,
+  targetWordId,
+  featured = false,
+  unavailableAudioLabel,
+}: ExampleLineProps) {
+  const sentence =
+    example.tokens.length > 0 ? (
+      <TokenizedSentence
+        sentence={example.sentence}
+        targetWordId={targetWordId}
+        tokens={example.tokens}
+      />
+    ) : (
+      <MarkedText text={example.sentence} />
+    )
+
+  if (featured) {
+    return (
+      <div className="text-center">
+        <p className="text-lg leading-8 text-[var(--ink)] sm:text-xl">
+          {sentence}
+          <span className="ml-1 inline-flex align-middle">
+            <AudioButton
+              url={example.audioUrl}
+              label={playLabel}
+              slowLabel={slowLabel}
+              unavailableLabel={unavailableAudioLabel}
+            />
+          </span>
+        </p>
+        <p className="mt-1 text-base leading-6 text-[var(--mute)] italic">
+          <MarkedText text={example.translation} />
+        </p>
+      </div>
+    )
+  }
+
   return (
     <div className="group relative flex items-center gap-1 rounded-lg py-1.5 pr-1 pl-5 transition-colors hover:bg-[var(--bg)]">
       {/* The marker gives way to the hover background, which then outlines the example. */}
@@ -79,22 +122,17 @@ export function ExampleLine({ example, playLabel, slowLabel, targetWordId }: Exa
         className="absolute top-2.5 left-2 h-3 w-1 rounded-full bg-[var(--mute)]/25 transition-opacity group-hover:opacity-0"
       />
       <div className="min-w-0 flex-1">
-        <p className="text-sm leading-5 text-[var(--ink)]">
-          {example.tokens.length > 0 ? (
-            <TokenizedSentence
-              sentence={example.sentence}
-              targetWordId={targetWordId}
-              tokens={example.tokens}
-            />
-          ) : (
-            <MarkedText text={example.sentence} />
-          )}
-        </p>
+        <p className="text-sm leading-5 text-[var(--ink)]">{sentence}</p>
         <p className="text-xs leading-4 text-[var(--mute)] italic">
           <MarkedText text={example.translation} />
         </p>
       </div>
-      <AudioButton url={example.audioUrl} label={playLabel} slowLabel={slowLabel} />
+      <AudioButton
+        url={example.audioUrl}
+        label={playLabel}
+        slowLabel={slowLabel}
+        unavailableLabel={unavailableAudioLabel}
+      />
     </div>
   )
 }

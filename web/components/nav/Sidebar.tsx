@@ -9,7 +9,7 @@ import { UserMenu } from '@/components/nav/UserMenu'
 import type { SupportedLanguageCode } from '@/lib/languages'
 import { SIDEBAR_STORAGE_KEY } from '@/lib/sidebar'
 
-export type SidebarIcon = 'levels' | 'topics' | 'roots' | 'search'
+export type SidebarIcon = 'levels' | 'topics' | 'roots' | 'flashcards' | 'search'
 
 export interface SidebarLink {
   href: string
@@ -48,6 +48,12 @@ const iconPaths: Record<SidebarIcon, ReactNode> = {
     </>
   ),
   roots: <path d="M12 21V9m0 0c0-3 2-5 5-5 0 3-2 5-5 5Zm0 4c0-3-2-5-5-5 0 3 2 5 5 5Z" />,
+  flashcards: (
+    <>
+      <rect height="12" rx="2" width="15" x="6" y="8" />
+      <path d="M3 15V6a2 2 0 0 1 2-2h11" />
+    </>
+  ),
   search: (
     <>
       <circle cx="11" cy="11" r="7" />

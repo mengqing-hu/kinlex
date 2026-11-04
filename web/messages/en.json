@@ -6,6 +6,7 @@
     "topics": "Topics",
     "allTopics": "All topics",
     "roots": "Roots",
+    "flashcards": "Flashcards",
     "search": "Search",
     "signIn": "Sign in",
     "account": "Account",
@@ -45,7 +46,11 @@
     "empty": "No word parts match this search.",
     "word": "word",
     "words": "words",
-    "types": { "prefix": "Prefixes", "root": "Roots", "suffix": "Suffixes" },
+    "types": {
+      "prefix": "Prefixes",
+      "root": "Roots",
+      "suffix": "Suffixes"
+    },
     "metadataTitle": "German roots, prefixes and suffixes",
     "metadataDescription": "Explore German word families through roots, prefixes and suffixes."
   },
@@ -53,7 +58,11 @@
     "allRoots": "All word parts",
     "separable": "Separable prefix",
     "words": "Words containing {root}",
-    "types": { "prefix": "Prefix", "root": "Root", "suffix": "Suffix" },
+    "types": {
+      "prefix": "Prefix",
+      "root": "Root",
+      "suffix": "Suffix"
+    },
     "metadataTitle": "{root} German word family",
     "metadataDescription": "Learn German words containing {root}, meaning {meaning}."
   },
@@ -136,5 +145,29 @@
     "relatedWords": "Related words",
     "noRelatedWords": "No related words are available yet.",
     "separable": "Separable"
+  },
+  "flashcardsPage": {
+    "metadataTitle": "Flashcards",
+    "title": "Flashcards",
+    "cardCount": "Cards per round",
+    "stillLearning": "Still learning",
+    "know": "Know",
+    "progress": "Card {current} of {total}",
+    "flipHintBefore": "Press",
+    "flipHintAfter": "or click the card to flip",
+    "space": "space",
+    "playWord": "Play pronunciation of {word}",
+    "playExample": "Play example sentence",
+    "slowAudio": "Replay at a slower speed",
+    "loading": "Drawing cards…",
+    "loadError": "The cards could not be loaded.",
+    "saveError": "Your last answer could not be saved.",
+    "retry": "Try again",
+    "empty": "There are no words to practise yet.",
+    "roundDone": "Round complete",
+    "roundSummary": "{learning} still learning · {know} known",
+    "nextRound": "Next round",
+    "noMeaning": "No meaning is available yet.",
+    "noRecording": "No recording yet"
   }
 }
