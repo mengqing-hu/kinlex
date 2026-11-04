@@ -28,7 +28,6 @@ interface FilterBarProps {
   partsOfSpeech: WordFilterOption[]
   topics: WordFilterOption[]
   showLevelFilter?: boolean
-  showTopicFilter?: boolean
   selectedLevel?: string
   searchQuery: string
   selectedPartOfSpeech: string
@@ -58,7 +57,6 @@ export function FilterBar({
   partsOfSpeech,
   topics,
   showLevelFilter = false,
-  showTopicFilter = true,
   selectedLevel = '',
   searchQuery,
   selectedPartOfSpeech,
@@ -102,7 +100,7 @@ export function FilterBar({
           onChange={onPartOfSpeechChange}
         />
         {/* Hidden until words have been sorted into topics, unless a link already chose one. */}
-        {showTopicFilter && (topics.length > 0 || selectedTopic) ? (
+        {topics.length > 0 || selectedTopic ? (
           <FilterSelect
             label={labels.topic}
             options={[

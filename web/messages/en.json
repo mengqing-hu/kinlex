@@ -3,8 +3,6 @@
     "home": "Kinlex",
     "learningLanguage": "Learning {language}",
     "levels": "Levels",
-    "topics": "Topics",
-    "allTopics": "All topics",
     "roots": "Roots",
     "flashcards": "Flashcards",
     "favorites": "Favorites",
@@ -20,23 +18,6 @@
   "footer": {
     "description": "Learn words through their connections.",
     "copyright": "Copyright {year} Kinlex"
-  },
-  "topicsPage": {
-    "eyebrow": "German vocabulary",
-    "title": "Explore vocabulary by topic",
-    "description": "Choose a topic and learn related German words through meanings, examples and word structure.",
-    "wordCount": "{count, plural, one {# word} other {# words}}",
-    "empty": "No topics are available yet.",
-    "metadataTitle": "German vocabulary topics",
-    "metadataDescription": "Explore German vocabulary grouped by practical topics."
-  },
-  "topicPage": {
-    "allTopics": "All topics",
-    "eyebrow": "German vocabulary topic",
-    "title": "{topic} vocabulary",
-    "description": "Learn German words connected to {topic} with meanings, examples and word structure.",
-    "metadataTitle": "{topic} German vocabulary",
-    "metadataDescription": "Learn German vocabulary related to {topic} with meanings, examples and word structure."
   },
   "rootsPage": {
     "eyebrow": "Word structure",

@@ -502,7 +502,7 @@ export async function findWords(
 }
 
 // The words a list page shows before any filter is chosen.
-export type WordFilterScope = Pick<WordListParams, 'level' | 'topic' | 'morpheme' | 'favorites'>
+export type WordFilterScope = Pick<WordListParams, 'level' | 'morpheme' | 'favorites'>
 
 export async function findWordFilterOptions(
   db: SupabaseClient<Database>,
@@ -554,7 +554,6 @@ async function findWordFilterCounts(
   const { data, error } = await db.rpc('word_filter_counts', {
     p_language: language,
     p_level: scope.level,
-    p_topic: scope.topic,
     p_word_ids: filterWordIds,
   })
   assertQuerySucceeded(error, 'count words per filter')

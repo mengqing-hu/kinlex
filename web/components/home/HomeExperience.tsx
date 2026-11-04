@@ -44,12 +44,6 @@ export function HomeExperience() {
           >
             {returning ? 'Continue learning' : 'Start with A1'}
           </Link>
-          <Link
-            className="rounded-xl border border-[var(--line)] bg-[var(--card)] px-5 py-3 font-semibold"
-            href="/de/topics"
-          >
-            Explore topics
-          </Link>
         </div>
       </section>
     </main>

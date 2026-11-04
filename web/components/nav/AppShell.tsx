@@ -16,7 +16,6 @@ export async function AppShell({ children, language }: AppShellProps) {
   const base = `/${language}`
   const links: SidebarLink[] = [
     { href: `${base}/levels/a1`, icon: 'levels', label: t('levels'), match: `${base}/levels` },
-    { href: `${base}/topics`, icon: 'topics', label: t('topics'), match: `${base}/topics` },
     { href: `${base}/roots`, icon: 'roots', label: t('roots'), match: `${base}/roots` },
     {
       href: `${base}/flashcards`,

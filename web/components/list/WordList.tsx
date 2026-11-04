@@ -72,10 +72,8 @@ interface WordListProps {
   language: string
   level?: string
   morpheme?: string
-  topic?: string
   favoritesOnly?: boolean
   showLevelFilter?: boolean
-  showTopicFilter?: boolean
   initialPage: CursorPage<WordListItem>
   filterOptions: WordFilterOptions
   labels: WordListLabels
@@ -186,10 +184,8 @@ export function WordList({
   language,
   level,
   morpheme,
-  topic,
   favoritesOnly = false,
   showLevelFilter = false,
-  showTopicFilter = true,
   initialPage,
   filterOptions,
   labels,
@@ -204,7 +200,7 @@ export function WordList({
     const params = new URLSearchParams(search)
     return {
       partOfSpeech: normalizePartOfSpeech(params.get('pos') ?? ''),
-      topic: showTopicFilter ? (params.get('topic') ?? '') : (topic ?? ''),
+      topic: params.get('topic') ?? '',
       hidden: hiddenSides.find((side) => side === params.get('hide')) ?? null,
       hideActions: params.get('actions') === '0',
       view: wordListViews.find((option) => option === params.get('view')) ?? 'list',
@@ -213,10 +209,10 @@ export function WordList({
       sort: wordSorts.find((option) => option === params.get('sort')) ?? 'frequency',
       order: sortOrders.find((option) => option === params.get('order')),
     }
-  }, [search, showTopicFilter, topic])
+  }, [search])
   const [state, setState] = useState<WordListState>({
     ...initialPage,
-    queryKey: `::${topic ?? ''}:${morpheme ?? ''}`,
+    queryKey: `:::${morpheme ?? ''}`,
     error: false,
   })
   const [retryVersion, setRetryVersion] = useState(0)
@@ -442,7 +438,6 @@ export function WordList({
         partsOfSpeech={partOfSpeechOptions}
         topics={topicOptions}
         showLevelFilter={showLevelFilter}
-        showTopicFilter={showTopicFilter}
         selectedLevel={level ?? ''}
         searchQuery={searchQuery}
         selectedPartOfSpeech={filters.partOfSpeech}
