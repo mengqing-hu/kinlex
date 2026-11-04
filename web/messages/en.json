@@ -149,25 +149,53 @@
   "flashcardsPage": {
     "metadataTitle": "Flashcards",
     "title": "Flashcards",
-    "cardCount": "Cards per round",
     "stillLearning": "Still learning",
     "know": "Know",
     "progress": "Card {current} of {total}",
     "flipHintBefore": "Press",
     "flipHintAfter": "or click the card to flip",
     "space": "space",
-    "playWord": "Play pronunciation of {word}",
-    "playExample": "Play example sentence",
-    "slowAudio": "Replay at a slower speed",
     "loading": "Drawing cards…",
     "loadError": "The cards could not be loaded.",
     "saveError": "Your last answer could not be saved.",
     "retry": "Try again",
-    "empty": "There are no words to practise yet.",
+    "empty": "No words match these settings yet.",
+    "emptyAction": "Change settings",
     "roundDone": "Round complete",
     "roundSummary": "{learning} still learning · {know} known",
     "nextRound": "Next round",
-    "noMeaning": "No meaning is available yet.",
-    "noRecording": "No recording yet"
+    "face": {
+      "playWord": "Play pronunciation of {word}",
+      "playExample": "Play example sentence",
+      "slowAudio": "Replay at a slower speed",
+      "noMeaning": "No meaning is available yet.",
+      "noRecording": "No recording yet"
+    },
+    "settings": {
+      "title": "Settings",
+      "wordsSection": "Words",
+      "wordsHint": "Word choices apply from the next round.",
+      "source": "Practise",
+      "sources": {
+        "all": "All words",
+        "favorites": "Favorites",
+        "learning": "Still learning"
+      },
+      "levels": "Levels",
+      "levelsHint": "None selected means every level.",
+      "cardCount": "Cards per round",
+      "cardCountHint": "1–{max}",
+      "startRound": "Start a new round now",
+      "cardSection": "Cards",
+      "direction": "Show first",
+      "directions": {
+        "de-en": "German",
+        "en-de": "Meaning",
+        "mixed": "Mixed"
+      },
+      "showExample": "Example sentence",
+      "showExampleMeaning": "Example translation",
+      "autoplay": "Play pronunciation automatically"
+    }
   }
 }

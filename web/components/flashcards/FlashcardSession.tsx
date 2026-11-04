@@ -2,44 +2,50 @@
 
 import { type MouseEvent, type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 
-import { AudioButton } from '@/components/audio/AudioButton'
-import { ExampleLine } from '@/components/word/ExampleLine'
+import { useAudioPlayer } from '@/components/audio/AudioProvider'
+import {
+  FaceExample,
+  type FlashcardFaceLabels,
+  MeaningFace,
+  WordFace,
+} from '@/components/flashcards/FlashcardFaces'
+import {
+  FlashcardSettingsPanel,
+  type FlashcardSettingsLabels,
+} from '@/components/flashcards/FlashcardSettingsPanel'
 import { fetchApiData } from '@/lib/client/apiClient'
 import { queueActivityEvent } from '@/lib/client/eventQueue'
 import {
-  FLASHCARD_COUNT_STORAGE_KEY,
-  FLASHCARD_DEFAULT_COUNT,
-  FLASHCARD_MAX_COUNT,
+  defaultFlashcardSettings,
+  type FlashcardSettings,
+  readFlashcardSettings,
+  writeFlashcardSettings,
 } from '@/lib/flashcards'
-import { formatPartOfSpeech } from '@/lib/utils/partOfSpeech'
 import type { WordListItem } from '@/types/domain'
 
 type FlashcardResult = 'know' | 'learning'
+type Side = 'word' | 'meaning'
 
 export interface FlashcardLabels {
   title: string
-  cardCount: string
   stillLearning: string
   know: string
-  // Templates: {current} {total}, {word}, {learning} {know}.
+  // Templates: {current} {total}, {learning} {know}.
   progress: string
   flipHintBefore: string
   flipHintAfter: string
   space: string
-  playWord: string
-  playExample: string
-  slowAudio: string
   loading: string
   loadError: string
   saveError: string
   retry: string
   empty: string
+  emptyAction: string
   roundDone: string
   roundSummary: string
   nextRound: string
-  noMeaning: string
-  noRecording: string
-  partsOfSpeech: Record<string, string>
+  face: FlashcardFaceLabels
+  settings: FlashcardSettingsLabels
 }
 
 interface FlashcardSessionProps {
@@ -49,41 +55,35 @@ interface FlashcardSessionProps {
 
 type Phase = 'loading' | 'error' | 'empty' | 'playing' | 'done'
 
+// The settings that decide which words a round holds, as opposed to how its cards look.
+type DeckQuery = Pick<FlashcardSettings, 'count' | 'source' | 'levels'>
+
+const deckQueryOf = ({ count, source, levels }: FlashcardSettings): DeckQuery => ({
+  count,
+  source,
+  levels,
+})
+
+const isSameDeck = (left: DeckQuery, right: DeckQuery) =>
+  left.count === right.count &&
+  left.source === right.source &&
+  left.levels.join() === right.levels.join()
+
 function fill(template: string, values: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (match, name: string) =>
     name in values ? String(values[name]) : match,
   )
 }
 
-function parseCount(text: string): number | null {
-  const value = Number(text)
-  return text.trim() !== '' && Number.isInteger(value) ? value : null
+function fetchRound(language: string, deck: DeckQuery) {
+  const params = new URLSearchParams({
+    lang: language,
+    limit: String(deck.count),
+    source: deck.source,
+  })
+  if (deck.levels.length > 0) params.set('levels', deck.levels.join(','))
+  return fetchApiData<WordListItem[]>(`/api/v1/me/flashcards?${params}`, { cache: 'no-store' })
 }
-
-const clampCount = (value: number) => Math.min(Math.max(value, 1), FLASHCARD_MAX_COUNT)
-
-function readStoredCount(): number {
-  try {
-    const stored = parseCount(window.localStorage.getItem(FLASHCARD_COUNT_STORAGE_KEY) ?? '')
-    return stored === null ? FLASHCARD_DEFAULT_COUNT : clampCount(stored)
-  } catch {
-    return FLASHCARD_DEFAULT_COUNT
-  }
-}
-
-function storeCount(count: number): void {
-  try {
-    window.localStorage.setItem(FLASHCARD_COUNT_STORAGE_KEY, String(count))
-  } catch {
-    // Without storage the count goes back to the default on the next visit.
-  }
-}
-
-const fetchRound = (language: string, size: number) =>
-  fetchApiData<WordListItem[]>(
-    `/api/v1/me/flashcards?lang=${encodeURIComponent(language)}&limit=${size}`,
-    { cache: 'no-store' },
-  )
 
 // Keys typed into a field belong to the field, not to the cards.
 function isTypingTarget(target: EventTarget | null): boolean {
@@ -93,11 +93,11 @@ function isTypingTarget(target: EventTarget | null): boolean {
   )
 }
 
-function Icon({ children, className = 'size-6' }: { children: ReactNode; className?: string }) {
+function Icon({ children }: { children: ReactNode }) {
   return (
     <svg
       aria-hidden="true"
-      className={className}
+      className="size-6"
       fill="none"
       stroke="currentColor"
       strokeLinecap="round"
@@ -111,23 +111,31 @@ function Icon({ children, className = 'size-6' }: { children: ReactNode; classNa
 }
 
 export function FlashcardSession({ language, labels }: FlashcardSessionProps) {
+  const { playAudio } = useAudioPlayer()
+  const [settings, setSettings] = useState(defaultFlashcardSettings)
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const [phase, setPhase] = useState<Phase>('loading')
+  // The word choices the current round was drawn with.
+  const [roundDeck, setRoundDeck] = useState<DeckQuery | null>(null)
+  const [roundNumber, setRoundNumber] = useState(0)
   // The round's cards in order; a card answered "still learning" is appended once more.
   const [queue, setQueue] = useState<WordListItem[]>([])
+  // Which side faces up per word when the direction is mixed, drawn once per round.
+  const [mixedSides, setMixedSides] = useState<Map<number, Side>>(new Map())
   const [position, setPosition] = useState(0)
   const [flipped, setFlipped] = useState(false)
   // The latest answer per word, so a word seen twice is counted once.
   const [results, setResults] = useState<Map<number, FlashcardResult>>(new Map())
   const [repeated, setRepeated] = useState<Set<number>>(new Set())
   const [saveFailed, setSaveFailed] = useState(false)
-  const [count, setCount] = useState(FLASHCARD_DEFAULT_COUNT)
-  const [countText, setCountText] = useState(String(FLASHCARD_DEFAULT_COUNT))
   const roundRequest = useRef(0)
+  const autoplayedCard = useRef<string | null>(null)
 
-  const showRound = useCallback((size: number, cards: WordListItem[]) => {
-    setCount(size)
-    setCountText(String(size))
+  const showRound = useCallback((deck: DeckQuery, cards: WordListItem[]) => {
+    setRoundDeck(deck)
+    setRoundNumber((current) => current + 1)
     setQueue(cards)
+    setMixedSides(new Map(cards.map((card) => [card.id, Math.random() < 0.5 ? 'word' : 'meaning'])))
     setPosition(0)
     setFlipped(false)
     setResults(new Map())
@@ -138,11 +146,13 @@ export function FlashcardSession({ language, labels }: FlashcardSessionProps) {
 
   // Only the latest request may fill the round, in case an earlier one answers late.
   const drawRound = useCallback(
-    (size: number) => {
+    (deck: DeckQuery, restoredSettings?: FlashcardSettings) => {
       const request = ++roundRequest.current
-      return fetchRound(language, size).then(
+      return fetchRound(language, deck).then(
         (cards) => {
-          if (request === roundRequest.current) showRound(size, cards)
+          if (request !== roundRequest.current) return
+          if (restoredSettings) setSettings(restoredSettings)
+          showRound(deck, cards)
         },
         () => {
           if (request === roundRequest.current) setPhase('error')
@@ -153,16 +163,41 @@ export function FlashcardSession({ language, labels }: FlashcardSessionProps) {
   )
 
   function startRound() {
+    setSettingsOpen(false)
     setPhase('loading')
-    void drawRound(count)
+    void drawRound(deckQueryOf(settings))
   }
 
   useEffect(() => {
-    // The stored count is only readable in the browser, so the first round waits for it here.
-    void drawRound(readStoredCount())
+    // Stored settings are only readable in the browser, so the first round waits for them here.
+    const stored = readFlashcardSettings()
+    void drawRound(deckQueryOf(stored), stored)
   }, [drawRound])
 
+  function changeSettings(next: FlashcardSettings) {
+    setSettings(next)
+    writeFlashcardSettings(next)
+  }
+
   const card = phase === 'playing' ? queue[position] : undefined
+  const front: Side =
+    settings.direction === 'de-en'
+      ? 'word'
+      : settings.direction === 'en-de'
+        ? 'meaning'
+        : card
+          ? (mixedSides.get(card.id) ?? 'word')
+          : 'word'
+  const wordVisible = (front === 'word') !== flipped
+
+  useEffect(() => {
+    if (!card?.audioUrl || !settings.autoplay || !wordVisible) return
+    // Once per card showing, so flipping back and forth does not replay it.
+    const key = `${roundNumber}-${position}`
+    if (autoplayedCard.current === key) return
+    autoplayedCard.current = key
+    playAudio(card.audioUrl)
+  }, [card, playAudio, position, roundNumber, settings.autoplay, wordVisible])
 
   const answer = useCallback(
     (result: FlashcardResult) => {
@@ -203,7 +238,8 @@ export function FlashcardSession({ language, labels }: FlashcardSessionProps) {
   )
 
   useEffect(() => {
-    if (phase !== 'playing') return
+    // The card under an open settings panel should not move when its keys are pressed.
+    if (phase !== 'playing' || settingsOpen) return
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.metaKey || event.ctrlKey || event.altKey || isTypingTarget(event.target)) return
@@ -223,24 +259,7 @@ export function FlashcardSession({ language, labels }: FlashcardSessionProps) {
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [answer, phase])
-
-  function changeCount(text: string) {
-    setCountText(text)
-    const value = parseCount(text)
-    if (value !== null && value >= 1 && value <= FLASHCARD_MAX_COUNT) {
-      setCount(value)
-      storeCount(value)
-    }
-  }
-
-  function settleCount() {
-    const value = parseCount(countText)
-    const settled = value === null ? count : clampCount(value)
-    setCount(settled)
-    setCountText(String(settled))
-    storeCount(settled)
-  }
+  }, [answer, phase, settingsOpen])
 
   function handleCardClick(event: MouseEvent<HTMLDivElement>) {
     if (event.target instanceof Element && event.target.closest('button, a')) return
@@ -255,28 +274,34 @@ export function FlashcardSession({ language, labels }: FlashcardSessionProps) {
   const learningWords = queue.filter(
     (word, index) => results.get(word.id) === 'learning' && queue.indexOf(word) === index,
   )
+  const roundIsOutdated = roundDeck !== null && !isSameDeck(roundDeck, deckQueryOf(settings))
+
+  function renderSide(side: Side, shownCard: WordListItem) {
+    return side === 'word' ? (
+      <WordFace card={shownCard} labels={labels.face} />
+    ) : (
+      <MeaningFace card={shownCard} labels={labels.face} />
+    )
+  }
+
+  const faceClassName =
+    'absolute inset-0 flex flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--card)] shadow-sm backface-hidden'
+  const primaryButtonClassName =
+    'rounded-full bg-[var(--ink)] px-5 py-2 text-sm font-semibold text-[var(--card)] focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none'
 
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold tracking-tight text-[var(--ink)]">{labels.title}</h1>
-        <label className="flex items-center gap-2 text-sm text-[var(--mute)]">
-          {labels.cardCount}
-          <input
-            className="w-20 rounded-lg border border-[var(--line)] bg-[var(--card)] px-3 py-1.5 text-base text-[var(--ink)] focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none"
-            inputMode="numeric"
-            max={FLASHCARD_MAX_COUNT}
-            min={1}
-            step={1}
-            type="number"
-            value={countText}
-            onBlur={settleCount}
-            onChange={(event) => changeCount(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') event.currentTarget.blur()
-            }}
-          />
-        </label>
+        <FlashcardSettingsPanel
+          labels={labels.settings}
+          open={settingsOpen}
+          roundIsOutdated={roundIsOutdated}
+          settings={settings}
+          onChange={changeSettings}
+          onOpenChange={setSettingsOpen}
+          onStartRound={startRound}
+        />
       </div>
 
       <div aria-hidden="true" className="mt-4 h-1 overflow-hidden rounded-full bg-[var(--line)]">
@@ -311,33 +336,12 @@ export function FlashcardSession({ language, labels }: FlashcardSessionProps) {
           <div className="mt-4 perspective-[1600px]">
             <div
               // Remounting per card shows each new card front side up without a flip animation.
-              key={`${position}-${card.id}`}
+              key={`${roundNumber}-${position}`}
               className={`relative h-80 cursor-pointer transition-transform duration-500 transform-3d sm:h-96 ${flipped ? 'rotate-x-180' : ''}`}
               onClick={handleCardClick}
             >
-              <section
-                aria-hidden={flipped}
-                className="absolute inset-0 flex flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--card)] shadow-sm backface-hidden"
-              >
-                <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
-                  <p className="text-4xl font-semibold tracking-tight break-words text-[var(--ink)] sm:text-5xl">
-                    {card.lemma}
-                    <span className="ml-2 inline-flex align-middle">
-                      <AudioButton
-                        large
-                        url={card.audioUrl}
-                        label={fill(labels.playWord, { word: card.lemma })}
-                        slowLabel={labels.slowAudio}
-                        unavailableLabel={labels.noRecording}
-                      />
-                    </span>
-                  </p>
-                  {card.level ? (
-                    <p className="mt-3 text-xs font-semibold tracking-widest text-[var(--root)] uppercase">
-                      {card.level}
-                    </p>
-                  ) : null}
-                </div>
+              <section aria-hidden={flipped} className={faceClassName}>
+                {renderSide(front, card)}
                 <p className="flex items-center justify-center gap-2 bg-[var(--bg)] px-4 py-3 text-sm text-[var(--mute)]">
                   {labels.flipHintBefore}
                   <kbd className="rounded-md border border-[var(--mute)] px-2 py-0.5 font-sans text-xs font-semibold text-[var(--ink)]">
@@ -349,27 +353,15 @@ export function FlashcardSession({ language, labels }: FlashcardSessionProps) {
 
               <section
                 aria-hidden={!flipped}
-                className="absolute inset-0 flex rotate-x-180 flex-col overflow-y-auto rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 shadow-sm backface-hidden"
+                className={`${faceClassName} rotate-x-180 overflow-y-auto`}
               >
-                <div className="flex flex-1 flex-col items-center justify-center text-center">
-                  <p className="text-xs text-[var(--mute)]">
-                    {formatPartOfSpeech(labels.partsOfSpeech, card.pos, card.posDetail)}
-                  </p>
-                  <p className="mt-3 text-2xl leading-snug font-semibold text-[var(--ink)] sm:text-3xl">
-                    {card.glosses.length > 0 ? card.glosses.join(', ') : labels.noMeaning}
-                  </p>
-                </div>
-                {card.example ? (
-                  <div className="mx-auto mt-4 w-full max-w-2xl">
-                    <ExampleLine
-                      featured
-                      unavailableAudioLabel={labels.noRecording}
-                      example={card.example}
-                      playLabel={labels.playExample}
-                      slowLabel={labels.slowAudio}
-                      targetWordId={card.id}
-                    />
-                  </div>
+                {renderSide(front === 'word' ? 'meaning' : 'word', card)}
+                {settings.showExample ? (
+                  <FaceExample
+                    card={card}
+                    labels={labels.face}
+                    showMeaning={settings.showExampleMeaning}
+                  />
                 ) : null}
               </section>
             </div>
@@ -415,7 +407,7 @@ export function FlashcardSession({ language, labels }: FlashcardSessionProps) {
             <>
               <p className="text-[var(--ink)]">{labels.loadError}</p>
               <button
-                className="mt-4 rounded-full bg-[var(--ink)] px-5 py-2 text-sm font-semibold text-[var(--card)] focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none"
+                className={`mt-4 ${primaryButtonClassName}`}
                 type="button"
                 onClick={startRound}
               >
@@ -423,7 +415,16 @@ export function FlashcardSession({ language, labels }: FlashcardSessionProps) {
               </button>
             </>
           ) : phase === 'empty' ? (
-            <p className="text-[var(--mute)]">{labels.empty}</p>
+            <>
+              <p className="text-[var(--mute)]">{labels.empty}</p>
+              <button
+                className={`mt-4 ${primaryButtonClassName}`}
+                type="button"
+                onClick={() => setSettingsOpen(true)}
+              >
+                {labels.emptyAction}
+              </button>
+            </>
           ) : (
             <>
               <h2 className="text-2xl font-semibold tracking-tight text-[var(--ink)]">
@@ -447,7 +448,7 @@ export function FlashcardSession({ language, labels }: FlashcardSessionProps) {
               <button
                 // Lets Enter start the next round straight away.
                 autoFocus
-                className="mt-6 rounded-full bg-[var(--ink)] px-5 py-2 text-sm font-semibold text-[var(--card)] focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none"
+                className={`mt-6 ${primaryButtonClassName}`}
                 type="button"
                 onClick={startRound}
               >

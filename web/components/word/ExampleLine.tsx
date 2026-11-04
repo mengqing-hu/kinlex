@@ -12,6 +12,7 @@ interface ExampleLineProps {
   featured?: boolean
   // Shown on a disabled audio button when the sentence has no recording; without it, no button.
   unavailableAudioLabel?: string
+  hideTranslation?: boolean
 }
 
 // Renders [bracketed] parts in bold, in the sentence and in its translation alike.
@@ -81,6 +82,7 @@ export function ExampleLine({
   targetWordId,
   featured = false,
   unavailableAudioLabel,
+  hideTranslation = false,
 }: ExampleLineProps) {
   const sentence =
     example.tokens.length > 0 ? (
@@ -107,9 +109,11 @@ export function ExampleLine({
             />
           </span>
         </p>
-        <p className="mt-1 text-base leading-6 text-[var(--mute)] italic">
-          <MarkedText text={example.translation} />
-        </p>
+        {hideTranslation ? null : (
+          <p className="mt-1 text-base leading-6 text-[var(--mute)] italic">
+            <MarkedText text={example.translation} />
+          </p>
+        )}
       </div>
     )
   }
@@ -123,9 +127,11 @@ export function ExampleLine({
       />
       <div className="min-w-0 flex-1">
         <p className="text-sm leading-5 text-[var(--ink)]">{sentence}</p>
-        <p className="text-xs leading-4 text-[var(--mute)] italic">
-          <MarkedText text={example.translation} />
-        </p>
+        {hideTranslation ? null : (
+          <p className="text-xs leading-4 text-[var(--mute)] italic">
+            <MarkedText text={example.translation} />
+          </p>
+        )}
       </div>
       <AudioButton
         url={example.audioUrl}
