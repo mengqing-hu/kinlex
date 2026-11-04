@@ -174,16 +174,9 @@ def build_report(language: str, input_path: Path) -> str:
             ],
         ),
         (
-            "Verbs ending in an untyped ending",
-            "The infinitive ending should stay on the root or suffix.",
-            [
-                f"{word.word}: {word.show()}"
-                for word in done
-                if word.word_class == "verb"
-                and len(word.parts) > 1
-                and word.parts[-1].morpheme is None
-                and word.parts[-1].text in {"en", "n"}
-            ],
+            "Verb roots named by the infinitive",
+            "Verb roots use the stem (`fahr-`, not `fahren`); `consistency` renames them.",
+            [f"`{root}`" for root in roots if root in verbs],
         ),
         (
             "Nouns without a plural",

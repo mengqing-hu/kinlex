@@ -20,6 +20,7 @@ from core.consistency import (
     split_lead,
 )
 from core.models import AudioResult, AudioTarget, Segment, Word, WordEnrichment
+from core.verb_stems import use_verb_stems, verb_infinitives
 from services import db
 from services.clients import (
     LLMProvider,
@@ -154,18 +155,6 @@ def apply_source_metadata(
     return enrichment.model_copy(update={"gender": gender, "segments": segments})
 
 
-def validate_word_enrichment(word: str, word_class: str, enrichment: WordEnrichment) -> None:
-    validate_segments(word, enrichment.segments)
-    last = enrichment.segments[-1]
-    if (
-        word_class == "verb"
-        and len(enrichment.segments) > 1
-        and last.morpheme_type is None
-        and last.word_part in {"en", "n"}
-    ):
-        raise ValidationError("a verb's infinitive ending must stay on its root or suffix")
-
-
 def _extract_json(text: str) -> object:
     body = _FENCE.sub("", text.strip())
     start, end = body.find("{"), body.rfind("}")
@@ -290,7 +279,7 @@ def generate_database_fields(
                     sentence_meaning=word.sentence_meaning or "not provided",
                 ),
                 schema=WordEnrichment,
-                validate=lambda value: validate_word_enrichment(stem, word.word_class, value),
+                validate=lambda value: validate_segments(stem, value.segments),
                 config=config,
                 summary=summary,
             )
@@ -333,7 +322,8 @@ def apply_root_consistency(*, language: str, dry_run: bool = False) -> Consisten
     """Bring every stored segmentation in line with the current lexicon and with each other.
 
     It reapplies postprocess_stem to what is already saved, so lexicon edits reach earlier
-    batches without calling the model, and then expands roots that name other segmented words.
+    batches without calling the model, names verb roots by their stem, and then expands roots
+    that name other segmented words.
     It runs over the whole vocabulary because a later batch can segment a word that an earlier
     batch used as a root (Bahnhof inside Hauptbahnhof).
     """
@@ -341,12 +331,13 @@ def apply_root_consistency(*, language: str, dry_run: bool = False) -> Consisten
     overrides = load_root_overrides(language)
     with db.connect() as connection, connection.transaction():
         stored = db.segmented_words(connection, language=language)
+        verbs = verb_infinitives([word for word, _segments in stored])
         updated = []
         for word, segments in stored:
             lead, body = split_lead(segments)
             stem = "".join(segment.word_part for segment in body)
             body = postprocess_stem(word, stem, body, affixes=affixes, overrides=overrides)
-            updated.append((word, lead + body))
+            updated.append((word, lead + use_verb_stems(word, body, verbs)))
         result = make_roots_consistent(updated)
         # Report every word that differs from what is stored, whichever step changed it.
         final = {change.word.id: change.after for change in result.changes}

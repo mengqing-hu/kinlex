@@ -82,6 +82,10 @@ def make_roots_consistent(entries: list[tuple[Word, list[Segment]]]) -> Consiste
                 parts.append(segment)
                 continue
             target_parts = resolve(target, visiting | {index})
+            if all(part.morpheme_type is None for part in target_parts):
+                # An unsegmented word (the preposition statt) says nothing about the root statt-.
+                parts.append(segment)
+                continue
             if len(target_parts) == 1:
                 # Keep this word's letters ("Bade") but take the word's own root ("baden").
                 parts.append(

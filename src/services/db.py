@@ -207,12 +207,12 @@ def import_vocabulary(
     if not pairs:
         return []
     rows = connection.execute(
-        """
+        f"""
         {_WORD_COLUMNS}
         where (w.language, w.word, w.word_class) in (
           select * from unnest(%s::text[], %s::text[], %s::text[])
         )
-        """.format(_WORD_COLUMNS=_WORD_COLUMNS),
+        """,
         ([p[0] for p in pairs], [p[1] for p in pairs], [p[2] for p in pairs]),
     ).fetchall()
     return [_word_from_row(row) for row in rows]
@@ -467,6 +467,12 @@ def replace_word_segments(
         morpheme_id = None
         if segment.morpheme_type is not None:
             assert segment.morpheme is not None and segment.morpheme_meaning is not None
+            # A verb stem gets its own slug: "druck-" must not land on the noun root "Druck".
+            kind = (
+                "stem"
+                if segment.morpheme_type == "root" and segment.morpheme.endswith("-")
+                else segment.morpheme_type
+            )
             row = connection.execute(
                 """
                 insert into public.morphemes
@@ -474,7 +480,7 @@ def replace_word_segments(
                 values (%s, %s, %s, %s, %s, %s)
                 on conflict (language, slug)
                 do update set slug = excluded.slug
-                returning id
+                returning id, morpheme
                 """,
                 (
                     word.language,
@@ -482,10 +488,13 @@ def replace_word_segments(
                     segment.morpheme_type,
                     segment.morpheme_meaning,
                     segment.is_separable,
-                    f"{_slugify(segment.morpheme)}-{segment.morpheme_type}",
+                    f"{_slugify(segment.morpheme)}-{kind}",
                 ),
             ).fetchone()
             assert row is not None
+            if row[1] != segment.morpheme:
+                # Two spellings with one slug would silently share a row, name and meaning.
+                raise ValueError(f"morpheme {segment.morpheme!r} has the slug of {row[1]!r}")
             morpheme_id = int(row[0])
         connection.execute(
             """
