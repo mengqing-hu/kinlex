@@ -1,5 +1,8 @@
 @import 'tailwindcss';
 
+/* Set on <html> before the first paint (see app/layout.tsx) when the sidebar is collapsed. */
+@custom-variant sidebar-collapsed (&:where(html[data-sidebar='collapsed'] *));
+
 :root {
   color-scheme: light;
   --bg: #f3f1ef;
@@ -63,6 +66,9 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-a {
-  color: inherit;
+/* In the base layer so that text colour utilities on links still win. */
+@layer base {
+  a {
+    color: inherit;
+  }
 }

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 
 import { ActivityGraphFrame } from '@/components/me/ActivityGraphFrame'
+import { Card } from '@/components/ui/Card'
 import { ACTIVITY_WEEKS, getActivityWindowStart, toDateKey } from '@/lib/utils/activityCalendar'
 import type { DailyActivity } from '@/types/domain'
 
@@ -317,7 +318,7 @@ export function Heatmap({ days, today: todayKey }: HeatmapProps) {
       : (ranges.find(({ value }) => value === range)?.period ?? '')
 
   return (
-    <section aria-labelledby="activity-heading">
+    <Card aria-labelledby="activity-heading">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold" id="activity-heading">
@@ -350,7 +351,7 @@ export function Heatmap({ days, today: todayKey }: HeatmapProps) {
         </div>
       </div>
 
-      <div className="mt-3 rounded-lg border border-[var(--line)] bg-[var(--card)] px-5 pt-4 pb-3">
+      <div className="mt-4">
         <ActivityGraphFrame key={range}>
           {range === 'year' ? (
             <YearView getDay={getDay} today={today} />
@@ -377,6 +378,6 @@ export function Heatmap({ days, today: todayKey }: HeatmapProps) {
           ) : null}
         </div>
       </div>
-    </section>
+    </Card>
   )
 }

@@ -5,15 +5,20 @@ import { useState } from 'react'
 import { getBrowserSupabase } from '@/lib/supabase/browser'
 
 interface GoogleSignInButtonProps {
+  // For a short visible label, e.g. "Google", that does not say what the button does on its own.
+  accessibleLabel?: string
   className?: string
   label?: string
+  labelClassName?: string
   nextPath?: string
   onError?: () => void
 }
 
 export function GoogleSignInButton({
+  accessibleLabel,
   className,
   label = 'Continue with Google',
+  labelClassName,
   nextPath = '/me',
   onError,
 }: GoogleSignInButtonProps) {
@@ -40,6 +45,7 @@ export function GoogleSignInButton({
   return (
     <button
       className={`inline-flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-60 ${className ?? ''}`}
+      aria-label={accessibleLabel}
       disabled={isRedirecting}
       type="button"
       onClick={handleClick}
@@ -62,7 +68,7 @@ export function GoogleSignInButton({
           fill="#1976D2"
         />
       </svg>
-      {isRedirecting ? 'Redirecting...' : label}
+      <span className={labelClassName}>{isRedirecting ? 'Redirecting...' : label}</span>
     </button>
   )
 }

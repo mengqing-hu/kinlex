@@ -3,17 +3,12 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
-import type { User } from '@supabase/supabase-js'
-
-import { AccountMenu } from '@/components/auth/AccountMenu'
-import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton'
 import { getBrowserSupabase } from '@/lib/supabase/browser'
 
 const VISITED_KEY = 'kinlex:visited'
 
 export function HomeExperience() {
   const [returning, setReturning] = useState(false)
-  const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
     const hasVisited = window.localStorage.getItem(VISITED_KEY) === '1'
@@ -23,32 +18,12 @@ export function HomeExperience() {
     void getBrowserSupabase()
       .auth.getSession()
       .then(({ data }) => {
-        if (data.session) {
-          setReturning(true)
-          setUser(data.session.user)
-        }
+        if (data.session) setReturning(true)
       })
   }, [])
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-6xl flex-col px-6 py-8 sm:px-8">
-      <nav className="flex items-center justify-between">
-        <span className="text-xl font-semibold">Kinlex</span>
-        <div className="flex items-center gap-3 text-sm font-semibold">
-          <Link href="/search">Search</Link>
-          {user ? (
-            <AccountMenu user={user} />
-          ) : (
-            <>
-              <Link href="/login">Sign in</Link>
-              <GoogleSignInButton
-                className="rounded-lg border border-[var(--line)] bg-[var(--card)] px-3 py-2 transition-colors hover:border-[var(--info)]"
-                label="Sign in with Google"
-              />
-            </>
-          )}
-        </div>
-      </nav>
+    <main className="mx-auto flex min-h-[calc(100dvh-3.5rem)] max-w-6xl flex-col px-6 sm:px-8 md:min-h-dvh">
       <section className="flex flex-1 flex-col justify-center py-20">
         <p className="text-sm font-semibold tracking-widest text-[var(--root)] uppercase">
           German vocabulary, connected

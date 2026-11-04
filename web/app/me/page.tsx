@@ -16,7 +16,7 @@ export default async function ProfilePage() {
   const stats = await getUserStatistics(supabase, user.id)
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-5">
       <StatsPanel stats={stats} />
       <Heatmap days={stats.dailyActivity} today={toDateKey(new Date())} />
     </div>

@@ -9,7 +9,11 @@
     "search": "Search",
     "signIn": "Sign in",
     "account": "Account",
-    "mainNavigation": "Main navigation"
+    "mainNavigation": "Main navigation",
+    "collapseSidebar": "Collapse sidebar",
+    "expandSidebar": "Expand sidebar",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "footer": {
     "description": "Learn words through their connections.",

@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 
+import { Card } from '@/components/ui/Card'
 import type { UserProfile } from '@/types/domain'
 
 export function SettingsForm({ profile }: { profile: UserProfile }) {
@@ -29,7 +30,7 @@ export function SettingsForm({ profile }: { profile: UserProfile }) {
   }
 
   return (
-    <section aria-labelledby="settings-heading">
+    <Card aria-labelledby="settings-heading">
       <h2 className="text-lg font-semibold" id="settings-heading">
         Settings
       </h2>
@@ -86,6 +87,6 @@ export function SettingsForm({ profile }: { profile: UserProfile }) {
           Delete account
         </button>
       </div>
-    </section>
+    </Card>
   )
 }

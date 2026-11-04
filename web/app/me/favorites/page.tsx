@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 import { WordList } from '@/components/list/WordList'
+import { Card } from '@/components/ui/Card'
 import { supportedLanguageCodes } from '@/lib/languages'
 import { listWordFilterOptions, listWords } from '@/lib/services/wordService'
 import { getWordListLabels } from '@/lib/wordListLabels'
@@ -26,12 +27,14 @@ export default async function FavoritesPage() {
   ])
 
   return (
-    <WordList
-      favoritesOnly
-      language={lang}
-      initialPage={initialPage}
-      filterOptions={filterOptions}
-      labels={{ ...labels, empty: 'You have not saved any words yet.' }}
-    />
+    <Card aria-label="Favorites" className="px-3 sm:px-5">
+      <WordList
+        favoritesOnly
+        language={lang}
+        initialPage={initialPage}
+        filterOptions={filterOptions}
+        labels={{ ...labels, empty: 'You have not saved any words yet.' }}
+      />
+    </Card>
   )
 }

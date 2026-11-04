@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 
 import { AudioProvider } from '@/components/audio/AudioProvider'
 import { ActivityHeartbeat } from '@/components/activity/ActivityHeartbeat'
+import { SIDEBAR_STORAGE_KEY } from '@/lib/sidebar'
 
 import './globals.css'
 
@@ -14,13 +15,20 @@ export const metadata: Metadata = {
   description: 'Learn German vocabulary through words, examples, and word families.',
 }
 
+// Runs before the page paints, so a collapsed sidebar never flashes open. Reading the preference
+// on the server would need a cookie, which would make every cached page dynamic.
+const sidebarScript = `try{if(localStorage.getItem('${SIDEBAR_STORAGE_KEY}')==='collapsed')document.documentElement.dataset.sidebar='collapsed'}catch(e){}`
+
 type RootLayoutProps = Readonly<{
   children: ReactNode
 }>
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: sidebarScript }} />
+      </head>
       <body>
         <AudioProvider>
           <ActivityHeartbeat />

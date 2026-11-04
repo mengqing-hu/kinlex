@@ -4,7 +4,7 @@ import type { User } from '@supabase/supabase-js'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
-import { accountPages } from '@/components/me/AccountTabs'
+import { accountPages } from '@/components/me/AccountNav'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,13 +41,23 @@ export function AccountMenu({ label = 'Account', user }: AccountMenuProps) {
       <DropdownMenuTrigger asChild>
         <button
           aria-label={label}
-          className="inline-flex size-9 items-center justify-center rounded-full bg-[var(--ink)] text-sm font-semibold text-[var(--card)] transition-opacity outline-none hover:opacity-85 focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:ring-offset-2"
+          className="md:sidebar-collapsed:justify-center md:sidebar-collapsed:px-0 flex w-full items-center gap-3 rounded-md px-2 py-1.5 text-left transition-colors outline-none hover:bg-[var(--bg)] focus-visible:ring-2 focus-visible:ring-[var(--info)]"
           type="button"
         >
-          {initial}
+          <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--ink)] text-sm font-semibold text-[var(--card)]">
+            {initial}
+          </span>
+          <span className="md:sidebar-collapsed:hidden min-w-0 flex-1">
+            <span className="block truncate text-sm font-medium text-[var(--ink)]">
+              {displayName ?? user.email}
+            </span>
+            {displayName ? (
+              <span className="block truncate text-xs text-[var(--mute)]">{user.email}</span>
+            ) : null}
+          </span>
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent align="end" className="w-56" side="right" sideOffset={12}>
         <div className="px-3 py-2">
           {displayName ? <p className="truncate text-sm font-semibold">{displayName}</p> : null}
           <p className="truncate text-xs text-[var(--mute)]">{user.email}</p>
