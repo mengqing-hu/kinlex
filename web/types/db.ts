@@ -735,7 +735,12 @@ export type Database = {
     Functions: {
       delete_current_user: { Args: never; Returns: undefined }
       flashcard_deck: {
-        Args: { p_language: string; p_limit?: number }
+        Args: {
+          p_language: string
+          p_levels?: string[]
+          p_limit?: number
+          p_source?: string
+        }
         Returns: number[]
       }
       record_flashcard_review: {

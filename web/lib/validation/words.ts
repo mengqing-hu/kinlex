@@ -1,9 +1,12 @@
 import { z } from 'zod'
 
+import { wordLevels } from '@/lib/constants'
+
 import { languageCodeSchema, limitSchema, optionalLanguageCodeSchema } from './common'
 
+export { wordLevels }
+
 const filterSchema = z.string().trim().min(1).max(100)
-export const wordLevels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as const
 export const wordSorts = ['familiarity_asc', 'familiarity_desc'] as const
 
 export const wordListParamsSchema = z.object({

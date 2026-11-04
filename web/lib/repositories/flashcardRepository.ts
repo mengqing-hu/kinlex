@@ -1,7 +1,7 @@
 import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js'
 
 import { NotFoundError, RepositoryError } from '@/lib/errors'
-import type { FlashcardResult } from '@/lib/validation/me'
+import type { FlashcardDeckParams, FlashcardResult } from '@/lib/validation/me'
 import type { Database } from '@/types/db'
 
 function assertQuerySucceeded(error: PostgrestError | null, operation: string): void {
@@ -10,10 +10,14 @@ function assertQuerySucceeded(error: PostgrestError | null, operation: string): 
 
 export async function drawFlashcardWordIds(
   db: SupabaseClient<Database>,
-  language: string,
-  limit: number,
+  params: FlashcardDeckParams,
 ): Promise<number[]> {
-  const { data, error } = await db.rpc('flashcard_deck', { p_language: language, p_limit: limit })
+  const { data, error } = await db.rpc('flashcard_deck', {
+    p_language: params.lang,
+    p_limit: params.limit,
+    p_source: params.source,
+    p_levels: params.levels,
+  })
   assertQuerySucceeded(error, 'draw flashcards')
   return data ?? []
 }

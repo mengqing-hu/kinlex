@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
-import { FLASHCARD_DEFAULT_COUNT, FLASHCARD_MAX_COUNT } from '@/lib/flashcards'
+import { wordLevels } from '@/lib/constants'
+import { FLASHCARD_DEFAULT_COUNT, FLASHCARD_MAX_COUNT, flashcardSources } from '@/lib/flashcards'
 
 import { languageCodeSchema, optionalLanguageCodeSchema } from './common'
 
@@ -39,6 +40,13 @@ export const flashcardDeckParamsSchema = z.object({
     .min(1, 'limit must be at least 1')
     .max(FLASHCARD_MAX_COUNT, `limit must be at most ${FLASHCARD_MAX_COUNT}`)
     .default(FLASHCARD_DEFAULT_COUNT),
+  source: z.enum(flashcardSources).default('all'),
+  // A comma-separated list such as "A1,B1"; empty or missing means every level.
+  levels: z
+    .string()
+    .default('')
+    .transform((value) => value.split(',').filter(Boolean))
+    .pipe(z.array(z.enum(wordLevels)).max(wordLevels.length)),
 })
 
 export const flashcardResults = ['know', 'learning'] as const

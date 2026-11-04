@@ -17,7 +17,7 @@ export async function drawFlashcards(
     throw new UnsupportedLanguageError(params.lang)
   }
 
-  const wordIds = await drawFlashcardWordIds(db, params.lang, params.limit)
+  const wordIds = await drawFlashcardWordIds(db, params)
   return findWordsByIds(db, params.lang, params.explain, wordIds, userId)
 }
 
