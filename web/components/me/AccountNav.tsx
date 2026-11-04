@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation'
 
 export const accountPages = [
   { href: '/me', label: 'Profile' },
-  { href: '/me/favorites', label: 'Favorites' },
   { href: '/me/settings', label: 'Settings' },
 ] as const
 

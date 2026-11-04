@@ -24,6 +24,12 @@ export async function AppShell({ children, language }: AppShellProps) {
       label: t('flashcards'),
       match: `${base}/flashcards`,
     },
+    {
+      href: `${base}/favorites`,
+      icon: 'favorites',
+      label: t('favorites'),
+      match: `${base}/favorites`,
+    },
     { href: '/search', icon: 'search', label: t('search'), match: '/search' },
   ]
 
