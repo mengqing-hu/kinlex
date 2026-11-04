@@ -1,7 +1,7 @@
 import type { NextRequest } from 'next/server'
 
 import { AppError } from '@/lib/errors'
-import { contentErrorResponse, contentResponse } from '@/lib/http'
+import { contentErrorResponse, contentResponse, privateResponse } from '@/lib/http'
 import { listWords } from '@/lib/services/wordService'
 import { getSupabase } from '@/lib/supabase/server'
 import { formatValidationError } from '@/lib/validation/common'
@@ -23,7 +23,8 @@ export async function GET(request: NextRequest) {
     } = await db.auth.getUser()
     const result = await listWords(db, parsedParams.data, user?.id)
 
-    return contentResponse(result)
+    // Signed-in results carry favorites and familiarity, so they must not land in a shared cache.
+    return user ? privateResponse(result) : contentResponse(result)
   } catch (error) {
     if (error instanceof AppError) {
       return contentErrorResponse(error.code, error.message, error.status)

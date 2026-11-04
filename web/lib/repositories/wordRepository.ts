@@ -70,11 +70,34 @@ async function findMorphemeWordIds(
   return (data ?? []).map(({ word_id }) => word_id)
 }
 
+async function findAllFavoriteWordIds(
+  db: SupabaseClient<Database>,
+  userId: string | undefined,
+): Promise<number[]> {
+  if (!userId) {
+    return []
+  }
+
+  const { data, error } = await db
+    .from('user_word_state')
+    .select('word_id')
+    .eq('user_id', userId)
+    .eq('favorited', true)
+
+  assertQuerySucceeded(error, 'filter words by favorites')
+  return (data ?? []).map(({ word_id }) => word_id)
+}
+
 async function findFilterWordIds(
   db: SupabaseClient<Database>,
   params: WordListQuery,
+  userId?: string,
 ): Promise<number[] | undefined> {
   const lookups: Array<Promise<number[]>> = []
+
+  if (params.favorites) {
+    lookups.push(findAllFavoriteWordIds(db, userId))
+  }
 
   if (params.topic) {
     lookups.push(findTopicWordIds(db, params.topic))
@@ -332,7 +355,7 @@ export async function findWords(
   params: WordListQuery,
   userId?: string,
 ): Promise<CursorPage<WordListItem>> {
-  const filterWordIds = await findFilterWordIds(db, params)
+  const filterWordIds = await findFilterWordIds(db, params, userId)
   if (filterWordIds?.length === 0) {
     return { items: [], nextCursor: null }
   }

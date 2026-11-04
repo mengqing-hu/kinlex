@@ -15,6 +15,7 @@ export const wordListParamsSchema = z.object({
   topic: filterSchema.optional(),
   morpheme: filterSchema.optional(),
   sort: z.enum(wordSorts).optional(),
+  favorites: z.literal('1').transform(() => true).optional(),
   cursor: z.string().trim().min(1, 'cursor cannot be empty').max(500).optional(),
   limit: limitSchema,
 })

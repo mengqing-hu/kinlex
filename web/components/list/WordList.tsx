@@ -56,6 +56,7 @@ interface WordListProps {
   level?: string
   morpheme?: string
   topic?: string
+  favoritesOnly?: boolean
   showLevelFilter?: boolean
   showTopicFilter?: boolean
   initialPage: CursorPage<WordListItem>
@@ -107,10 +108,15 @@ async function fetchWordPage(
   topic: string,
   morpheme: string | undefined,
   sort: string,
+  favoritesOnly: boolean,
   cursor?: string,
   signal?: AbortSignal,
 ): Promise<CursorPage<WordListItem>> {
   const params = new URLSearchParams({ lang: language, limit: String(PAGE_SIZE) })
+
+  if (favoritesOnly) {
+    params.set('favorites', '1')
+  }
 
   if (level) {
     params.set('level', level)
@@ -151,6 +157,7 @@ export function WordList({
   level,
   morpheme,
   topic,
+  favoritesOnly = false,
   showLevelFilter = false,
   showTopicFilter = true,
   initialPage,
@@ -220,6 +227,7 @@ export function WordList({
       filters.topic,
       morpheme,
       sort,
+      favoritesOnly,
       undefined,
       controller.signal,
     )
@@ -237,6 +245,7 @@ export function WordList({
     return () => controller.abort()
   }, [
     debouncedSearchQuery,
+    favoritesOnly,
     filters.partOfSpeech,
     filters.topic,
     language,
@@ -257,7 +266,7 @@ export function WordList({
     }
 
     // Size the word area so the whole page, including what sits below the list (the page's bottom
-    // padding and the footer), fits in the window. The page then has nothing to scroll, so the
+    // padding and a footer, if the page has one), fits in the window. The page then has nothing to scroll, so the
     // filter bar never slides under the sticky navigation. Positions are measured against the
     // page, so the result is the same however far the page has been scrolled.
     function measure() {
@@ -310,6 +319,7 @@ export function WordList({
         filters.topic,
         morpheme,
         sort,
+        favoritesOnly,
         state.nextCursor,
       )
       setState((current) => ({
