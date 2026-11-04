@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { SearchBox } from '@/components/nav/SearchBox'
 import { searchWords } from '@/lib/services/searchService'
 import { getPublicSupabase } from '@/lib/supabase/server'
+import { getWordPanelPath } from '@/lib/wordPanel'
 
 export const metadata: Metadata = {
   title: 'Search German vocabulary',
@@ -53,7 +54,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 <li key={word.id}>
                   <Link
                     className="flex items-start justify-between gap-4 py-5"
-                    href={`/de/word/${word.slug}`}
+                    href={getWordPanelPath('de', word.slug, word.level)}
                   >
                     <span>
                       <strong className="text-lg text-[var(--ink)]">{word.lemma}</strong>

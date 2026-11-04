@@ -60,7 +60,6 @@ export async function getWordListLabels(): Promise<WordListLabels> {
     },
     wordPanel: {
       close: wordT('closePanel'),
-      openFullPage: wordT('openFullPage'),
       loading: t('loading'),
       loadError: t('loadError'),
       retry: t('retry'),

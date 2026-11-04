@@ -5,6 +5,8 @@ import { useState, type ReactNode } from 'react'
 
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/HoverCard'
 import { fetchApiData } from '@/lib/client/apiClient'
+import { openWordPanelOnClick } from '@/lib/client/searchParams'
+import { getWordPanelPath } from '@/lib/wordPanel'
 import type { MorphemeWordCollection } from '@/types/domain'
 
 export interface MorphemeCardLabels {
@@ -122,7 +124,8 @@ export function MorphemeCard({ children, language, morphemeId, labels }: Morphem
                   <li key={word.id}>
                     <Link
                       className="flex items-baseline justify-between gap-3 rounded-md px-2 py-1 text-sm hover:bg-[var(--bg)] focus-visible:outline-2 focus-visible:outline-[var(--info)]"
-                      href={`/${encodeURIComponent(language)}/word/${encodeURIComponent(word.slug)}`}
+                      href={getWordPanelPath(language, word.slug, word.level)}
+                      onClick={(event) => openWordPanelOnClick(event, word.slug)}
                     >
                       <span className="shrink-0 font-medium">
                         {word.segments.length > 0

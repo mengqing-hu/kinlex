@@ -6,8 +6,6 @@ interface ExampleLineProps {
   example: WordExample
   playLabel: string
   slowLabel: string
-  // The side panel uses smaller text; the word page uses the default size.
-  compact?: boolean
   // The word the page is about, shown in bold wherever it appears in the sentence.
   targetWordId?: number
 }
@@ -72,28 +70,16 @@ function TokenizedSentence({
   return parts
 }
 
-export function ExampleLine({
-  example,
-  playLabel,
-  slowLabel,
-  compact = false,
-  targetWordId,
-}: ExampleLineProps) {
+export function ExampleLine({ example, playLabel, slowLabel, targetWordId }: ExampleLineProps) {
   return (
-    <div
-      // The hover background is one step off whatever the example sits on: the white side panel
-      // or the tinted word page.
-      className={`group relative flex items-center gap-1 rounded-lg transition-colors ${
-        compact ? 'py-1.5 pr-1 pl-5 hover:bg-[var(--bg)]' : 'py-3 pr-2 pl-8 hover:bg-[var(--card)]'
-      }`}
-    >
+    <div className="group relative flex items-center gap-1 rounded-lg py-1.5 pr-1 pl-5 transition-colors hover:bg-[var(--bg)]">
       {/* The marker gives way to the hover background, which then outlines the example. */}
       <span
         aria-hidden="true"
-        className={`absolute w-1 rounded-full bg-[var(--mute)]/25 transition-opacity group-hover:opacity-0 ${compact ? 'top-2.5 left-2 h-3' : 'top-4.5 left-3 h-4'}`}
+        className="absolute top-2.5 left-2 h-3 w-1 rounded-full bg-[var(--mute)]/25 transition-opacity group-hover:opacity-0"
       />
       <div className="min-w-0 flex-1">
-        <p className={`text-[var(--ink)] ${compact ? 'text-sm leading-5' : 'text-lg leading-7'}`}>
+        <p className="text-sm leading-5 text-[var(--ink)]">
           {example.tokens.length > 0 ? (
             <TokenizedSentence
               sentence={example.sentence}
@@ -104,9 +90,7 @@ export function ExampleLine({
             <MarkedText text={example.sentence} />
           )}
         </p>
-        <p
-          className={`text-[var(--mute)] italic ${compact ? 'text-xs leading-4' : 'mt-1 text-base leading-6'}`}
-        >
+        <p className="text-xs leading-4 text-[var(--mute)] italic">
           <MarkedText text={example.translation} />
         </p>
       </div>

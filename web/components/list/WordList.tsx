@@ -9,11 +9,11 @@ import type { MorphemeCardLabels } from '@/components/word/MorphemeCard'
 import { WordDetailPanel, type WordPanelLabels } from '@/components/word/WordDetailPanel'
 import { WordRow } from '@/components/word/WordRow'
 import { fetchApiData } from '@/lib/client/apiClient'
+import { SEARCH_PARAMS_CHANGE_EVENT, updateSearchParameter } from '@/lib/client/searchParams'
 import { getBrowserSupabase } from '@/lib/supabase/browser'
 import { wordLevels, wordSorts } from '@/lib/validation/words'
 import type { CursorPage, WordFilterOption, WordFilterOptions, WordListItem } from '@/types/domain'
 
-const FILTER_CHANGE_EVENT = 'kinlex:filters'
 const PAGE_SIZE = 20
 const MIN_SCROLL_AREA_HEIGHT = 320
 
@@ -73,11 +73,11 @@ interface WordListState extends CursorPage<WordListItem> {
 
 function subscribeToSearchParams(callback: () => void): () => void {
   window.addEventListener('popstate', callback)
-  window.addEventListener(FILTER_CHANGE_EVENT, callback)
+  window.addEventListener(SEARCH_PARAMS_CHANGE_EVENT, callback)
 
   return () => {
     window.removeEventListener('popstate', callback)
-    window.removeEventListener(FILTER_CHANGE_EVENT, callback)
+    window.removeEventListener(SEARCH_PARAMS_CHANGE_EVENT, callback)
   }
 }
 
@@ -87,19 +87,6 @@ function getSearchParamsSnapshot(): string {
 
 function getServerSearchParamsSnapshot(): string {
   return ''
-}
-
-function updateSearchParameter(name: string, value: string): void {
-  const url = new URL(window.location.href)
-
-  if (value) {
-    url.searchParams.set(name, value)
-  } else {
-    url.searchParams.delete(name)
-  }
-
-  window.history.pushState(null, '', url)
-  window.dispatchEvent(new Event(FILTER_CHANGE_EVENT))
 }
 
 async function fetchWordPage(

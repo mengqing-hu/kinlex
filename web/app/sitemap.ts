@@ -10,12 +10,8 @@ const baseUrl = config.siteUrl.replace(/\/$/, '')
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await getSupabase()
-  const [{ data: words, error }, topicGroups, morphemeGroups] = await Promise.all([
-    supabase
-      .from('words')
-      .select('language, slug, updated_at')
-      .eq('status', 'published')
-      .order('updated_at', { ascending: false }),
+  // Words have no pages of their own; they open in the side panel of the level lists.
+  const [topicGroups, morphemeGroups] = await Promise.all([
     Promise.all(
       supportedLanguageCodes.map(async (language) => ({
         language,
@@ -30,10 +26,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ),
   ])
 
-  if (error) {
-    throw new Error('Failed to load published words for the sitemap', { cause: error })
-  }
-
   const staticEntries: MetadataRoute.Sitemap = [
     { url: baseUrl, changeFrequency: 'daily', priority: 1 },
     { url: `${baseUrl}/search`, changeFrequency: 'weekly', priority: 0.7 },
@@ -41,13 +33,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/impressum`, changeFrequency: 'yearly', priority: 0.2 },
     { url: `${baseUrl}/privacy`, changeFrequency: 'yearly', priority: 0.2 },
   ]
-
-  const wordEntries: MetadataRoute.Sitemap = words.map((word) => ({
-    url: `${baseUrl}/${encodeURIComponent(word.language)}/word/${encodeURIComponent(word.slug)}`,
-    lastModified: word.updated_at,
-    changeFrequency: 'weekly',
-    priority: 0.8,
-  }))
 
   const topicEntries: MetadataRoute.Sitemap = topicGroups.flatMap(({ language, topics }) => [
     {
@@ -75,5 +60,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ])
 
-  return [...staticEntries, ...topicEntries, ...rootEntries, ...wordEntries]
+  return [...staticEntries, ...topicEntries, ...rootEntries]
 }

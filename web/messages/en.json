@@ -58,8 +58,6 @@
     "metadataDescription": "Learn German words containing {root}, meaning {meaning}."
   },
   "wordDetail": {
-    "backToHome": "Kinlex",
-    "level": "Level {level}",
     "plural": "Plural: {plural}",
     "meaning": "Meaning",
     "structure": "Word structure",
@@ -71,7 +69,6 @@
     "playExample": "Play example sentence",
     "slowAudio": "Replay at a slower speed",
     "closePanel": "Close details",
-    "openFullPage": "Open full page",
     "morphemeTypes": {
       "prefix": "Prefix",
       "root": "Root",
@@ -90,9 +87,7 @@
       "particle": "Particle",
       "preposition": "Preposition",
       "pronoun": "Pronoun"
-    },
-    "metadataTitle": "{word} – meaning, examples and word family",
-    "metadataDescription": "Learn the meaning, word structure, forms and examples of {word}."
+    }
   },
   "levelPage": {
     "backToHome": "Kinlex",
