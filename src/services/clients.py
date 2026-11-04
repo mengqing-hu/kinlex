@@ -24,8 +24,13 @@ class Voice:
         return f"{self.name}; {self.instructions}" if self.instructions else self.name
 
 
+DEFAULT_TEMPERATURE = 0.2
+
+
 class LLMProvider(Protocol):
-    def complete(self, model: str, system: str, prompt: str) -> str: ...
+    def complete(
+        self, model: str, system: str, prompt: str, temperature: float | None = None
+    ) -> str: ...
 
 
 class TTSProvider(Protocol):
@@ -82,7 +87,9 @@ class _LLM:
         self.limiters = {model: _Limiter(rate) for model, rate in limits.items()}
         self.reasoning_effort = reasoning_effort
 
-    def complete(self, model: str, system: str, prompt: str) -> str:
+    def complete(
+        self, model: str, system: str, prompt: str, temperature: float | None = None
+    ) -> str:
         if model in self.limiters:
             self.limiters[model].wait()
         response = _post(
@@ -94,7 +101,7 @@ class _LLM:
                     {"role": "system", "content": system},
                     {"role": "user", "content": prompt},
                 ],
-                "temperature": 0.2,
+                "temperature": DEFAULT_TEMPERATURE if temperature is None else temperature,
                 **({"reasoning_effort": self.reasoning_effort} if self.reasoning_effort else {}),
             },
         )

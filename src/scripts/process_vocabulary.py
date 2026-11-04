@@ -18,6 +18,7 @@ from core.pipeline import (
     import_vocabulary,
     publish_vocabulary,
 )
+from core.topics import classify_topics
 from services.clients import revalidate_website
 from utils.runtime import get_logger
 
@@ -56,7 +57,8 @@ def _add_common_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="consistency only: print the root changes without saving them",
+        help="consistency: print the root changes without saving them; "
+        "topics: ask the model and write the report, but save no topics",
     )
     parser.add_argument(
         "--lexicon-only",
@@ -82,6 +84,7 @@ def _parser() -> argparse.ArgumentParser:
         ("run", "generate database fields and then TTS audio"),
         ("consistency", "expand roots that name other segmented words, across all batches"),
         ("annotate", "split example sentences into words with their meanings, for hover"),
+        ("topics", "sort words into topics, for the topic filter and topic pages"),
     ):
         command = commands.add_parser(name, help=help_text)
         _add_common_options(command)
@@ -139,6 +142,21 @@ def main() -> int:
             dry_run=args.dry_run,
         )
         return 0
+
+    if args.command == "topics":
+        if args.batch is not None:
+            raise ValueError("topics works through all words not yet sorted; use --limit")
+        topics_result = classify_topics(
+            get_config(),
+            language=args.language,
+            limit=args.limit,
+            force=args.force,
+            dry_run=args.dry_run,
+            report_path=args.output_dir / f"topics_report{'_dry_run' if args.dry_run else ''}.md",
+        )
+        print(f"topics: sorted {topics_result.sorted} words, failed {topics_result.failed} batches")
+        print(f"report: {topics_result.report}")
+        return 1 if topics_result.failed else 0
 
     if args.command == "annotate":
         if args.batch is not None:

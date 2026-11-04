@@ -122,3 +122,21 @@ class SentenceGlosses(Record):
 
 class TokenGlossReply(Record):
     sentences: list[SentenceGlosses]
+
+
+class WordForTopics(Record):
+    id: int
+    word: str
+    word_class: str
+    level: str | None
+    meaning: str | None
+    example_sentence: str | None
+
+
+class WordTopics(Record):
+    id: int
+    topics: list[str]
+
+
+class WordTopicsReply(Record):
+    words: list[WordTopics]
