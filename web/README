@@ -94,16 +94,18 @@ pnpm start
 - If the application reports a missing `NEXT_PUBLIC_SUPABASE_ANON_KEY`, run `supabase status`, update `web/.env.local`, and restart `pnpm dev`.
 - If port 3000 is already in use, Next.js selects another port and prints its URL in the terminal.
 
-
-
 #### Terminal 1
+
 First, ensure that Docker Desktop is running, then execute the following in the project root directory:
+
 ```
 supabase start
 ```
 
 #### Terminal 2
+
 Execute the following in a new terminal:
+
 ```
 cd web
 pnpm dev

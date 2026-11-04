@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { getTranslations } from 'next-intl/server'
 
-import { Footer } from '@/components/layout/Footer'
 import { TopNav } from '@/components/nav/TopNav'
 import { getLanguageDefinition, isSupportedLanguage } from '@/lib/languages'
 
@@ -19,10 +18,7 @@ export default async function LanguageLayout({ children, params }: LanguageLayou
   }
 
   const language = getLanguageDefinition(lang)
-  const [navigation, footer] = await Promise.all([
-    getTranslations('navigation'),
-    getTranslations('footer'),
-  ])
+  const navigation = await getTranslations('navigation')
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -37,10 +33,6 @@ export default async function LanguageLayout({ children, params }: LanguageLayou
         }}
       />
       <div className="flex-1">{children}</div>
-      <Footer
-        copyright={footer('copyright', { year: new Date().getUTCFullYear() })}
-        description={footer('description')}
-      />
     </div>
   )
 }

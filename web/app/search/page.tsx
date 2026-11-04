@@ -56,9 +56,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                     href={`/de/word/${word.slug}`}
                   >
                     <span>
-                      <strong className="text-lg text-[var(--ink)]">
-                        {word.lemma}
-                      </strong>
+                      <strong className="text-lg text-[var(--ink)]">{word.lemma}</strong>
                       <span className="mt-1 block text-sm text-[var(--mute)]">
                         {word.gloss ?? word.pos}
                       </span>

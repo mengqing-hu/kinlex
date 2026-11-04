@@ -28,9 +28,7 @@ export function RelatedWords({
             className="block rounded-lg border border-[var(--line)] bg-[var(--card)] px-3 py-2.5 transition-colors hover:border-[var(--root)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--info)]"
             href={`/${encodeURIComponent(language)}/word/${encodeURIComponent(word.slug)}`}
           >
-            <span className="font-semibold text-[var(--ink)]">
-              {word.lemma}
-            </span>
+            <span className="font-semibold text-[var(--ink)]">{word.lemma}</span>
             <span className="mt-0.5 block text-xs text-[var(--mute)]">
               {formatPartOfSpeech(partOfSpeechLabels, word.pos, word.posDetail)}
               {word.level ? ` · ${word.level}` : ''}

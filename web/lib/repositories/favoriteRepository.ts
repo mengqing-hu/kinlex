@@ -14,7 +14,9 @@ export async function findFavorites(
 ): Promise<FavoriteWord[]> {
   const { data, error } = await db
     .from('user_word_state')
-    .select('words!inner(id, slug, lemma:word, pos:word_class, posDetail:word_class_detail, gender, level, freq_rank)')
+    .select(
+      'words!inner(id, slug, lemma:word, pos:word_class, posDetail:word_class_detail, gender, level, freq_rank)',
+    )
     .eq('user_id', userId)
     .eq('favorited', true)
   assertQuerySucceeded(error, 'load favorites')
