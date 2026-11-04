@@ -42,20 +42,11 @@ export default async function RootsPage({ params }: RootsPageProps) {
 
   return (
     <main className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-12">
-      <header className="max-w-3xl">
-        <p className="text-sm font-semibold tracking-widest text-[var(--root)] uppercase">
-          {t('eyebrow')}
-        </p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">{t('title')}</h1>
-        <p className="mt-4 text-lg leading-8 text-[var(--mute)]">{t('description')}</p>
-      </header>
       <RootDirectory
         items={items}
         language={lang}
         labels={{
           empty: t('empty'),
-          searchLabel: t('searchLabel'),
-          searchPlaceholder: t('searchPlaceholder'),
           types: {
             prefix: t('types.prefix'),
             root: t('types.root'),

@@ -20,12 +20,7 @@
     "copyright": "Copyright {year} Kinlex"
   },
   "rootsPage": {
-    "eyebrow": "Word structure",
-    "title": "Explore German word families",
-    "description": "Browse prefixes, roots and suffixes to see how German words are connected.",
-    "searchLabel": "Filter word parts",
-    "searchPlaceholder": "Search by form or meaning",
-    "empty": "No word parts match this search.",
+    "empty": "No word parts are available yet.",
     "word": "word",
     "words": "words",
     "types": {

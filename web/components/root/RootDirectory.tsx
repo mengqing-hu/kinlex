@@ -1,14 +1,9 @@
-'use client'
-
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
 
 import type { MorphemeDirectoryItem } from '@/types/domain'
 
 interface RootDirectoryLabels {
   empty: string
-  searchLabel: string
-  searchPlaceholder: string
   types: Record<string, string>
   word: string
   words: string
@@ -23,35 +18,12 @@ interface RootDirectoryProps {
 const morphemeTypes = ['prefix', 'root', 'suffix'] as const
 
 export function RootDirectory({ items, labels, language }: RootDirectoryProps) {
-  const [query, setQuery] = useState('')
-  const normalizedQuery = query.trim().toLocaleLowerCase('de')
-  const filteredItems = useMemo(
-    () =>
-      normalizedQuery
-        ? items.filter((item) =>
-            `${item.text} ${item.meaning}`.toLocaleLowerCase('de').includes(normalizedQuery),
-          )
-        : items,
-    [items, normalizedQuery],
-  )
-
   return (
-    <div className="mt-10">
-      <label className="block max-w-xl text-sm font-semibold text-[var(--ink)]">
-        {labels.searchLabel}
-        <input
-          className="mt-2 min-h-11 w-full rounded-xl border border-[var(--line)] bg-[var(--card)] px-4 font-normal outline-none focus:border-[var(--info)] focus:ring-2 focus:ring-[var(--info)]/20"
-          placeholder={labels.searchPlaceholder}
-          type="search"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-        />
-      </label>
-
-      {filteredItems.length > 0 ? (
-        <div className="mt-10 space-y-12">
+    <div>
+      {items.length > 0 ? (
+        <div className="space-y-12">
           {morphemeTypes.map((type) => {
-            const typeItems = filteredItems.filter((item) => item.type === type)
+            const typeItems = items.filter((item) => item.type === type)
             if (typeItems.length === 0) return null
 
             return (
@@ -82,7 +54,7 @@ export function RootDirectory({ items, labels, language }: RootDirectoryProps) {
           })}
         </div>
       ) : (
-        <p className="mt-10 text-[var(--mute)]">{labels.empty}</p>
+        <p className="text-[var(--mute)]">{labels.empty}</p>
       )}
     </div>
   )
