@@ -7,6 +7,7 @@
     "allTopics": "All topics",
     "roots": "Roots",
     "flashcards": "Flashcards",
+    "favorites": "Favorites",
     "search": "Search",
     "signIn": "Sign in",
     "account": "Account",
@@ -202,6 +203,11 @@
     "relatedWords": "Related words",
     "noRelatedWords": "No related words are available yet.",
     "separable": "Separable"
+  },
+  "favoritesPage": {
+    "metadataTitle": "Favorites",
+    "title": "Favorites",
+    "empty": "You have not saved any words yet."
   },
   "flashcardsPage": {
     "metadataTitle": "Flashcards",
