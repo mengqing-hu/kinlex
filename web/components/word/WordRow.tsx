@@ -3,7 +3,7 @@ import { FavoriteButton } from '@/components/favorite/FavoriteButton'
 import { FamiliarityMeter } from '@/components/word/FamiliarityMeter'
 import type { MorphemeCardLabels } from '@/components/word/MorphemeCard'
 import { MorphemeText } from '@/components/word/MorphemeText'
-import { parseExampleMarkup } from '@/lib/utils/exampleMarkup'
+import { ExampleSentence } from '@/components/word/ExampleLine'
 import type { WordListItem } from '@/types/domain'
 
 interface WordRowLabels {
@@ -86,20 +86,9 @@ export function WordRow({
         {word.glosses.join(', ')}
       </p>
       {compact ? null : word.example ? (
-        <div
-          className="flex min-w-0 items-center gap-1"
-          title={`${word.example.sentence} — ${word.example.translation}`}
-        >
+        <div className="flex min-w-0 items-center gap-1">
           <span className="min-w-0 truncate text-sm text-[var(--ink)]">
-            {parseExampleMarkup(word.example.sentence).map((part, index) =>
-              part.highlighted ? (
-                <strong className="font-semibold" key={`${index}-${part.text}`}>
-                  {part.text}
-                </strong>
-              ) : (
-                <span key={`${index}-${part.text}`}>{part.text}</span>
-              ),
-            )}
+            <ExampleSentence example={word.example} highlightTarget={false} />
           </span>
           <AudioButton
             url={word.example.audioUrl}
@@ -109,6 +98,7 @@ export function WordRow({
           <span
             aria-hidden={hideMeanings}
             className={`min-w-0 flex-1 truncate text-xs text-[var(--mute)] ${hideMeanings ? hiddenMeaningClassName : ''}`}
+            title={hideMeanings ? undefined : word.example.translation}
           >
             — {word.example.translation}
           </span>

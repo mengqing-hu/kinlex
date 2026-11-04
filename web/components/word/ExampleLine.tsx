@@ -1,4 +1,5 @@
 import { AudioButton } from '@/components/audio/AudioButton'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip'
 import { parseExampleMarkup } from '@/lib/utils/exampleMarkup'
 import type { ExampleToken, WordExample } from '@/types/domain'
 
@@ -16,9 +17,9 @@ interface ExampleLineProps {
 }
 
 // Renders [bracketed] parts in bold, in the sentence and in its translation alike.
-function MarkedText({ text }: { text: string }) {
+function MarkedText({ text, bold = true }: { text: string; bold?: boolean }) {
   return parseExampleMarkup(text).map((part, index) =>
-    part.highlighted ? (
+    part.highlighted && bold ? (
       <strong className="font-semibold" key={`${index}-${part.text}`}>
         {part.text}
       </strong>
@@ -48,19 +49,16 @@ function TokenizedSentence({
     const isTarget = targetWordId !== undefined && token.wordId === targetWordId
     parts.push(
       token.gloss ? (
-        <span className="group/token relative" key={token.start}>
-          <span
-            className={`cursor-help underline decoration-transparent decoration-2 underline-offset-4 transition-colors group-hover/token:decoration-[var(--ink)] ${isTarget ? 'font-semibold' : ''}`}
-          >
-            {text}
-          </span>
-          <span
-            className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-1.5 -translate-x-1/2 rounded-md bg-[var(--ink)] px-2.5 py-1 text-xs font-semibold whitespace-nowrap text-[var(--card)] not-italic opacity-0 shadow-md transition-opacity group-hover/token:opacity-100"
-            role="tooltip"
-          >
-            {token.gloss}
-          </span>
-        </span>
+        <Tooltip key={token.start}>
+          <TooltipTrigger asChild>
+            <span
+              className={`cursor-help underline decoration-transparent decoration-2 underline-offset-4 transition-colors hover:decoration-[var(--ink)] ${isTarget ? 'font-semibold' : ''}`}
+            >
+              {text}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent className="pointer-events-none">{token.gloss}</TooltipContent>
+        </Tooltip>
       ) : (
         <span className={isTarget ? 'font-semibold' : undefined} key={token.start}>
           {text}
@@ -75,6 +73,29 @@ function TokenizedSentence({
   return parts
 }
 
+// The sentence alone: word by word with hover meanings when it has been annotated, otherwise
+// with its [bracketed] parts in bold.
+export function ExampleSentence({
+  example,
+  targetWordId,
+  highlightTarget = true,
+}: {
+  example: WordExample
+  targetWordId?: number
+  // Off where the sentence sits next to its word anyway, such as in a word list row.
+  highlightTarget?: boolean
+}) {
+  return example.tokens.length > 0 ? (
+    <TokenizedSentence
+      sentence={example.sentence}
+      targetWordId={highlightTarget ? targetWordId : undefined}
+      tokens={example.tokens}
+    />
+  ) : (
+    <MarkedText bold={highlightTarget} text={example.sentence} />
+  )
+}
+
 export function ExampleLine({
   example,
   playLabel,
@@ -84,16 +105,7 @@ export function ExampleLine({
   unavailableAudioLabel,
   hideTranslation = false,
 }: ExampleLineProps) {
-  const sentence =
-    example.tokens.length > 0 ? (
-      <TokenizedSentence
-        sentence={example.sentence}
-        targetWordId={targetWordId}
-        tokens={example.tokens}
-      />
-    ) : (
-      <MarkedText text={example.sentence} />
-    )
+  const sentence = <ExampleSentence example={example} targetWordId={targetWordId} />
 
   if (featured) {
     return (

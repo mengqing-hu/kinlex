@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 
 import { AudioProvider } from '@/components/audio/AudioProvider'
 import { ActivityHeartbeat } from '@/components/activity/ActivityHeartbeat'
+import { TooltipProvider } from '@/components/ui/Tooltip'
 import { SIDEBAR_STORAGE_KEY } from '@/lib/sidebar'
 
 import './globals.css'
@@ -31,8 +32,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
       </head>
       <body>
         <AudioProvider>
-          <ActivityHeartbeat />
-          {children}
+          {/* Hover meanings in example sentences show at once, as the reader moves along. */}
+          <TooltipProvider delayDuration={0} skipDelayDuration={0}>
+            <ActivityHeartbeat />
+            {children}
+          </TooltipProvider>
         </AudioProvider>
       </body>
     </html>
