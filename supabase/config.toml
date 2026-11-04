@@ -53,8 +53,8 @@ file_size_limit = "50MiB"
 enabled = true
 site_url = "http://localhost:3000"
 additional_redirect_urls = [
-  "http://localhost:3000/auth/callback",
-  "http://127.0.0.1:3000/auth/callback",
+  "http://localhost:3000/auth/callback**",
+  "http://127.0.0.1:3000/auth/callback**",
 ]
 jwt_expiry = 3600
 enable_refresh_token_rotation = true
@@ -82,6 +82,13 @@ secure_password_change = true
 max_frequency = "1s"
 otp_length = 6
 otp_expiry = 3600
+
+# Credentials come from supabase/.env, which is git-ignored.
+[auth.external.google]
+enabled = true
+client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
+skip_nonce_check = false
 
 [auth.sms]
 enable_signup = false

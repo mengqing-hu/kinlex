@@ -3,12 +3,17 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
+import type { User } from '@supabase/supabase-js'
+
+import { AccountMenu } from '@/components/auth/AccountMenu'
+import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton'
 import { getBrowserSupabase } from '@/lib/supabase/browser'
 
 const VISITED_KEY = 'kinlex:visited'
 
 export function HomeExperience() {
   const [returning, setReturning] = useState(false)
+  const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
     const hasVisited = window.localStorage.getItem(VISITED_KEY) === '1'
@@ -18,7 +23,10 @@ export function HomeExperience() {
     void getBrowserSupabase()
       .auth.getSession()
       .then(({ data }) => {
-        if (data.session) setReturning(true)
+        if (data.session) {
+          setReturning(true)
+          setUser(data.session.user)
+        }
       })
   }, [])
 
@@ -28,12 +36,17 @@ export function HomeExperience() {
         <span className="text-xl font-semibold">Kinlex</span>
         <div className="flex items-center gap-3 text-sm font-semibold">
           <Link href="/search">Search</Link>
-          <Link
-            className="rounded-lg border border-[var(--line)] bg-[var(--card)] px-3 py-2"
-            href="/login"
-          >
-            Sign in
-          </Link>
+          {user ? (
+            <AccountMenu user={user} />
+          ) : (
+            <>
+              <Link href="/login">Sign in</Link>
+              <GoogleSignInButton
+                className="rounded-lg border border-[var(--line)] bg-[var(--card)] px-3 py-2 transition-colors hover:border-[var(--info)]"
+                label="Sign in with Google"
+              />
+            </>
+          )}
         </div>
       </nav>
       <section className="flex flex-1 flex-col justify-center py-20">

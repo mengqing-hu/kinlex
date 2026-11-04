@@ -36,3 +36,14 @@ export function DropdownMenuItem({ className = '', ...props }: DropdownMenuItemP
     />
   )
 }
+
+type DropdownMenuSeparatorProps = ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Separator>
+
+export function DropdownMenuSeparator({ className = '', ...props }: DropdownMenuSeparatorProps) {
+  return (
+    <DropdownMenuPrimitive.Separator
+      className={`-mx-1.5 my-1.5 h-px bg-[var(--line)] ${className}`}
+      {...props}
+    />
+  )
+}

@@ -1,6 +1,7 @@
 import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js'
 
 import { RepositoryError } from '@/lib/errors'
+import { getActivityWindowStart, toDateKey } from '@/lib/utils/activityCalendar'
 import type { Database } from '@/types/db'
 import type { UserStatistics } from '@/types/domain'
 
@@ -17,8 +18,8 @@ export async function findUserStatistics(
       .from('daily_study_time')
       .select('date, active_seconds, words_viewed')
       .eq('user_id', userId)
-      .order('date', { ascending: true })
-      .limit(366),
+      .gte('date', toDateKey(getActivityWindowStart(new Date())))
+      .order('date', { ascending: true }),
     db
       .from('user_stats')
       .select('total_days, current_streak, longest_streak')

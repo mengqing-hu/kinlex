@@ -10,14 +10,17 @@ export function StatsPanel({ stats }: { stats: UserStatistics }) {
   ]
   return (
     <section aria-labelledby="stats-heading">
-      <h2 className="text-2xl font-semibold" id="stats-heading">
+      <h2 className="text-lg font-semibold" id="stats-heading">
         Learning statistics
       </h2>
-      <dl className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      <dl className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
         {items.map(([label, value]) => (
-          <div className="rounded-xl border border-[var(--line)] bg-[var(--card)] p-4" key={label}>
-            <dt className="text-sm text-[var(--mute)]">{label}</dt>
-            <dd className="mt-2 text-xl font-semibold">{value}</dd>
+          <div
+            className="rounded-lg border border-[var(--line)] bg-[var(--card)] px-3 py-2.5"
+            key={label}
+          >
+            <dt className="text-xs text-[var(--mute)]">{label}</dt>
+            <dd className="mt-1 text-lg font-semibold">{value}</dd>
           </div>
         ))}
       </dl>

@@ -30,10 +30,10 @@ export function SettingsForm({ profile }: { profile: UserProfile }) {
 
   return (
     <section aria-labelledby="settings-heading">
-      <h2 className="text-2xl font-semibold" id="settings-heading">
+      <h2 className="text-lg font-semibold" id="settings-heading">
         Settings
       </h2>
-      <form className="mt-4 max-w-xl space-y-4" onSubmit={save}>
+      <form className="mt-3 max-w-xl space-y-4" onSubmit={save}>
         <label className="block text-sm font-semibold">
           Display name
           <input
