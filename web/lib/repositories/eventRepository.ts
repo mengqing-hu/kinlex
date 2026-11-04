@@ -8,37 +8,33 @@ function assertQuerySucceeded(error: PostgrestError | null, operation: string): 
   if (error) throw new RepositoryError(`Failed to ${operation}`, { cause: error })
 }
 
+// Sends of the same queued events can overlap, so duplicates are skipped in the insert itself
+// rather than looked up first, and the rows that went in tell which events were new.
 export async function insertNewActivityEvents(
   db: SupabaseClient<Database>,
   userId: string,
   events: ActivityEventInput[],
 ): Promise<ActivityEventInput[]> {
-  const clientIds = events.map((event) => event.clientEventId)
-  const { data: existing, error: existingError } = await db
+  const { data, error } = await db
     .from('activity_events')
+    .upsert(
+      events.map((event) => ({
+        user_id: userId,
+        client_event_id: event.clientEventId,
+        language: event.language,
+        event_type: event.eventType,
+        target_type: event.targetType,
+        target_id: event.targetId,
+        value: event.value,
+        occurred_at: event.occurredAt,
+      })),
+      { onConflict: 'user_id,client_event_id', ignoreDuplicates: true },
+    )
     .select('client_event_id')
-    .eq('user_id', userId)
-    .in('client_event_id', clientIds)
-  assertQuerySucceeded(existingError, 'check activity events')
-
-  const existingIds = new Set((existing ?? []).map((event) => event.client_event_id))
-  const newEvents = events.filter((event) => !existingIds.has(event.clientEventId))
-  if (newEvents.length === 0) return []
-
-  const { error } = await db.from('activity_events').insert(
-    newEvents.map((event) => ({
-      user_id: userId,
-      client_event_id: event.clientEventId,
-      language: event.language,
-      event_type: event.eventType,
-      target_type: event.targetType,
-      target_id: event.targetId,
-      value: event.value,
-      occurred_at: event.occurredAt,
-    })),
-  )
   assertQuerySucceeded(error, 'record activity events')
-  return newEvents
+
+  const insertedIds = new Set((data ?? []).map((event) => event.client_event_id))
+  return events.filter((event) => insertedIds.has(event.clientEventId))
 }
 
 export async function addDailyActivity(
@@ -57,13 +53,4 @@ export async function addDailyActivity(
     p_words_viewed: wordsViewed,
   })
   assertQuerySucceeded(error, 'update daily activity')
-}
-
-export async function refreshUserStatistics(
-  db: SupabaseClient<Database>,
-  userId: string,
-  today: string,
-): Promise<void> {
-  const { error } = await db.rpc('refresh_user_stats', { p_user_id: userId, p_today: today })
-  assertQuerySucceeded(error, 'refresh user statistics')
 }

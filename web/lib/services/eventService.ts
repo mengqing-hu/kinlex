@@ -1,11 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 
-import { getDateInTimezone, systemClock, type Clock } from '@/lib/clock'
-import {
-  addDailyActivity,
-  insertNewActivityEvents,
-  refreshUserStatistics,
-} from '@/lib/repositories/eventRepository'
+import { getDateInTimezone } from '@/lib/clock'
+import { addDailyActivity, insertNewActivityEvents } from '@/lib/repositories/eventRepository'
 import { findProfile } from '@/lib/repositories/profileRepository'
 import type { ActivityEventInput } from '@/lib/validation/me'
 import type { Database } from '@/types/db'
@@ -21,7 +17,6 @@ export async function recordActivityEvents(
   db: SupabaseClient<Database>,
   userId: string,
   events: ActivityEventInput[],
-  clock: Clock = systemClock,
 ): Promise<{ accepted: number }> {
   const [newEvents, profile] = await Promise.all([
     insertNewActivityEvents(db, userId, events),
@@ -57,6 +52,6 @@ export async function recordActivityEvents(
     ),
   )
 
-  await refreshUserStatistics(db, userId, getDateInTimezone(clock.now(), profile.timezone))
+  // update_daily_study_time refreshes the streaks itself.
   return { accepted: newEvents.length }
 }
