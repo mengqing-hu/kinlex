@@ -33,6 +33,7 @@ export async function GET(request: NextRequest, context: MorphemeWordsRouteConte
       parsedId.data,
       parsedParams.data.lang,
       parsedParams.data.explain,
+      parsedParams.data.limit,
     )
     return contentResponse(result)
   } catch (error) {

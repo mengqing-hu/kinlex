@@ -1,6 +1,36 @@
+import { useSyncExternalStore } from 'react'
+
 // The word list keeps its filters and the open word in the URL without navigating. Changes go
 // through history.pushState, which fires no event of its own, so this one tells listeners.
 export const SEARCH_PARAMS_CHANGE_EVENT = 'kinlex:filters'
+
+function subscribeToSearchParams(callback: () => void): () => void {
+  window.addEventListener('popstate', callback)
+  window.addEventListener(SEARCH_PARAMS_CHANGE_EVENT, callback)
+
+  return () => {
+    window.removeEventListener('popstate', callback)
+    window.removeEventListener(SEARCH_PARAMS_CHANGE_EVENT, callback)
+  }
+}
+
+function getSearchParamsSnapshot(): string {
+  return window.location.search
+}
+
+function getServerSearchParamsSnapshot(): string {
+  return ''
+}
+
+// The page's query string, following both the changes below and Back and Forward; empty while
+// rendering on the server.
+export function useSearchParamsString(): string {
+  return useSyncExternalStore(
+    subscribeToSearchParams,
+    getSearchParamsSnapshot,
+    getServerSearchParamsSnapshot,
+  )
+}
 
 // Sets several parameters as one history entry; an empty value removes that parameter.
 export function updateSearchParameters(changes: Record<string, string>): void {

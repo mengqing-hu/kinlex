@@ -12,12 +12,13 @@ export async function getMorphemeWords(
   morphemeId: number,
   language: string,
   explainLanguage: string,
+  limit: number,
 ): Promise<MorphemeWordCollection> {
   if (!isSupportedLanguage(language)) {
     throw new UnsupportedLanguageError(language)
   }
 
-  const result = await findMorphemeWords(db, morphemeId, language, explainLanguage)
+  const result = await findMorphemeWords(db, morphemeId, language, explainLanguage, limit)
   if (!result) {
     throw new NotFoundError('Morpheme not found')
   }

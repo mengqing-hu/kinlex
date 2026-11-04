@@ -15,6 +15,7 @@ export async function findMorphemeWords(
   morphemeId: number,
   language: string,
   explainLanguage: string,
+  limit: number,
 ): Promise<MorphemeWordCollection | null> {
   const { data: morpheme, error: morphemeError } = await db
     .from('morphemes')
@@ -51,7 +52,7 @@ export async function findMorphemeWords(
     .in('id', wordIds)
     .order('freq_rank', { ascending: true, nullsFirst: false })
     .order('id', { ascending: true })
-    .limit(8)
+    .limit(limit)
 
   assertQuerySucceeded(wordsError, 'load morpheme words')
   return {

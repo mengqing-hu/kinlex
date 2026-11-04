@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { FilterBar } from '@/components/list/FilterBar'
 import { hiddenSides, type ListOptionsLabels } from '@/components/list/ListOptions'
@@ -14,9 +14,9 @@ import { WordCard } from '@/components/word/WordCard'
 import { WordRow } from '@/components/word/WordRow'
 import { fetchApiData } from '@/lib/client/apiClient'
 import {
-  SEARCH_PARAMS_CHANGE_EVENT,
   updateSearchParameter,
   updateSearchParameters,
+  useSearchParamsString,
 } from '@/lib/client/searchParams'
 import {
   findMarkedWordIds,
@@ -82,24 +82,6 @@ interface WordListProps {
 interface WordListState extends CursorPage<WordListItem> {
   queryKey: string
   error: boolean
-}
-
-function subscribeToSearchParams(callback: () => void): () => void {
-  window.addEventListener('popstate', callback)
-  window.addEventListener(SEARCH_PARAMS_CHANGE_EVENT, callback)
-
-  return () => {
-    window.removeEventListener('popstate', callback)
-    window.removeEventListener(SEARCH_PARAMS_CHANGE_EVENT, callback)
-  }
-}
-
-function getSearchParamsSnapshot(): string {
-  return window.location.search
-}
-
-function getServerSearchParamsSnapshot(): string {
-  return ''
 }
 
 // The filters of a word list, as the words API takes them.
@@ -191,11 +173,7 @@ export function WordList({
   labels,
 }: WordListProps) {
   const router = useRouter()
-  const search = useSyncExternalStore(
-    subscribeToSearchParams,
-    getSearchParamsSnapshot,
-    getServerSearchParamsSnapshot,
-  )
+  const search = useSearchParamsString()
   const filters = useMemo(() => {
     const params = new URLSearchParams(search)
     return {

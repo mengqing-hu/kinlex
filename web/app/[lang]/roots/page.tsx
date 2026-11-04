@@ -6,6 +6,7 @@ import { RootDirectory, type RootDirectoryLabels } from '@/components/root/RootD
 import { config } from '@/lib/config'
 import { isSupportedLanguage, supportedLanguageCodes } from '@/lib/languages'
 import { listMorphemes } from '@/lib/services/morphemeService'
+import { getWordListLabels } from '@/lib/wordListLabels'
 import { getPublicSupabase } from '@/lib/supabase/server'
 
 export const revalidate = 3600
@@ -35,9 +36,10 @@ export default async function RootsPage({ params }: RootsPageProps) {
   const { lang } = await params
   if (!isSupportedLanguage(lang)) notFound()
 
-  const [items, t] = await Promise.all([
+  const [items, t, listLabels] = await Promise.all([
     listMorphemes(getPublicSupabase(), lang),
     getTranslations('rootsPage'),
+    getWordListLabels(),
   ])
 
   return (
@@ -48,6 +50,19 @@ export default async function RootsPage({ params }: RootsPageProps) {
         labels={{
           allTypes: t('allTypes'),
           empty: t('empty'),
+          morphemePanel: {
+            close: listLabels.wordPanel.close,
+            loading: listLabels.morphemeCard.loading,
+            loadError: listLabels.morphemeCard.loadError,
+            retry: listLabels.morphemeCard.retry,
+            meaning: listLabels.wordPanel.meaning,
+            words: t('panel.words'),
+            noWords: t('panel.noWords'),
+            separable: listLabels.morphemeCard.separable,
+            openList: t('panel.openList'),
+            morphemeTypes: listLabels.morphemeTypes,
+            partsOfSpeech: listLabels.partsOfSpeech,
+          },
           type: t('type'),
           types: {
             prefix: t('types.prefix'),
@@ -67,6 +82,7 @@ export default async function RootsPage({ params }: RootsPageProps) {
             cards: t('views.cards'),
           },
           word: t('word'),
+          wordPanel: listLabels.wordPanel,
           words: t('words'),
         }}
       />

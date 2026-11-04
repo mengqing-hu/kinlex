@@ -55,6 +55,11 @@
           "desc": "Most words first"
         }
       }
+    },
+    "panel": {
+      "words": "Words",
+      "noWords": "No words use this word part yet.",
+      "openList": "Open as a full list"
     }
   },
   "rootPage": {

@@ -1,23 +1,34 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { type MouseEvent, useCallback, useState } from 'react'
 
 import { FilterSelect } from '@/components/list/FilterSelect'
 import { SortSelect, type SortSelectLabels } from '@/components/list/SortSelect'
 import { ViewToggle, type ViewToggleLabels, type WordListView } from '@/components/list/ViewToggle'
-
+import {
+  MorphemeDetailPanel,
+  type MorphemePanelLabels,
+} from '@/components/root/MorphemeDetailPanel'
+import { WordDetailPanel, type WordPanelLabels } from '@/components/word/WordDetailPanel'
+import {
+  updateSearchParameter,
+  updateSearchParameters,
+  useSearchParamsString,
+} from '@/lib/client/searchParams'
 import type { SortOrder } from '@/lib/constants'
 import type { MorphemeDirectoryItem } from '@/types/domain'
 
 export interface RootDirectoryLabels {
   allTypes: string
   empty: string
+  morphemePanel: MorphemePanelLabels
   type: string
   sorting: SortSelectLabels<RootSort>
   types: Record<string, string>
   views: ViewToggleLabels
   word: string
+  wordPanel: WordPanelLabels
   words: string
 }
 
@@ -44,6 +55,24 @@ export function RootDirectory({ items, labels, language }: RootDirectoryProps) {
   const [sort, setSort] = useState<RootSort>('alphabetical')
   const [order, setOrder] = useState<SortOrder>(defaultRootSortOrders.alphabetical)
   const wordCount = (count: number) => `${count} ${count === 1 ? labels.word : labels.words}`
+  // The word part open in the side panel, and a word opened from it, kept in the URL like the
+  // word list's open word, so Back closes them and they can be shared.
+  const search = new URLSearchParams(useSearchParamsString())
+  const openSlug = search.get('root') ?? ''
+  const openWord = search.get('word') ?? ''
+  const openItem = items.find((item) => item.slug === openSlug)
+  const closeMorphemePanel = useCallback(() => updateSearchParameter('root', ''), [])
+  const closeWordPanel = useCallback(() => updateSearchParameter('word', ''), [])
+
+  // A plain click opens the word part beside the list; a modified or middle click keeps the
+  // link's own behaviour, its page in a new tab.
+  function openOnClick(event: MouseEvent, slug: string) {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return
+    }
+    event.preventDefault()
+    updateSearchParameters({ root: slug, word: '' })
+  }
   const direction = order === 'asc' ? 1 : -1
   const shownItems = (
     selectedType ? items.filter((item) => item.type === selectedType) : items
@@ -98,12 +127,16 @@ export function RootDirectory({ items, labels, language }: RootDirectoryProps) {
                   {labels.types[type] ?? type}
                 </h2>
                 {view === 'cards' ? (
-                  <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  <ul
+                    className={`mt-4 grid gap-3 sm:grid-cols-2 ${openItem ? 'xl:grid-cols-3' : 'lg:grid-cols-3'}`}
+                  >
                     {typeItems.map((item) => (
                       <li key={item.id}>
                         <Link
-                          className="block rounded-xl border border-[var(--line)] bg-[var(--card)] p-4 hover:border-[var(--root)] focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none"
+                          aria-current={item.slug === openSlug ? 'true' : undefined}
+                          className={`block rounded-xl border bg-[var(--card)] p-4 hover:border-[var(--root)] focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none ${item.slug === openSlug ? 'border-[var(--root)]' : 'border-[var(--line)]'}`}
                           href={`/${language}/roots/${item.slug}`}
+                          onClick={(event) => openOnClick(event, item.slug)}
                         >
                           <span className="text-lg font-semibold text-[var(--ink)]">
                             {item.text}
@@ -123,8 +156,10 @@ export function RootDirectory({ items, labels, language }: RootDirectoryProps) {
                     {typeItems.map((item) => (
                       <li className="border-b border-[var(--line)] last:border-b-0" key={item.id}>
                         <Link
-                          className="grid min-h-9 grid-cols-[8rem_minmax(0,1fr)_auto] items-center gap-x-3 rounded-md px-2 py-1 transition-colors hover:bg-[var(--row-hover)] focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none"
+                          aria-current={item.slug === openSlug ? 'true' : undefined}
+                          className={`grid min-h-9 grid-cols-[8rem_minmax(0,1fr)_auto] items-center gap-x-3 rounded-md px-2 py-1 transition-colors hover:bg-[var(--row-hover)] focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none ${item.slug === openSlug ? 'bg-[var(--row-hover)]' : ''}`}
                           href={`/${language}/roots/${item.slug}`}
+                          onClick={(event) => openOnClick(event, item.slug)}
                         >
                           <span className="truncate text-sm font-semibold text-[var(--ink)]">
                             {item.text}
@@ -147,6 +182,24 @@ export function RootDirectory({ items, labels, language }: RootDirectoryProps) {
       ) : (
         <p className="mt-8 text-[var(--mute)]">{labels.empty}</p>
       )}
+
+      {/* A word opened from the word part's list takes the panel's place; closing it goes back. */}
+      {openWord ? (
+        <WordDetailPanel
+          labels={labels.wordPanel}
+          language={language}
+          slug={openWord}
+          onClose={closeWordPanel}
+        />
+      ) : openItem ? (
+        <MorphemeDetailPanel
+          labels={labels.morphemePanel}
+          language={language}
+          morpheme={openItem}
+          wordCount={wordCount(openItem.wordCount)}
+          onClose={closeMorphemePanel}
+        />
+      ) : null}
     </div>
   )
 }
