@@ -75,3 +75,50 @@ class AudioResult(Record):
     path: str
     voice: str
     model: str
+
+
+class LexiconEntry(Record):
+    id: int
+    word: str
+    word_class: str
+    gloss: str | None = None
+
+
+class ExampleToken(Record):
+    """One word of an example sentence; start and end are character offsets, end exclusive."""
+
+    position: int
+    start: int
+    end: int
+    surface: str
+    lemma: str
+    word_id: int | None = None
+    # The entry's meaning when it has only one; None leaves the choice to the model.
+    lexicon_gloss: str | None = None
+
+
+class TokenGloss(Record):
+    example_id: int
+    position: int
+    meaning_language: str
+    gloss: str
+    source: Literal["lexicon", "model"]
+
+
+class TokenToGloss(Record):
+    example_id: int
+    sentence: str
+    translation: str | None
+    position: int
+    surface: str
+    lemma: str
+    word_id: int | None = None
+
+
+class SentenceGlosses(Record):
+    id: int
+    glosses: dict[str, str]
+
+
+class TokenGlossReply(Record):
+    sentences: list[SentenceGlosses]

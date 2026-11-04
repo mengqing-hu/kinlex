@@ -60,6 +60,7 @@ python -m scripts.process_vocabulary <command> [options]
 | `prepare`     | Same as `run`, for one batch you review before publishing.                       |
 | `process`     | `prepare`, then `publish`, unless any word or audio failed.                      |
 | `consistency` | Reapplies the lexicon to every stored segmentation and expands nested roots.     |
+| `annotate`    | Splits example sentences into words with their meaning there, for hover on the site. |
 
 Options:
 
@@ -69,11 +70,30 @@ Options:
   either, the whole CSV is processed and the files are named `german_enriched.csv` and `.json`.
 - `--force` regenerates fields or audio that already exist.
 - `--dry-run` (`consistency` only) prints the changes without saving them.
+- `--lexicon-only` (`annotate` only) stores the words and the meanings the vocabulary settles,
+  without calling the LLM.
 - `--input PATH`, `--language CODE`, and `--output-dir PATH` override the defaults.
 
 Generation is idempotent. Without `--force`, completed rows are skipped and failed rows remain
 eligible for the next run. With `--force`, cached LLM responses are reused as long as the prompt
 is unchanged, so a forced rerun only calls the model for words it has not answered before.
+
+## Example annotations
+
+`annotate` needs spaCy and its German model, which are an optional extra:
+
+```bash
+pip install -e ".[annotate]"
+kinlex-pipeline annotate --lexicon-only   # words and vocabulary meanings, no model calls
+kinlex-pipeline annotate                  # then the LLM fills in the remaining meanings
+```
+
+spaCy finds each word's dictionary form and joins a separated verb prefix to its verb ("hast ...
+vor" is vorhaben). A word whose vocabulary entry has a single meaning takes it directly; the LLM is
+asked, 20 sentences per call, only for words whose entry lists several meanings ("from, of") and
+words that are not in the vocabulary, such as articles. The command is idempotent: it tokenizes
+only examples without tokens and asks only for meanings still missing, so rerunning it retries
+failed batches. `--limit N` counts examples; `--force` tokenizes every example again.
 
 ## Batch workflow
 

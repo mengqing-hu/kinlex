@@ -6,6 +6,7 @@ from pathlib import Path
 import httpx
 
 from config import REPO_ROOT, get_config, get_settings
+from core.annotation import annotate_examples
 from core.consistency import ConsistencyResult
 from core.models import Segment
 from core.pipeline import (
@@ -57,6 +58,11 @@ def _add_common_options(parser: argparse.ArgumentParser) -> None:
         action="store_true",
         help="consistency only: print the root changes without saving them",
     )
+    parser.add_argument(
+        "--lexicon-only",
+        action="store_true",
+        help="annotate only: store tokens and vocabulary meanings without calling the LLM",
+    )
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -75,6 +81,7 @@ def _parser() -> argparse.ArgumentParser:
         ("process", "generate, export, and publish one vocabulary batch"),
         ("run", "generate database fields and then TTS audio"),
         ("consistency", "expand roots that name other segmented words, across all batches"),
+        ("annotate", "split example sentences into words with their meanings, for hover"),
     ):
         command = commands.add_parser(name, help=help_text)
         _add_common_options(command)
@@ -132,6 +139,19 @@ def main() -> int:
             dry_run=args.dry_run,
         )
         return 0
+
+    if args.command == "annotate":
+        if args.batch is not None:
+            raise ValueError("annotate works through examples in order; use --limit")
+        result = annotate_examples(
+            get_config(),
+            language=args.language,
+            limit=args.limit,
+            force=args.force,
+            use_model=not args.lexicon_only,
+        )
+        print(f"annotate: processed {result.processed}, failed {result.failed}")
+        return 1 if result.failed else 0
 
     offset, limit, file_stem = _selection(args)
     config = get_config()
