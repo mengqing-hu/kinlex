@@ -284,4 +284,10 @@ join public.words
 on conflict (example_id, target_type, target_id) do update
 set sort_order = excluded.sort_order;
 
+-- The server key of .env.example, so a fresh local database can serve content. Never register this
+-- key on a hosted project.
+insert into private.server_keys (key_hash, label)
+values (encode(sha256(convert_to('kinlex-local-server-key', 'UTF8')), 'hex'), 'local development')
+on conflict (key_hash) do nothing;
+
 commit;

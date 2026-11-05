@@ -7,8 +7,17 @@ import { cookies } from 'next/headers'
 import { config } from '@/lib/config'
 import type { Database } from '@/types/db'
 
+// The content tables are only readable with this key, which the browser never sees, so the
+// dictionary cannot be paged through with the public anon key alone.
+function getServerKeyHeaders(): Record<string, string> {
+  const serverKey = process.env.SUPABASE_SERVER_KEY
+  if (!serverKey) throw new Error('SUPABASE_SERVER_KEY is required')
+  return { 'x-kinlex-server-key': serverKey }
+}
+
 export function getPublicSupabase() {
   return createClient<Database>(config.supabaseUrl, config.supabaseAnonKey, {
+    global: { headers: getServerKeyHeaders() },
     auth: {
       autoRefreshToken: false,
       detectSessionInUrl: false,
@@ -21,6 +30,7 @@ export async function getSupabase() {
   const cookieStore = await cookies()
 
   return createServerClient<Database>(config.supabaseUrl, config.supabaseAnonKey, {
+    global: { headers: getServerKeyHeaders() },
     cookies: {
       getAll: () => cookieStore.getAll(),
       setAll: (cookiesToSet) => {
