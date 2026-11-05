@@ -7,9 +7,12 @@ import { useEffect, useState } from 'react'
 import { AccountMenu } from '@/components/auth/AccountMenu'
 import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton'
 import { getBrowserSupabase } from '@/lib/supabase/browser'
+import { fetchApiData } from '@/lib/client/apiClient'
 import { flushEventQueue } from '@/lib/client/eventQueue'
 import { mergeLocalFamiliarity } from '@/lib/client/localFamiliarity'
 import { mergeLocalFavorites } from '@/lib/client/localFavorites'
+import { onProfileSaved } from '@/lib/client/profileEvents'
+import type { UserProfile } from '@/types/domain'
 
 interface UserMenuProps {
   accountLabel: string
@@ -18,6 +21,9 @@ interface UserMenuProps {
 
 export function UserMenu({ accountLabel, signInLabel }: UserMenuProps) {
   const [user, setUser] = useState<User | null | undefined>(undefined)
+  // The name and picture the user set; until it loads the menu shows the Google ones.
+  const [profile, setProfile] = useState<UserProfile | null>(null)
+  const userId = user?.id
 
   useEffect(() => {
     const supabase = getBrowserSupabase()
@@ -46,13 +52,28 @@ export function UserMenu({ accountLabel, signInLabel }: UserMenuProps) {
     }
   }, [])
 
+  useEffect(() => {
+    if (!userId) return
+    let isMounted = true
+    fetchApiData<UserProfile>('/api/v1/me/profile', { cache: 'no-store' })
+      .then((loaded) => {
+        if (isMounted) setProfile(loaded)
+      })
+      .catch(() => undefined)
+    const unsubscribe = onProfileSaved(setProfile)
+    return () => {
+      isMounted = false
+      unsubscribe()
+    }
+  }, [userId])
+
   if (user === undefined) {
     // Reserve the account row's space while the session loads, so the sidebar does not jump.
     return <span aria-hidden="true" className="block h-11" />
   }
 
   if (user) {
-    return <AccountMenu label={accountLabel} user={user} />
+    return <AccountMenu label={accountLabel} profile={profile} user={user} />
   }
 
   return (

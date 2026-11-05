@@ -4,7 +4,7 @@ import type { User } from '@supabase/supabase-js'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
-import { accountPages } from '@/components/me/AccountNav'
+import { Avatar } from '@/components/ui/Avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +13,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu'
 import { getBrowserSupabase } from '@/lib/supabase/browser'
+import type { UserProfile } from '@/types/domain'
+
+const accountPages = [
+  { href: '/me', label: 'Profile' },
+  { href: '/me/settings', label: 'Settings' },
+] as const
 
 // Google sign-ins fill full_name; magic-link users only have an email.
 function getDisplayName(user: User) {
@@ -23,12 +29,13 @@ function getDisplayName(user: User) {
 interface AccountMenuProps {
   label?: string
   user: User
+  profile: UserProfile | null
 }
 
-export function AccountMenu({ label = 'Account', user }: AccountMenuProps) {
+export function AccountMenu({ label = 'Account', user, profile }: AccountMenuProps) {
   const router = useRouter()
-  const displayName = getDisplayName(user)
-  const initial = (displayName ?? user.email ?? '?').charAt(0).toUpperCase()
+  const displayName = profile?.displayName ?? getDisplayName(user)
+  const name = displayName ?? user.email ?? '?'
 
   async function signOut() {
     await getBrowserSupabase().auth.signOut()
@@ -44,16 +51,14 @@ export function AccountMenu({ label = 'Account', user }: AccountMenuProps) {
           className="md:sidebar-collapsed:justify-center md:sidebar-collapsed:px-0 flex w-full items-center gap-3 rounded-md px-2 py-1.5 text-left transition-colors outline-none hover:bg-[var(--bg)] focus-visible:ring-2 focus-visible:ring-[var(--info)]"
           type="button"
         >
-          <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--ink)] text-sm font-semibold text-[var(--card)]">
-            {initial}
-          </span>
-          <span className="md:sidebar-collapsed:hidden min-w-0 flex-1">
-            <span className="block truncate text-sm font-medium text-[var(--ink)]">
-              {displayName ?? user.email}
-            </span>
-            {displayName ? (
-              <span className="block truncate text-xs text-[var(--mute)]">{user.email}</span>
-            ) : null}
+          <Avatar
+            className="size-8 bg-[var(--ink)] text-xs text-[var(--card)]"
+            name={name}
+            url={profile?.avatarUrl ?? null}
+          />
+          {/* Only the name: the email is in the menu that opens. */}
+          <span className="md:sidebar-collapsed:hidden block min-w-0 flex-1 truncate text-sm font-medium text-[var(--ink)]">
+            {name}
           </span>
         </button>
       </DropdownMenuTrigger>

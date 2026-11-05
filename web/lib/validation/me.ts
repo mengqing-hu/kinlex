@@ -5,13 +5,22 @@ import { FLASHCARD_DEFAULT_COUNT, FLASHCARD_MAX_COUNT, flashcardSources } from '
 
 import { languageCodeSchema, optionalLanguageCodeSchema } from './common'
 
-export const profileUpdateSchema = z.object({
-  displayName: z.string().trim().min(1).max(80).nullable(),
-  nativeLanguage: languageCodeSchema,
-  uiLanguage: languageCodeSchema,
-  timezone: z.string().trim().min(1).max(100),
-  profilePublic: z.boolean(),
-})
+// Fields left out stay as they are, so the profile page and the settings page each save only
+// their own.
+export const profileUpdateSchema = z
+  .object({
+    displayName: z.string().trim().min(1).max(80).nullable(),
+    // A file the user uploaded to their own folder of the avatars bucket.
+    avatarPath: z
+      .string()
+      .regex(/^[0-9a-f-]{36}\/[\w-]+\.(webp|png)$/)
+      .nullable(),
+    nativeLanguage: languageCodeSchema,
+    uiLanguage: languageCodeSchema,
+    timezone: z.string().trim().min(1).max(100),
+    profilePublic: z.boolean(),
+  })
+  .partial()
 
 export const favoriteWordIdSchema = z.coerce.number().int().positive()
 

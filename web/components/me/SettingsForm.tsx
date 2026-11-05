@@ -17,7 +17,13 @@ export function SettingsForm({ profile }: { profile: UserProfile }) {
     const response = await fetch('/api/v1/me/profile', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(state),
+      // The name and the picture are edited on the profile page.
+      body: JSON.stringify({
+        nativeLanguage: state.nativeLanguage,
+        uiLanguage: state.uiLanguage,
+        timezone: state.timezone,
+        profilePublic: state.profilePublic,
+      }),
     })
     setStatus(response.ok ? 'saved' : 'error')
   }
@@ -35,14 +41,6 @@ export function SettingsForm({ profile }: { profile: UserProfile }) {
         Settings
       </h2>
       <form className="mt-3 max-w-xl space-y-4" onSubmit={save}>
-        <label className="block text-sm font-semibold">
-          Display name
-          <input
-            className="mt-1 min-h-10 w-full rounded-lg border border-[var(--line)] bg-[var(--card)] px-3 font-normal"
-            value={state.displayName ?? ''}
-            onChange={(event) => setState({ ...state, displayName: event.target.value || null })}
-          />
-        </label>
         <label className="block text-sm font-semibold">
           Timezone
           <input

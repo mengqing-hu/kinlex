@@ -161,6 +161,8 @@ export interface FavoriteWord {
 
 export interface UserProfile {
   displayName: string | null
+  avatarPath: string | null
+  avatarUrl: string | null
   nativeLanguage: string
   uiLanguage: string
   timezone: string
