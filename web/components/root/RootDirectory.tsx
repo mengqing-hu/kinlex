@@ -52,8 +52,10 @@ function compareText(left: MorphemeDirectoryItem, right: MorphemeDirectoryItem):
 export function RootDirectory({ items, labels, language }: RootDirectoryProps) {
   const [selectedType, setSelectedType] = useState('')
   const [view, setView] = useState<WordListView>('cards')
-  const [sort, setSort] = useState<RootSort>('alphabetical')
+  // Null until the reader picks a sort; the list is then in its default order, A to Z.
+  const [chosenSort, setChosenSort] = useState<RootSort | null>(null)
   const [order, setOrder] = useState<SortOrder>(defaultRootSortOrders.alphabetical)
+  const sort: RootSort = chosenSort ?? 'alphabetical'
   const wordCount = (count: number) => `${count} ${count === 1 ? labels.word : labels.words}`
   // The word part open in the side panel, and a word opened from it, kept in the URL like the
   // word list's open word, so Back closes them and they can be shared.
@@ -104,10 +106,10 @@ export function RootDirectory({ items, labels, language }: RootDirectoryProps) {
             defaultSort="alphabetical"
             labels={labels.sorting}
             order={order}
-            sort={sort}
+            sort={chosenSort}
             sorts={rootSorts}
             onChange={(nextSort, nextOrder) => {
-              setSort(nextSort)
+              setChosenSort(nextSort)
               setOrder(nextOrder)
             }}
           />

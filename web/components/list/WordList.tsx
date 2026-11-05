@@ -184,7 +184,8 @@ export function WordList({
       view: wordListViews.find((option) => option === params.get('view')) ?? 'list',
       // The word open in the side panel, kept in the URL so Back closes it and it can be shared.
       openWord: params.get('word') ?? '',
-      sort: wordSorts.find((option) => option === params.get('sort')) ?? 'frequency',
+      // The sort the reader chose; none means the default order, frequency.
+      sort: wordSorts.find((option) => option === params.get('sort')) ?? null,
       order: sortOrders.find((option) => option === params.get('order')),
     }
   }, [search])
@@ -206,9 +207,10 @@ export function WordList({
   const loadMoreRef = useRef<() => Promise<void>>(async () => undefined)
   const [scrollAreaHeight, setScrollAreaHeight] = useState<number | null>(null)
   // Sorts by what one learner did need an account, so guests get the default order instead.
-  const sortAllowed = signedIn || !personalWordSorts.includes(filters.sort)
-  const sort: WordSort = sortAllowed ? filters.sort : 'frequency'
-  const order: SortOrder = (sortAllowed ? filters.order : undefined) ?? defaultSortOrders[sort]
+  const chosenSort =
+    filters.sort && (signedIn || !personalWordSorts.includes(filters.sort)) ? filters.sort : null
+  const sort: WordSort = chosenSort ?? 'frequency'
+  const order: SortOrder = (chosenSort ? filters.order : undefined) ?? defaultSortOrders[sort]
   const queryKey = `${debouncedSearchQuery}:${filters.partOfSpeech}:${filters.topic}:${morpheme ?? ''}:${sort}:${order}:${dataVersion}`
 
   useEffect(() => {
@@ -424,7 +426,7 @@ export function WordList({
         selectedTopic={filters.topic}
         hidden={filters.hidden}
         hideActions={filters.hideActions}
-        selectedSort={sort}
+        selectedSort={chosenSort}
         selectedOrder={order}
         canUsePersonalSorts={signedIn}
         view={filters.view}
@@ -440,9 +442,7 @@ export function WordList({
         onSortChange={(nextSort, nextOrder) =>
           updateSearchParameters(
             // The default order keeps the URL clean.
-            nextSort === 'frequency' && nextOrder === defaultSortOrders.frequency
-              ? { sort: '', order: '' }
-              : { sort: nextSort, order: nextOrder },
+            nextSort === null ? { sort: '', order: '' } : { sort: nextSort, order: nextOrder },
           )
         }
         // The list is the default, so it leaves the URL clean.

@@ -72,6 +72,7 @@ export default async function RootsPage({ params }: RootsPageProps) {
           sorting: {
             sort: t('sorting.sort'),
             sortBy: t('sorting.sortBy'),
+            default: t('sorting.default'),
             reverse: t('sorting.reverse'),
             sorts: t.raw('sorting.sorts') as RootDirectoryLabels['sorting']['sorts'],
             orders: t.raw('sorting.orders') as RootDirectoryLabels['sorting']['orders'],

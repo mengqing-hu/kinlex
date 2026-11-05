@@ -13,6 +13,8 @@ import type { SortOrder, WordSort } from '@/lib/constants'
 export interface SortSelectLabels<S extends string = WordSort> {
   sort: string
   sortBy: string
+  // The menu item that goes back to the list's usual order.
+  default: string
   // Spoken after the current direction on the direction button.
   reverse: string
   // Why some sorts cannot be chosen, such as sorting by what the learner did without an account.
@@ -24,15 +26,18 @@ export interface SortSelectLabels<S extends string = WordSort> {
 
 interface SortSelectProps<S extends string> {
   sorts: readonly S[]
-  // The list's usual order; any other sort or direction highlights the control.
+  // The order the list uses while no sort is chosen.
   defaultSort: S
   // The direction each sort starts in when chosen.
   defaultOrders: Record<S, SortOrder>
   disabledSorts?: readonly S[]
-  sort: S
+  // The sort the reader chose, or null for the list's usual order. Any choice highlights the
+  // control and names the sort, even one that orders the list as the default does.
+  sort: S | null
   order: SortOrder
   labels: SortSelectLabels<S>
-  onChange: (sort: S, order: SortOrder) => void
+  // Called with null when the reader goes back to the default.
+  onChange: (sort: S | null, order: SortOrder) => void
 }
 
 function ArrowIcon({ order }: { order: SortOrder }) {
@@ -62,8 +67,9 @@ export function SortSelect<S extends string>({
   labels,
   onChange,
 }: SortSelectProps<S>) {
-  const active = sort !== defaultSort || order !== defaultOrders[defaultSort]
-  const shown = active ? labels.sorts[sort] : labels.sort
+  const active = sort !== null
+  const shownSort = sort ?? defaultSort
+  const shown = sort === null ? labels.sort : labels.sorts[sort]
   // Every text the control can show, stacked in one grid cell, so it keeps the width of the longest.
   const texts = [labels.sort, ...sorts.map((option) => labels.sorts[option])]
 
@@ -89,7 +95,7 @@ export function SortSelect<S extends string>({
     >
       <DropdownMenu>
         <DropdownMenuTrigger
-          aria-label={`${labels.sort}: ${labels.sorts[sort]}`}
+          aria-label={`${labels.sort}: ${sort === null ? labels.default : labels.sorts[sort]}`}
           className={`${segmentClassName} ${segmentHoverClassName} gap-1.5 rounded-l-lg pr-2.5 pl-3.5`}
           title={disabledSorts.length > 0 ? labels.disabledHint : undefined}
         >
@@ -120,10 +126,15 @@ export function SortSelect<S extends string>({
         <DropdownMenuContent className="min-w-48">
           <DropdownMenuLabel>{labels.sortBy}</DropdownMenuLabel>
           <DropdownMenuRadioGroup
-            value={sort}
+            value={sort ?? ''}
             // A new sort starts in its own usual direction.
-            onValueChange={(value) => onChange(value as S, defaultOrders[value as S])}
+            onValueChange={(value) =>
+              value === ''
+                ? onChange(null, defaultOrders[defaultSort])
+                : onChange(value as S, defaultOrders[value as S])
+            }
           >
+            <DropdownMenuRadioItem value="">{labels.default}</DropdownMenuRadioItem>
             {menuSorts.map((option) => (
               <DropdownMenuRadioItem
                 disabled={disabledSorts.includes(option)}
@@ -140,12 +151,20 @@ export function SortSelect<S extends string>({
         aria-hidden="true"
         className={`my-2 w-px ${active ? 'bg-[var(--root)]/40' : 'bg-[var(--line)]'}`}
       />
+      {/* The default is one fixed order, so its direction only changes once a sort is chosen. */}
       <button
-        aria-label={`${labels.orders[sort][order]}. ${labels.reverse}`}
-        className={`${segmentClassName} ${segmentHoverClassName} rounded-r-lg pr-3 pl-2`}
-        title={labels.orders[sort][order]}
+        aria-label={
+          sort === null
+            ? labels.orders[shownSort][order]
+            : `${labels.orders[shownSort][order]}. ${labels.reverse}`
+        }
+        className={`${segmentClassName} ${sort === null ? 'cursor-not-allowed opacity-40' : segmentHoverClassName} rounded-r-lg pr-3 pl-2`}
+        disabled={sort === null}
+        title={labels.orders[shownSort][order]}
         type="button"
-        onClick={() => onChange(sort, nextOrder)}
+        onClick={() => {
+          if (sort !== null) onChange(sort, nextOrder)
+        }}
       >
         <ArrowIcon order={order} />
       </button>

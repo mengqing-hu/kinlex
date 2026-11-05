@@ -59,6 +59,7 @@ export async function getWordListLabels(): Promise<WordListLabels> {
     sorting: {
       sort: t('sorting.sort'),
       sortBy: t('sorting.sortBy'),
+      default: t('sorting.default'),
       reverse: t('sorting.reverse'),
       disabledHint: t('sorting.signInHint'),
       sorts: t.raw('sorting.sorts') as SortSelectLabels['sorts'],

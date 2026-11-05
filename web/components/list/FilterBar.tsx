@@ -41,7 +41,8 @@ interface FilterBarProps {
   selectedTopic: string
   hidden: HiddenSide | null
   hideActions: boolean
-  selectedSort: WordSort
+  // Null while the list is in its default order.
+  selectedSort: WordSort | null
   selectedOrder: SortOrder
   canUsePersonalSorts: boolean
   view: WordListView
@@ -50,7 +51,7 @@ interface FilterBarProps {
   onSearchQueryChange: (value: string) => void
   onPartOfSpeechChange: (value: string) => void
   onTopicChange: (value: string) => void
-  onSortChange: (sort: WordSort, order: SortOrder) => void
+  onSortChange: (sort: WordSort | null, order: SortOrder) => void
   onViewChange: (view: WordListView) => void
   onHiddenChange: (hidden: HiddenSide | null) => void
   onHideActionsChange: (checked: boolean) => void

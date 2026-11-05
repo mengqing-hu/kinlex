@@ -40,6 +40,7 @@
     "sorting": {
       "sort": "Sort",
       "sortBy": "Sort by",
+      "default": "Default",
       "reverse": "Reverse the order",
       "sorts": {
         "alphabetical": "A–Z",
@@ -139,6 +140,7 @@
     "sorting": {
       "sort": "Sort",
       "sortBy": "Sort by",
+      "default": "Default",
       "reverse": "Reverse the order",
       "signInHint": "Sign in to sort by what you have studied",
       "sorts": {
