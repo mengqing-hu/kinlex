@@ -129,21 +129,26 @@ export function RootDirectory({ items, labels, language }: RootDirectoryProps) {
                   {labels.types[type] ?? type}
                 </h2>
                 {view === 'cards' ? (
+                  // Like the word list's cards, two columns while the side panel takes room.
                   <ul
-                    className={`mt-4 grid gap-3 sm:grid-cols-2 ${openItem ? 'xl:grid-cols-3' : 'lg:grid-cols-3'}`}
+                    className={`mt-4 grid gap-3 sm:grid-cols-2 ${openItem || openWord ? '2xl:grid-cols-3' : 'lg:grid-cols-3'}`}
                   >
                     {typeItems.map((item) => (
-                      <li key={item.id}>
+                      <li className="flex" key={item.id}>
                         <Link
                           aria-current={item.slug === openSlug ? 'true' : undefined}
-                          className={`block rounded-xl border bg-[var(--card)] p-4 hover:border-[var(--root)] focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none ${item.slug === openSlug ? 'border-[var(--root)]' : 'border-[var(--line)]'}`}
+                          className={`flex w-full flex-col rounded-xl border bg-[var(--card)] p-4 hover:border-[var(--root)] focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none ${item.slug === openSlug ? 'border-[var(--root)]' : 'border-[var(--line)]'}`}
                           href={`/${language}/word-parts/${item.slug}`}
                           onClick={(event) => openOnClick(event, item.slug)}
                         >
                           <span className="text-lg font-semibold text-[var(--ink)]">
                             {item.text}
                           </span>
-                          <span className="mt-1 block text-sm text-[var(--mute)]">
+                          {/* Always two lines tall, so every card has the same size. */}
+                          <span
+                            className="mt-1 line-clamp-2 min-h-10 text-sm text-[var(--mute)]"
+                            title={item.meaning}
+                          >
                             {item.meaning}
                           </span>
                           <span className="mt-4 block text-xs font-semibold tracking-wide text-[var(--mute)] uppercase">
