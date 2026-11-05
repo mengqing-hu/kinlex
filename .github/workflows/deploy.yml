@@ -1,0 +1,68 @@
+name: Deploy
+
+# Production goes out in order: the checks pass, then the database is migrated, then the website
+# is deployed. Vercel does not deploy main by itself (see web/vercel.json), so new code never goes
+# live before the schema it needs, and a failed step stops the ones after it.
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One deploy at a time, and never cancelled halfway, so a migration is not cut off.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  checks:
+    name: Checks
+    uses: ./.github/workflows/ci.yml
+
+  migrate:
+    name: Database migrations
+    needs: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: 2.95.4
+
+      - name: Link the production project
+        run: supabase link --project-ref "$SUPABASE_PROJECT_REF"
+
+      - name: Apply new migrations
+        run: supabase db push --yes
+
+  website:
+    name: Website
+    needs: migrate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      # Built by Vercel rather than here, since Vercel keeps the production secrets and never
+      # hands them out.
+      - name: Deploy to production
+        run: npx --yes vercel@64.7.0 deploy --prod --yes --token "$VERCEL_TOKEN"

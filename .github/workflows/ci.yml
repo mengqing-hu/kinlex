@@ -2,9 +2,8 @@ name: CI
 
 on:
   pull_request:
-  push:
-    branches:
-      - main
+  # On main the checks run as the first step of the deploy workflow.
+  workflow_call:
 
 permissions:
   contents: read
