@@ -3,6 +3,10 @@
 /* Set on <html> before the first paint (see app/layout.tsx) when the sidebar is collapsed. */
 @custom-variant sidebar-collapsed (&:where(html[data-sidebar='collapsed'] *));
 
+/* The theme script in app/layout.tsx sets data-theme on <html> to light or dark before the first
+   paint, following the system unless the reader picked one in the settings. */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
 :root {
   color-scheme: light;
   --bg: #f3f1ef;
@@ -25,28 +29,26 @@
   --foreground: var(--ink);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-    --bg: #181715;
-    --card: #22201e;
-    --ink: #f1efeb;
-    --mute: #b8aea8;
-    --line: #3a3633;
-    --prefix: #b4a7c5;
-    --root: #a9b69a;
-    --suffix: #dfb566;
-    --info: #91b4d0;
-    --highlight: #6b5a1f;
-    --row-hover: #24221f;
-    --familiarity-1: #e07a62;
-    --familiarity-2: #eb9a5c;
-    --familiarity-3: #e8b84a;
-    --familiarity-4: #bfcb66;
-    --familiarity-5: #8fbf7c;
-    --background: var(--bg);
-    --foreground: var(--ink);
-  }
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #181715;
+  --card: #22201e;
+  --ink: #f1efeb;
+  --mute: #b8aea8;
+  --line: #3a3633;
+  --prefix: #b4a7c5;
+  --root: #a9b69a;
+  --suffix: #dfb566;
+  --info: #91b4d0;
+  --highlight: #6b5a1f;
+  --row-hover: #24221f;
+  --familiarity-1: #e07a62;
+  --familiarity-2: #eb9a5c;
+  --familiarity-3: #e8b84a;
+  --familiarity-4: #bfcb66;
+  --familiarity-5: #8fbf7c;
+  --background: var(--bg);
+  --foreground: var(--ink);
 }
 
 * {

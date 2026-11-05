@@ -5,6 +5,7 @@ import { AudioProvider } from '@/components/audio/AudioProvider'
 import { ActivityHeartbeat } from '@/components/activity/ActivityHeartbeat'
 import { TooltipProvider } from '@/components/ui/Tooltip'
 import { SIDEBAR_STORAGE_KEY } from '@/lib/sidebar'
+import { themeScript } from '@/lib/theme'
 
 import './globals.css'
 
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script dangerouslySetInnerHTML={{ __html: sidebarScript }} />
       </head>
       <body>
