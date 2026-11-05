@@ -51,16 +51,3 @@ export async function setFavorite(
     .upsert({ user_id: userId, word_id: wordId, favorited }, { onConflict: 'user_id,word_id' })
   assertQuerySucceeded(error, favorited ? 'favorite word' : 'remove favorite')
 }
-
-export async function mergeFavorites(
-  db: SupabaseClient<Database>,
-  userId: string,
-  wordIds: number[],
-): Promise<void> {
-  if (wordIds.length === 0) return
-  const { error } = await db.from('user_word_state').upsert(
-    wordIds.map((wordId) => ({ user_id: userId, word_id: wordId, favorited: true })),
-    { onConflict: 'user_id,word_id' },
-  )
-  assertQuerySucceeded(error, 'merge favorites')
-}

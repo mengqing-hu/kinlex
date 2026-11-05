@@ -9,8 +9,6 @@ import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton'
 import { getBrowserSupabase } from '@/lib/supabase/browser'
 import { fetchApiData } from '@/lib/client/apiClient'
 import { flushEventQueue } from '@/lib/client/eventQueue'
-import { mergeLocalFamiliarity } from '@/lib/client/localFamiliarity'
-import { mergeLocalFavorites } from '@/lib/client/localFavorites'
 import { onProfileSaved } from '@/lib/client/profileEvents'
 import type { UserProfile } from '@/types/domain'
 
@@ -40,8 +38,6 @@ export function UserMenu({ accountLabel, signInLabel }: UserMenuProps) {
         setUser(session?.user ?? null)
       }
       if (session) {
-        void mergeLocalFavorites()
-        void mergeLocalFamiliarity()
         void flushEventQueue()
       }
     })

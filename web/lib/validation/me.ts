@@ -24,20 +24,10 @@ export const profileUpdateSchema = z
 
 export const favoriteWordIdSchema = z.coerce.number().int().positive()
 
-export const favoriteMergeSchema = z.object({
-  wordIds: z.array(z.number().int().positive()).max(500),
-})
-
 export const familiarityLevelSchema = z.number().int().min(0).max(5)
 
 export const familiarityUpdateSchema = z.object({
   level: familiarityLevelSchema,
-})
-
-export const familiarityMergeSchema = z.object({
-  entries: z
-    .array(z.object({ wordId: z.number().int().positive(), level: familiarityLevelSchema }))
-    .max(500),
 })
 
 export const wordStateResetSchema = z.object({

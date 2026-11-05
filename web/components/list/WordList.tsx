@@ -464,7 +464,7 @@ export function WordList({
           )
         }
         onReset={async (field: ResettableWordState, wordIds: number[]) => {
-          const changed = await resetWordState(field, wordIds, signedIn)
+          const changed = await resetWordState(field, wordIds)
           if (changed.length > 0) setDataVersion((version) => version + 1)
           return changed.length
         }}

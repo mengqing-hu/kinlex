@@ -2,13 +2,9 @@
 
 import { useEffect, useState } from 'react'
 
+import { SignInPrompt } from '@/components/auth/SignInPrompt'
 import { queueActivityEvent } from '@/lib/client/eventQueue'
-import {
-  getRemoteFavoriteIds,
-  isLocalFavorite,
-  setLocalFavorite,
-  updateRemoteFavorite,
-} from '@/lib/client/localFavorites'
+import { getRemoteFavoriteIds, updateRemoteFavorite } from '@/lib/client/favorites'
 import { getBrowserSupabase } from '@/lib/supabase/browser'
 
 interface FavoriteButtonProps {
@@ -29,13 +25,11 @@ export function FavoriteButton({
   size = 'md',
 }: FavoriteButtonProps) {
   const [favorited, setFavorited] = useState(initialFavorited)
-  const [signedIn, setSignedIn] = useState(false)
+  // Unknown until the session has loaded; the button does nothing until then.
+  const [signedIn, setSignedIn] = useState<boolean | null>(null)
   const [pending, setPending] = useState(false)
 
   useEffect(() => {
-    void Promise.resolve(isLocalFavorite(wordId)).then((localFavorite) => {
-      if (localFavorite) setFavorited(true)
-    })
     void getBrowserSupabase()
       .auth.getSession()
       .then(({ data }) => {
@@ -51,20 +45,16 @@ export function FavoriteButton({
     const next = !favorited
     setFavorited(next)
 
-    if (!signedIn) {
-      setLocalFavorite(wordId, next)
-    } else {
-      setPending(true)
-      const response = await fetch(`/api/v1/me/favorites/${wordId}`, {
-        method: next ? 'PUT' : 'DELETE',
-      })
-      setPending(false)
-      if (!response.ok) {
-        setFavorited(!next)
-        return
-      }
-      updateRemoteFavorite(wordId, next)
+    setPending(true)
+    const response = await fetch(`/api/v1/me/favorites/${wordId}`, {
+      method: next ? 'PUT' : 'DELETE',
+    })
+    setPending(false)
+    if (!response.ok) {
+      setFavorited(!next)
+      return
     }
+    updateRemoteFavorite(wordId, next)
 
     queueActivityEvent({
       language,
@@ -75,14 +65,14 @@ export function FavoriteButton({
     })
   }
 
-  return (
+  const button = (
     <button
       aria-label={favorited ? 'Remove from favorites' : 'Add to favorites'}
       aria-pressed={favorited}
       className={`inline-flex ${buttonSizes[size]} items-center justify-center rounded-full text-[var(--suffix)] hover:bg-[var(--bg)] disabled:opacity-50`}
       disabled={pending}
       type="button"
-      onClick={() => void toggle()}
+      onClick={signedIn ? () => void toggle() : undefined}
     >
       <svg aria-hidden="true" className={iconSizes[size]} viewBox="0 0 24 24">
         <path
@@ -94,5 +84,11 @@ export function FavoriteButton({
         />
       </svg>
     </button>
+  )
+
+  return signedIn === false ? (
+    <SignInPrompt message="Sign in to save favorites">{button}</SignInPrompt>
+  ) : (
+    button
   )
 }

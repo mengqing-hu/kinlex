@@ -11,9 +11,11 @@ type SubmissionState = 'idle' | 'submitting' | 'sent' | 'error' | 'oauth_error'
 type MagicLinkFormProps = Readonly<{
   callbackFailed: boolean
   nextPath: string
+  /** Why the visitor was sent here, when a page needs an account. */
+  reason: string | null
 }>
 
-export function MagicLinkForm({ callbackFailed, nextPath }: MagicLinkFormProps) {
+export function MagicLinkForm({ callbackFailed, nextPath, reason }: MagicLinkFormProps) {
   const [email, setEmail] = useState('')
   const [submissionState, setSubmissionState] = useState<SubmissionState>('idle')
 
@@ -45,6 +47,7 @@ export function MagicLinkForm({ callbackFailed, nextPath }: MagicLinkFormProps) 
         Kinlex
       </Link>
       <h1 className="mt-4 text-3xl font-semibold tracking-tight">Sign in</h1>
+      {reason && <p className="mt-3 font-medium">{reason}</p>}
       <p className="mt-3 text-neutral-600 dark:text-neutral-300">
         Continue with Google, or enter your email address and we will send you a secure sign-in
         link.

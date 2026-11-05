@@ -1,14 +1,6 @@
 import { fetchApiData } from '@/lib/client/apiClient'
-import {
-  clearLocalFamiliarity,
-  getLocalFamiliarityIds,
-  updateRemoteFamiliarity,
-} from '@/lib/client/localFamiliarity'
-import {
-  clearLocalFavorites,
-  getLocalFavoriteIds,
-  updateRemoteFavorite,
-} from '@/lib/client/localFavorites'
+import { updateRemoteFamiliarity } from '@/lib/client/familiarity'
+import { updateRemoteFavorite } from '@/lib/client/favorites'
 
 export type ResettableWordState = 'familiarity' | 'favorites'
 
@@ -19,43 +11,32 @@ const fetchWordIds = (listParams: URLSearchParams) =>
     cache: 'no-store',
   }).then(({ wordIds }) => wordIds)
 
-// The words of a list (given by its filters) that have a familiarity or are a favorite, in the
-// account when signed in and in this browser otherwise.
+// The words of a list (given by its filters) that have a familiarity or are a favorite. Only an
+// account can mark words, so a guest has none.
 export async function findMarkedWordIds(
   listParams: URLSearchParams,
   signedIn: boolean,
 ): Promise<MarkedWordIds> {
-  if (signedIn) {
-    const markedIds = (marked: ResettableWordState) => {
-      const params = new URLSearchParams(listParams)
-      params.set('marked', marked)
-      return fetchWordIds(params)
-    }
-    const [familiarity, favorites] = await Promise.all([
-      markedIds('familiarity'),
-      markedIds('favorites'),
-    ])
-    return { familiarity, favorites }
-  }
+  if (!signedIn) return { familiarity: [], favorites: [] }
 
-  const listed = new Set(await fetchWordIds(listParams))
-  return {
-    familiarity: getLocalFamiliarityIds().filter((wordId) => listed.has(wordId)),
-    favorites: getLocalFavoriteIds().filter((wordId) => listed.has(wordId)),
+  const markedIds = (marked: ResettableWordState) => {
+    const params = new URLSearchParams(listParams)
+    params.set('marked', marked)
+    return fetchWordIds(params)
   }
+  const [familiarity, favorites] = await Promise.all([
+    markedIds('familiarity'),
+    markedIds('favorites'),
+  ])
+  return { familiarity, favorites }
 }
 
-// Clears the familiarity or the favorite mark of these words, in the account when signed in and
-// in this browser otherwise. Returns the ids that changed.
+// Clears the familiarity or the favorite mark of these words in the account. Returns the ids that
+// changed.
 export async function resetWordState(
   field: ResettableWordState,
   wordIds: number[],
-  signedIn: boolean,
 ): Promise<number[]> {
-  if (!signedIn) {
-    return field === 'familiarity' ? clearLocalFamiliarity(wordIds) : clearLocalFavorites(wordIds)
-  }
-
   const { wordIds: changed } = await fetchApiData<{ wordIds: number[] }>('/api/v1/me/words/reset', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

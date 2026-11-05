@@ -2,12 +2,8 @@
 
 import { useEffect, useState } from 'react'
 
-import {
-  getLocalFamiliarity,
-  getRemoteFamiliarity,
-  setLocalFamiliarity,
-  updateRemoteFamiliarity,
-} from '@/lib/client/localFamiliarity'
+import { SignInPrompt } from '@/components/auth/SignInPrompt'
+import { getRemoteFamiliarity, updateRemoteFamiliarity } from '@/lib/client/familiarity'
 import { getBrowserSupabase } from '@/lib/supabase/browser'
 
 interface FamiliarityMeterProps {
@@ -29,11 +25,11 @@ const levelClasses: Record<number, string> = {
 
 export function FamiliarityMeter({ wordId, label }: FamiliarityMeterProps) {
   const [level, setLevel] = useState(0)
-  const [signedIn, setSignedIn] = useState(false)
+  // Unknown until the session has loaded; the meter does nothing until then.
+  const [signedIn, setSignedIn] = useState<boolean | null>(null)
   const [pending, setPending] = useState(false)
 
   useEffect(() => {
-    void Promise.resolve(getLocalFamiliarity(wordId)).then(setLevel)
     void getBrowserSupabase()
       .auth.getSession()
       .then(({ data }) => {
@@ -53,11 +49,6 @@ export function FamiliarityMeter({ wordId, label }: FamiliarityMeterProps) {
     const next = (level + 1) % (MAX_LEVEL + 1)
     setLevel(next)
 
-    if (!signedIn) {
-      setLocalFamiliarity(wordId, next)
-      return
-    }
-
     setPending(true)
     const response = await fetch(`/api/v1/me/familiarity/${wordId}`, {
       method: 'PUT',
@@ -74,7 +65,7 @@ export function FamiliarityMeter({ wordId, label }: FamiliarityMeterProps) {
 
   const levelLabel = label.replace('{level}', String(level))
 
-  return (
+  const button = (
     <button
       aria-label={levelLabel}
       className={`flex size-4 items-center justify-center rounded-full border text-[10px] leading-none font-semibold tabular-nums transition-colors disabled:cursor-wait ${
@@ -85,9 +76,15 @@ export function FamiliarityMeter({ wordId, label }: FamiliarityMeterProps) {
       disabled={pending}
       title={levelLabel}
       type="button"
-      onClick={() => void cycle()}
+      onClick={signedIn ? () => void cycle() : undefined}
     >
       {level > 0 ? level : ''}
     </button>
+  )
+
+  return signedIn === false ? (
+    <SignInPrompt message="Sign in to track how well you know each word">{button}</SignInPrompt>
+  ) : (
+    button
   )
 }
