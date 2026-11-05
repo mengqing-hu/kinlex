@@ -27,12 +27,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const rootEntries: MetadataRoute.Sitemap = morphemeGroups.flatMap(({ language, morphemes }) => [
     {
-      url: `${baseUrl}/${encodeURIComponent(language)}/roots`,
+      url: `${baseUrl}/${encodeURIComponent(language)}/word-parts`,
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     },
     ...morphemes.map((morpheme) => ({
-      url: `${baseUrl}/${encodeURIComponent(language)}/roots/${encodeURIComponent(morpheme.slug)}`,
+      url: `${baseUrl}/${encodeURIComponent(language)}/word-parts/${encodeURIComponent(morpheme.slug)}`,
       changeFrequency: 'weekly' as const,
       priority: 0.7,
     })),

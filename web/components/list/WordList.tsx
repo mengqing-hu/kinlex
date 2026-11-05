@@ -433,7 +433,7 @@ export function WordList({
         labels={labels}
         onLevelChange={(value) => {
           router.push(
-            `/${encodeURIComponent(language)}/levels/${value ? value.toLowerCase() : 'all'}`,
+            `/${encodeURIComponent(language)}/vocabulary/${value ? value.toLowerCase() : 'all'}`,
           )
         }}
         onSearchQueryChange={setSearchQuery}

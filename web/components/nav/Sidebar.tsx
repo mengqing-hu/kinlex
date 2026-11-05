@@ -15,7 +15,7 @@ export interface SidebarLink {
   href: string
   icon: SidebarIcon
   label: string
-  // The path prefix that marks this link as current, e.g. every level under /de/levels.
+  // The path prefix that marks this link as current, e.g. every level under /de/vocabulary.
   match: string
 }
 

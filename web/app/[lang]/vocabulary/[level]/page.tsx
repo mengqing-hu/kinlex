@@ -31,7 +31,7 @@ function parseLevel(value: string): WordLevel | null {
 }
 
 function getLevelPath(language: string, level: string): string {
-  return `/${encodeURIComponent(language)}/levels/${level.toLowerCase()}`
+  return `/${encodeURIComponent(language)}/vocabulary/${level.toLowerCase()}`
 }
 
 export function generateStaticParams() {

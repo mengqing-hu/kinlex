@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: RootPageProps): Promise<Metad
     loadMorphemeOrNotFound(lang, root),
     getTranslations('rootPage'),
   ])
-  const canonicalUrl = new URL(`/${lang}/roots/${morpheme.slug}`, config.siteUrl).toString()
+  const canonicalUrl = new URL(`/${lang}/word-parts/${morpheme.slug}`, config.siteUrl).toString()
   return {
     title: t('metadataTitle', { root: morpheme.text }),
     description: t('metadataDescription', { root: morpheme.text, meaning: morpheme.meaning }),
@@ -70,7 +70,7 @@ export default async function RootPage({ params }: RootPageProps) {
     <main className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-12">
       <Link
         className="text-sm font-semibold text-[var(--mute)] hover:text-[var(--ink)]"
-        href={`/${lang}/roots`}
+        href={`/${lang}/word-parts`}
       >
         {t('allRoots')}
       </Link>

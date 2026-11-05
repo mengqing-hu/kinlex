@@ -18,6 +18,23 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [],
   },
+  // The vocabulary and word part pages used to live under /levels and /roots; old links and
+  // search results move along, keeping their query, such as an open word.
+  async redirects() {
+    return [
+      {
+        source: '/:lang([a-z]{2,3})/levels/:level',
+        destination: '/:lang/vocabulary/:level',
+        permanent: true,
+      },
+      { source: '/:lang([a-z]{2,3})/roots', destination: '/:lang/word-parts', permanent: true },
+      {
+        source: '/:lang([a-z]{2,3})/roots/:root',
+        destination: '/:lang/word-parts/:root',
+        permanent: true,
+      },
+    ]
+  },
   async headers() {
     return [
       {

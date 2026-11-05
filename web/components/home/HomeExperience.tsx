@@ -40,7 +40,7 @@ export function HomeExperience() {
         <div className="mt-10 flex flex-wrap gap-3">
           <Link
             className="rounded-xl bg-[var(--ink)] px-5 py-3 font-semibold text-[var(--card)]"
-            href="/de/levels/a1"
+            href="/de/vocabulary/a1"
           >
             {returning ? 'Continue learning' : 'Start with A1'}
           </Link>

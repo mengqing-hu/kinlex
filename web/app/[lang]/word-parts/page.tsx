@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: RootsPageProps): Promise<Meta
   if (!isSupportedLanguage(lang)) notFound()
 
   const t = await getTranslations('rootsPage')
-  const canonicalUrl = new URL(`/${lang}/roots`, config.siteUrl).toString()
+  const canonicalUrl = new URL(`/${lang}/word-parts`, config.siteUrl).toString()
   return {
     title: t('metadataTitle'),
     description: t('metadataDescription'),

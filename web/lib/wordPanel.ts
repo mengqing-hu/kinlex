@@ -6,5 +6,5 @@ export const WORD_PANEL_SLOT_ID = 'word-panel-slot'
 // Where a word lives on the site: its level's list with the word open in the side panel.
 export function getWordPanelPath(language: string, slug: string, level: string | null): string {
   const levelPath = level ? level.toLowerCase() : 'all'
-  return `/${encodeURIComponent(language)}/levels/${levelPath}?word=${encodeURIComponent(slug)}`
+  return `/${encodeURIComponent(language)}/vocabulary/${levelPath}?word=${encodeURIComponent(slug)}`
 }

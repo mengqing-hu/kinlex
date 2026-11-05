@@ -184,7 +184,7 @@ export function MorphemeDetailPanel({
           {/* The root's own page lists its words with the word list's filters and sorts. */}
           <Link
             className="inline-block text-sm font-semibold text-[var(--mute)] hover:text-[var(--ink)]"
-            href={`/${language}/roots/${morpheme.slug}`}
+            href={`/${language}/word-parts/${morpheme.slug}`}
           >
             {labels.openList}
           </Link>
