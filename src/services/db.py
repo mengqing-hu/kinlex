@@ -1,15 +1,17 @@
 """Database reads and idempotent writes for enrichment and audio."""
 
 import re
+import sys
 import unicodedata
 from collections.abc import Iterator
 from contextlib import contextmanager
+from functools import cache
 from typing import Any
 
 import psycopg
 from psycopg.types.json import Jsonb
 
-from config import get_settings
+from config import database_host, get_settings, is_production
 from core.models import (
     AudioResult,
     AudioTarget,
@@ -65,10 +67,19 @@ _WORD_ORDER = """
 """
 
 
+@cache
+def _announce_production(host: str) -> None:
+    print(
+        f"KINLEX_TARGET=production: working on the production database at {host}", file=sys.stderr
+    )
+
+
 @contextmanager
 def connect() -> Iterator[psycopg.Connection[Any]]:
     settings = get_settings()
     settings.require("database_url")
+    if is_production():
+        _announce_production(database_host(settings))
     with psycopg.connect(settings.database_url.get_secret_value()) as connection:
         yield connection
 

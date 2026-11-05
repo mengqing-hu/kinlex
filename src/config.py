@@ -1,8 +1,10 @@
 """Environment variables (.env) and pipeline configuration (config.yaml)."""
 
+import os
 from functools import cache
 from pathlib import Path
 from typing import Literal
+from urllib.parse import urlsplit
 
 import yaml
 from pydantic import BaseModel, Field, SecretStr
@@ -95,9 +97,30 @@ class Config(BaseModel):
     retries: int
 
 
+PRODUCTION_ENV_FILE = PIPELINE_ROOT / ".env.production"
+
+
+def is_production() -> bool:
+    return os.environ.get("KINLEX_TARGET", "local") == "production"
+
+
+# The pipeline works on the local Supabase unless KINLEX_TARGET=production, which adds the values
+# in .env.production (the production database and website) on top of .env.
 @cache
 def get_settings() -> Settings:
-    return Settings()
+    target = os.environ.get("KINLEX_TARGET", "local")
+    if target == "local":
+        return Settings()
+    if target != "production":
+        raise SettingsError(f"KINLEX_TARGET must be local or production, not {target!r}")
+    if not PRODUCTION_ENV_FILE.is_file():
+        raise SettingsError(f"KINLEX_TARGET=production needs {PRODUCTION_ENV_FILE}")
+    return Settings(_env_file=(PIPELINE_ROOT / ".env", PRODUCTION_ENV_FILE))
+
+
+def database_host(settings: Settings) -> str:
+    """The database host, to say where the pipeline writes without showing the password."""
+    return urlsplit(settings.database_url.get_secret_value()).hostname or "unknown host"
 
 
 @cache
