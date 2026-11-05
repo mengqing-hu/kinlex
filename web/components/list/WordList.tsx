@@ -190,7 +190,8 @@ export function WordList({
   }, [search])
   const [state, setState] = useState<WordListState>({
     ...initialPage,
-    queryKey: `:::${morpheme ?? ''}`,
+    // The server renders the first page unfiltered in the default order, so it matches this key.
+    queryKey: `:::${morpheme ?? ''}:frequency:${defaultSortOrders.frequency}:0`,
     error: false,
   })
   const [retryVersion, setRetryVersion] = useState(0)
@@ -386,12 +387,13 @@ export function WordList({
   useEffect(() => {
     const scrollArea = scrollAreaRef.current
     const sentinel = loadMoreSentinelRef.current
-    if (!scrollArea || !sentinel || !state.nextCursor || state.error) {
+    if (!scrollArea || !sentinel || !state.nextCursor || state.error || isRefreshing) {
       return
     }
 
     // Load the next page as the end of the list scrolls into view. The observer is recreated after
-    // every page, so it fires again straight away while the list is still too short to scroll.
+    // every page and every refresh, so it fires again straight away while the end is still in view;
+    // it only reports changes, so one that fired while loading was blocked would never fire again.
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry?.isIntersecting) {
@@ -402,7 +404,7 @@ export function WordList({
     )
     observer.observe(sentinel)
     return () => observer.disconnect()
-  }, [state.nextCursor, state.error])
+  }, [state.nextCursor, state.error, isRefreshing])
 
   return (
     <div>
