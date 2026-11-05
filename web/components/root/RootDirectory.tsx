@@ -22,6 +22,9 @@ import type { MorphemeDirectoryItem } from '@/types/domain'
 export interface RootDirectoryLabels {
   allTypes: string
   empty: string
+  noMatches: string
+  search: string
+  searchPlaceholder: string
   morphemePanel: MorphemePanelLabels
   type: string
   sorting: SortSelectLabels<RootSort>
@@ -49,8 +52,25 @@ function compareText(left: MorphemeDirectoryItem, right: MorphemeDirectoryItem):
   return left.text.replaceAll('-', '').localeCompare(right.text.replaceAll('-', ''), 'de')
 }
 
+// Lower case, without the hyphens that mark prefixes and suffixes and without accents, so "über-"
+// is found by "über", "uber" and, written the German way without umlauts, "ueber".
+function searchKey(value: string): string {
+  return value.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase().replaceAll('-', '').trim()
+}
+
+function withoutUmlautSpelling(key: string): string {
+  return key.replaceAll('ae', 'a').replaceAll('oe', 'o').replaceAll('ue', 'u')
+}
+
+// Only the word part itself, not its meaning.
+function matchesSearch(item: MorphemeDirectoryItem, key: string): boolean {
+  const text = searchKey(item.text)
+  return text.includes(key) || text.includes(withoutUmlautSpelling(key))
+}
+
 export function RootDirectory({ items, labels, language }: RootDirectoryProps) {
   const [selectedType, setSelectedType] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
   const [view, setView] = useState<WordListView>('cards')
   // Null until the reader picks a sort; the list is then in its default order, A to Z.
   const [chosenSort, setChosenSort] = useState<RootSort | null>(null)
@@ -76,13 +96,15 @@ export function RootDirectory({ items, labels, language }: RootDirectoryProps) {
     updateSearchParameters({ root: slug, word: '' })
   }
   const direction = order === 'asc' ? 1 : -1
-  const shownItems = (
-    selectedType ? items.filter((item) => item.type === selectedType) : items
-  ).toSorted((left, right) =>
-    sort === 'words'
-      ? direction * (left.wordCount - right.wordCount) || compareText(left, right)
-      : direction * compareText(left, right),
-  )
+  const key = searchKey(searchQuery)
+  const shownItems = items
+    .filter((item) => !selectedType || item.type === selectedType)
+    .filter((item) => !key || matchesSearch(item, key))
+    .toSorted((left, right) =>
+      sort === 'words'
+        ? direction * (left.wordCount - right.wordCount) || compareText(left, right)
+        : direction * compareText(left, right),
+    )
 
   return (
     <div>
@@ -113,6 +135,30 @@ export function RootDirectory({ items, labels, language }: RootDirectoryProps) {
               setOrder(nextOrder)
             }}
           />
+          <label className="relative w-full sm:w-auto sm:max-w-64 sm:min-w-40 sm:flex-1">
+            <span className="sr-only">{labels.search}</span>
+            <svg
+              aria-hidden="true"
+              className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-[var(--mute)]"
+              fill="none"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.5-3.5" />
+            </svg>
+            <input
+              className="h-9 w-full rounded-lg border border-[var(--line)] bg-[var(--card)] pr-3.5 pl-9 text-sm text-[var(--ink)] transition-colors placeholder:text-[var(--mute)] hover:border-[var(--mute)] focus-visible:border-[var(--mute)] focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none"
+              maxLength={100}
+              placeholder={labels.searchPlaceholder}
+              type="search"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+            />
+          </label>
         </div>
         <ViewToggle labels={labels.views} view={view} onChange={setView} />
       </div>
@@ -187,7 +233,7 @@ export function RootDirectory({ items, labels, language }: RootDirectoryProps) {
           })}
         </div>
       ) : (
-        <p className="mt-8 text-[var(--mute)]">{labels.empty}</p>
+        <p className="mt-8 text-[var(--mute)]">{key ? labels.noMatches : labels.empty}</p>
       )}
 
       {/* A word opened from the word part's list takes the panel's place; closing it goes back. */}

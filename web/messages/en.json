@@ -23,6 +23,9 @@
     "type": "Word part",
     "allTypes": "All word parts",
     "empty": "No word parts are available yet.",
+    "noMatches": "No word parts match your search.",
+    "search": "Search word parts",
+    "searchPlaceholder": "Search word parts",
     "word": "word",
     "words": "words",
     "types": {

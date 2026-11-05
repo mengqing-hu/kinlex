@@ -64,6 +64,9 @@ export default async function RootsPage({ params }: RootsPageProps) {
             partsOfSpeech: listLabels.partsOfSpeech,
           },
           type: t('type'),
+          noMatches: t('noMatches'),
+          search: t('search'),
+          searchPlaceholder: t('searchPlaceholder'),
           types: {
             prefix: t('types.prefix'),
             root: t('types.root'),
