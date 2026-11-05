@@ -16,7 +16,7 @@ export interface FilterSelectOption {
   label: string
   // A second, quieter line under the label in the menu.
   hint?: string
-  // Shown after the label in the menu, not on the closed pill.
+  // Shown after the label in the menu, not on the closed button.
   count?: number
   // Sets the option apart from the ones above it.
   separated?: boolean
@@ -25,7 +25,7 @@ export interface FilterSelectOption {
 
 interface FilterSelectProps {
   label: string
-  // The first option is the unfiltered one (value ''); choosing anything else highlights the pill.
+  // The first option is the unfiltered one (value ''); choosing anything else highlights the button.
   options: FilterSelectOption[]
   value: string
   title?: string
@@ -36,7 +36,7 @@ export function FilterSelect({ label, options, value, title, onChange }: FilterS
   const selected = options.find((option) => option.value === value)
   const active = value !== '' && selected !== undefined
   const shown = active ? selected.label : label
-  // Every text the pill can show, stacked in one grid cell, so it keeps the width of the longest
+  // Every text the button can show, stacked in one grid cell, so it keeps the width of the longest
   // and does not resize when the choice changes.
   const texts = [
     label,
@@ -47,7 +47,7 @@ export function FilterSelect({ label, options, value, title, onChange }: FilterS
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label={selected ? `${label}: ${selected.label}` : label}
-        className={`inline-flex h-9 items-center gap-1.5 rounded-full border px-3.5 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none ${
+        className={`inline-flex h-9 items-center gap-1.5 rounded-lg border px-3.5 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none ${
           active
             ? 'border-[var(--root)]/50 bg-[var(--root)]/15 text-[var(--ink)] hover:border-[var(--root)]/70 data-[state=open]:border-[var(--root)]/70'
             : 'border-[var(--line)] bg-[var(--card)] text-[var(--mute)] hover:border-[var(--mute)] hover:text-[var(--ink)] data-[state=open]:border-[var(--mute)]'

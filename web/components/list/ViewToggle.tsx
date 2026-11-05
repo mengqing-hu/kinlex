@@ -27,21 +27,21 @@ const icons: Record<WordListView, ReactNode> = {
   ),
 }
 
-// Two buttons in one pill with the outline of the filters beside it; the chosen view sits inside
-// as a smaller pill of its own, in the tint the filters use for a chosen value. Like the filters,
-// the outline darkens under the pointer.
+// Two buttons in one control with the outline of the filters beside it; the chosen view sits inside
+// as a smaller rounded square of its own, in the tint the filters use for a chosen value. Like the
+// filters, the outline darkens under the pointer.
 export function ViewToggle({ view, labels, onChange }: ViewToggleProps) {
   return (
     <div
       aria-label={labels.view}
-      className="inline-flex h-9 items-stretch gap-0.5 rounded-full border border-[var(--line)] bg-[var(--card)] p-0.5 transition-colors hover:border-[var(--mute)]"
+      className="inline-flex h-9 items-stretch gap-0.5 rounded-lg border border-[var(--line)] bg-[var(--card)] p-0.5 transition-colors hover:border-[var(--mute)]"
       role="group"
     >
       {wordListViews.map((option) => (
         <button
           aria-label={labels[option]}
           aria-pressed={view === option}
-          className={`group/view inline-flex w-9 items-center justify-center rounded-full transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none ${
+          className={`group/view inline-flex w-9 items-center justify-center rounded-md transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none ${
             view === option
               ? 'bg-[var(--root)]/15 text-[var(--ink)] active:bg-[var(--root)]/25'
               : 'text-[var(--mute)] hover:bg-[var(--bg)] hover:text-[var(--ink)] active:bg-[var(--line)]'

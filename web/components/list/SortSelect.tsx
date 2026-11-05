@@ -24,7 +24,7 @@ export interface SortSelectLabels<S extends string = WordSort> {
 
 interface SortSelectProps<S extends string> {
   sorts: readonly S[]
-  // The list's usual order; any other sort or direction highlights the pill.
+  // The list's usual order; any other sort or direction highlights the control.
   defaultSort: S
   // The direction each sort starts in when chosen.
   defaultOrders: Record<S, SortOrder>
@@ -64,7 +64,7 @@ export function SortSelect<S extends string>({
 }: SortSelectProps<S>) {
   const active = sort !== defaultSort || order !== defaultOrders[defaultSort]
   const shown = active ? labels.sorts[sort] : labels.sort
-  // Every text the pill can show, stacked in one grid cell, so it keeps the width of the longest.
+  // Every text the control can show, stacked in one grid cell, so it keeps the width of the longest.
   const texts = [labels.sort, ...sorts.map((option) => labels.sorts[option])]
 
   const nextOrder: SortOrder = order === 'asc' ? 'desc' : 'asc'
@@ -78,10 +78,10 @@ export function SortSelect<S extends string>({
     ? 'hover:bg-[var(--root)]/15 data-[state=open]:bg-[var(--root)]/15'
     : 'hover:text-[var(--ink)] data-[state=open]:text-[var(--ink)]'
 
-  // Two buttons in one pill: the menu of sorts, and the direction, which flips with one click.
+  // Two buttons in one control: the menu of sorts, and the direction, which flips with one click.
   return (
     <div
-      className={`inline-flex h-9 items-stretch rounded-full border text-sm transition-colors ${
+      className={`inline-flex h-9 items-stretch rounded-lg border text-sm transition-colors ${
         active
           ? 'border-[var(--root)]/50 bg-[var(--root)]/15 text-[var(--ink)]'
           : 'border-[var(--line)] bg-[var(--card)] text-[var(--mute)] hover:border-[var(--mute)]'
@@ -90,7 +90,7 @@ export function SortSelect<S extends string>({
       <DropdownMenu>
         <DropdownMenuTrigger
           aria-label={`${labels.sort}: ${labels.sorts[sort]}`}
-          className={`${segmentClassName} ${segmentHoverClassName} gap-1.5 rounded-l-full pr-2.5 pl-3.5`}
+          className={`${segmentClassName} ${segmentHoverClassName} gap-1.5 rounded-l-lg pr-2.5 pl-3.5`}
           title={disabledSorts.length > 0 ? labels.disabledHint : undefined}
         >
           <span className="inline-grid text-left">
@@ -142,7 +142,7 @@ export function SortSelect<S extends string>({
       />
       <button
         aria-label={`${labels.orders[sort][order]}. ${labels.reverse}`}
-        className={`${segmentClassName} ${segmentHoverClassName} rounded-r-full pr-3 pl-2`}
+        className={`${segmentClassName} ${segmentHoverClassName} rounded-r-lg pr-3 pl-2`}
         title={labels.orders[sort][order]}
         type="button"
         onClick={() => onChange(sort, nextOrder)}

@@ -151,7 +151,7 @@ export function FilterBar({
             <path d="m20 20-3.5-3.5" />
           </svg>
           <input
-            className="h-9 w-full rounded-full border border-[var(--line)] bg-[var(--card)] pr-3.5 pl-9 text-sm text-[var(--ink)] transition-colors placeholder:text-[var(--mute)] hover:border-[var(--mute)] focus-visible:border-[var(--mute)] focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none"
+            className="h-9 w-full rounded-lg border border-[var(--line)] bg-[var(--card)] pr-3.5 pl-9 text-sm text-[var(--ink)] transition-colors placeholder:text-[var(--mute)] hover:border-[var(--mute)] focus-visible:border-[var(--mute)] focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none"
             maxLength={100}
             placeholder={labels.searchPlaceholder}
             type="search"

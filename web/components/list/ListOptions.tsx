@@ -48,9 +48,9 @@ interface ListOptionsProps {
 
 const sideOptions = ['none', ...hiddenSides] as const
 
-// The list's actions look like the filter pills, only smaller.
-const pillClassName =
-  'h-8 rounded-full border border-[var(--line)] bg-[var(--card)] px-3 text-xs font-medium whitespace-nowrap text-[var(--ink)] transition-colors hover:border-[var(--mute)] focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50'
+// The list's actions look like the filter buttons, only smaller.
+const actionButtonClassName =
+  'h-8 rounded-lg border border-[var(--line)] bg-[var(--card)] px-3 text-xs font-medium whitespace-nowrap text-[var(--ink)] transition-colors hover:border-[var(--mute)] focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50'
 
 function SectionTitle({ id, children }: { id: string; children: ReactNode }) {
   return (
@@ -69,7 +69,7 @@ type ResetStatus =
   | { kind: 'working'; field: ResettableWordState }
   | { kind: 'done'; message: string }
 
-// One pill that opens the options for the word list: hiding a side of each word to test oneself,
+// One button that opens the options for the word list: hiding a side of each word to test oneself,
 // and starting over on the list's words. Only one side of a word can be hidden at a time, since
 // hiding both would leave nothing to test against. Resetting cannot be undone, so it asks first.
 export function ListOptions({
@@ -123,7 +123,7 @@ export function ListOptions({
         aria-label={
           active ? `${labels.listOptions}: ${activeLabels.join(', ')}` : labels.listOptions
         }
-        className={`inline-flex h-9 w-12 items-center justify-center rounded-full border transition-colors focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none ${
+        className={`inline-flex h-9 w-12 items-center justify-center rounded-lg border transition-colors focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none ${
           active
             ? 'border-[var(--root)]/50 bg-[var(--root)]/15 text-[var(--ink)] hover:border-[var(--root)]/70 data-[state=open]:border-[var(--root)]/70'
             : 'border-[var(--line)] bg-[var(--card)] text-[var(--mute)] hover:border-[var(--mute)] hover:text-[var(--ink)] data-[state=open]:border-[var(--mute)]'
@@ -148,7 +148,7 @@ export function ListOptions({
       <PopoverContent aria-label={labels.listOptions} className="w-72 space-y-4">
         <section aria-labelledby="list-options-test" role="radiogroup">
           <SectionTitle id="list-options-test">{labels.testYourself}</SectionTitle>
-          <div className="flex rounded-full bg-[var(--bg)] p-0.5">
+          <div className="flex rounded-lg bg-[var(--bg)] p-0.5">
             {sideOptions.map((option) => (
               <label className="flex-1" key={option}>
                 <input
@@ -159,7 +159,7 @@ export function ListOptions({
                   value={option}
                   onChange={() => onHiddenChange(option === 'none' ? null : option)}
                 />
-                <span className="block cursor-pointer rounded-full px-2 py-1.5 text-center text-xs font-medium whitespace-nowrap text-[var(--mute)] transition-colors peer-checked:bg-[var(--card)] peer-checked:text-[var(--ink)] peer-checked:shadow-sm peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--info)] hover:text-[var(--ink)]">
+                <span className="block cursor-pointer rounded-md px-2 py-1.5 text-center text-xs font-medium whitespace-nowrap text-[var(--mute)] transition-colors peer-checked:bg-[var(--card)] peer-checked:text-[var(--ink)] peer-checked:shadow-sm peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--info)] hover:text-[var(--ink)]">
                   {optionLabels[option]}
                 </span>
               </label>
@@ -193,7 +193,7 @@ export function ListOptions({
               </p>
               <div className="mt-2.5 flex justify-end gap-2">
                 <button
-                  className={pillClassName}
+                  className={actionButtonClassName}
                   disabled={status.kind === 'working'}
                   type="button"
                   onClick={() => setStatus({ kind: 'idle' })}
@@ -201,7 +201,7 @@ export function ListOptions({
                   {labels.cancel}
                 </button>
                 <button
-                  className="h-8 rounded-full bg-[var(--familiarity-1)] px-3.5 text-xs font-medium text-white transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none disabled:cursor-wait disabled:opacity-60"
+                  className="h-8 rounded-lg bg-[var(--familiarity-1)] px-3.5 text-xs font-medium text-white transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none disabled:cursor-wait disabled:opacity-60"
                   disabled={status.kind === 'working'}
                   type="button"
                   onClick={() => confirmReset(status.field)}
@@ -215,7 +215,7 @@ export function ListOptions({
               <div className="grid grid-cols-2 gap-2">
                 {(['familiarity', 'favorites'] as const).map((field) => (
                   <button
-                    className={pillClassName}
+                    className={actionButtonClassName}
                     disabled={!marked || marked[field].length === 0}
                     key={field}
                     type="button"
