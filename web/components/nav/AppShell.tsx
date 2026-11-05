@@ -15,7 +15,12 @@ export async function AppShell({ children, language }: AppShellProps) {
   const t = await getTranslations('navigation')
   const base = `/${language}`
   const links: SidebarLink[] = [
-    { href: `${base}/vocabulary/a1`, icon: 'levels', label: t('levels'), match: `${base}/vocabulary` },
+    {
+      href: `${base}/vocabulary/a1`,
+      icon: 'levels',
+      label: t('levels'),
+      match: `${base}/vocabulary`,
+    },
     { href: `${base}/word-parts`, icon: 'roots', label: t('roots'), match: `${base}/word-parts` },
     {
       href: `${base}/flashcards`,
@@ -29,7 +34,6 @@ export async function AppShell({ children, language }: AppShellProps) {
       label: t('favorites'),
       match: `${base}/favorites`,
     },
-    { href: '/search', icon: 'search', label: t('search'), match: '/search' },
   ]
 
   return (
