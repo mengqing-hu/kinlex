@@ -1,4 +1,5 @@
 import { createServerClient } from '@supabase/ssr'
+import type { User } from '@supabase/supabase-js'
 import { type NextRequest, NextResponse } from 'next/server'
 
 import { config } from '@/lib/config'
@@ -8,7 +9,9 @@ function isProtectedPath(pathname: string) {
   return pathname === '/me' || pathname.startsWith('/me/')
 }
 
-export async function updateSession(request: NextRequest) {
+export async function updateSession(
+  request: NextRequest,
+): Promise<{ response: NextResponse; user: User | null }> {
   let response = NextResponse.next({ request })
 
   const supabase = createServerClient<Database>(config.supabaseUrl, config.supabaseAnonKey, {
@@ -42,8 +45,8 @@ export async function updateSession(request: NextRequest) {
       redirectResponse.cookies.set(cookie)
     })
 
-    return redirectResponse
+    return { response: redirectResponse, user }
   }
 
-  return response
+  return { response, user }
 }

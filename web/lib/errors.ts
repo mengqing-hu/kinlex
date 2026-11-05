@@ -1,5 +1,10 @@
 export type ApiErrorCode =
-  'INVALID_PARAMS' | 'UNAUTHORIZED' | 'UNSUPPORTED_LANGUAGE' | 'NOT_FOUND' | 'INTERNAL'
+  | 'INVALID_PARAMS'
+  | 'UNAUTHORIZED'
+  | 'UNSUPPORTED_LANGUAGE'
+  | 'NOT_FOUND'
+  | 'RATE_LIMITED'
+  | 'INTERNAL'
 
 export class AppError extends Error {
   constructor(

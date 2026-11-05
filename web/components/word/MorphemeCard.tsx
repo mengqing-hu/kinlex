@@ -126,6 +126,7 @@ export function MorphemeCard({ children, language, morphemeId, labels }: Morphem
                       className="flex items-baseline justify-between gap-3 rounded-md px-2 py-1 text-sm hover:bg-[var(--bg)] focus-visible:outline-2 focus-visible:outline-[var(--info)]"
                       href={getWordPanelPath(language, word.slug, word.level)}
                       onClick={(event) => openWordPanelOnClick(event, word.slug)}
+                      prefetch={false}
                     >
                       <span className="shrink-0 font-medium">
                         {word.segments.length > 0

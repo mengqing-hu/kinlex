@@ -124,6 +124,7 @@ export function MorphemeDetailPanel({
                           className="font-semibold text-[var(--ink)] hover:text-[var(--root)] hover:underline"
                           href={getWordPanelPath(language, word.slug, word.level)}
                           onClick={(event) => openWordPanelOnClick(event, word.slug)}
+                          prefetch={false}
                         >
                           {word.segments.length > 0
                             ? word.segments.map((segment, index) => (

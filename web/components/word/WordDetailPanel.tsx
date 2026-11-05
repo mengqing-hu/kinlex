@@ -151,6 +151,7 @@ function PanelWord({
                     className="font-semibold text-[var(--ink)] hover:text-[var(--root)] hover:underline"
                     href={getWordPanelPath(language, related.slug, related.level)}
                     onClick={(event) => openWordPanelOnClick(event, related.slug)}
+                    prefetch={false}
                   >
                     {related.lemma}
                   </Link>

@@ -186,6 +186,7 @@ export function RootDirectory({ items, labels, language }: RootDirectoryProps) {
                           className={`flex w-full flex-col rounded-xl border bg-[var(--card)] p-4 hover:border-[var(--root)] focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none ${item.slug === openSlug ? 'border-[var(--root)]' : 'border-[var(--line)]'}`}
                           href={`/${language}/word-parts/${item.slug}`}
                           onClick={(event) => openOnClick(event, item.slug)}
+                          prefetch={false}
                         >
                           <span className="text-lg font-semibold text-[var(--ink)]">
                             {item.text}
@@ -213,6 +214,7 @@ export function RootDirectory({ items, labels, language }: RootDirectoryProps) {
                           className={`grid min-h-9 grid-cols-[8rem_minmax(0,1fr)_auto] items-center gap-x-3 rounded-md px-2 py-1 transition-colors hover:bg-[var(--row-hover)] focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none ${item.slug === openSlug ? 'bg-[var(--row-hover)]' : ''}`}
                           href={`/${language}/word-parts/${item.slug}`}
                           onClick={(event) => openOnClick(event, item.slug)}
+                          prefetch={false}
                         >
                           <span className="truncate text-sm font-semibold text-[var(--ink)]">
                             {item.text}
