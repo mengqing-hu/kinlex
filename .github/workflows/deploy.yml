@@ -28,10 +28,12 @@ jobs:
     needs: checks
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # Straight to the database with its password, so no Supabase access token is needed. The
+    # session pooler, because the direct host is IPv6 only and GitHub's runners are not.
     env:
-      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
       SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+      SUPABASE_POOLER_HOST: aws-1-eu-central-1.pooler.supabase.com
 
     steps:
       - name: Check out repository
@@ -42,11 +44,13 @@ jobs:
         with:
           version: 2.95.4
 
-      - name: Link the production project
-        run: supabase link --project-ref "$SUPABASE_PROJECT_REF"
-
       - name: Apply new migrations
-        run: supabase db push --yes
+        run: |
+          # The password goes into the URL percent-encoded, which the secret masking would not
+          # recognise, so mask that form too.
+          password=$(python3 -c 'import os, urllib.parse; print(urllib.parse.quote(os.environ["SUPABASE_DB_PASSWORD"], safe=""))')
+          echo "::add-mask::$password"
+          supabase db push --yes --db-url "postgresql://postgres.$SUPABASE_PROJECT_REF:$password@$SUPABASE_POOLER_HOST:5432/postgres"
 
   website:
     name: Website
