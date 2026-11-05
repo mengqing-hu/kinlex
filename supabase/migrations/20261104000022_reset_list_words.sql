@@ -19,26 +19,34 @@ stable
 set search_path = ''
 as $$
 declare
-  ids bigint[];
+  ids bigint[] := '{}';
+  page bigint[];
 begin
   if p_marked is not null and p_marked not in ('familiarity', 'favorites') then
     raise exception 'Marked must be familiarity or favorites'
       using errcode = '22023';
   end if;
 
-  select coalesce(array_agg(id), '{}') into ids
-  from public.list_word_ids(
-    p_language,
-    'frequency',
-    false,
-    p_level,
-    p_query,
-    p_word_class_patterns,
-    p_word_ids,
-    p_topic,
-    0,
-    2147483647
-  ) as id;
+  -- list_word_ids hands out at most 101 ids a call, so page through it.
+  loop
+    page := array(
+      select id
+      from public.list_word_ids(
+        p_language,
+        'frequency',
+        false,
+        p_level,
+        p_query,
+        p_word_class_patterns,
+        p_word_ids,
+        p_topic,
+        coalesce(array_length(ids, 1), 0),
+        101
+      ) as id
+    );
+    ids := ids || page;
+    exit when coalesce(array_length(page, 1), 0) < 101;
+  end loop;
 
   if p_marked is null then
     return ids;
