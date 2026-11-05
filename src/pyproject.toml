@@ -71,3 +71,8 @@ warn_unreachable = true
 [[tool.mypy.overrides]]
 module = ["boto3", "boto3.*", "botocore", "botocore.*"]
 ignore_missing_imports = true
+
+# spaCy comes with the optional annotate extra, which CI does not install.
+[[tool.mypy.overrides]]
+module = ["spacy", "spacy.*"]
+ignore_missing_imports = true

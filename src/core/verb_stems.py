@@ -73,6 +73,3 @@ def use_verb_stems(word: Word, segments: list[Segment], verbs: frozenset[str]) -
         last.model_copy(update={"word_part": last.word_part[:cut]}),
         Segment(word_part=last.word_part[cut:]),
     ]
-
-
-
