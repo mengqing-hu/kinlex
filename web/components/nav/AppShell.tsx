@@ -21,6 +21,7 @@ export async function AppShell({ children, language }: AppShellProps) {
       label: t('levels'),
       match: `${base}/vocabulary`,
     },
+    { href: `${base}/grammar`, icon: 'grammar', label: t('grammar'), match: `${base}/grammar` },
     { href: `${base}/word-parts`, icon: 'roots', label: t('roots'), match: `${base}/word-parts` },
     {
       href: `${base}/flashcards`,

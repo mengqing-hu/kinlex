@@ -3,6 +3,7 @@
     "home": "Kinlex",
     "learningLanguage": "Learning {language}",
     "levels": "Vocabulary",
+    "grammar": "Grammar",
     "roots": "Word parts",
     "flashcards": "Flashcards",
     "favorites": "Favorites",
@@ -13,6 +14,37 @@
     "expandSidebar": "Expand sidebar",
     "openMenu": "Open menu",
     "closeMenu": "Close menu"
+  },
+  "grammarPage": {
+    "metadataTitle": "Grammar",
+    "chapter": "Chapter",
+    "allChapters": "All chapters",
+    "introduction": "Introduction",
+    "empty": "No grammar is available yet.",
+    "noMatches": "No grammar topics match your search.",
+    "search": "Search grammar",
+    "searchPlaceholder": "Search grammar",
+    "subsection": "subsection",
+    "subsections": "subsections",
+    "panel": {
+      "cases": {
+        "nom": "Nominative",
+        "akk": "Accusative",
+        "dat": "Dative",
+        "gen": "Genitive"
+      },
+      "learnFirst": "Learn first",
+      "related": "Related topics",
+      "next": "Up next",
+      "previousTopic": "Previous",
+      "nextTopic": "Next",
+      "noContent": "This topic has no content yet."
+    },
+    "views": {
+      "view": "View",
+      "list": "List",
+      "cards": "Cards"
+    }
   },
   "footer": {
     "description": "Learn words through their connections.",

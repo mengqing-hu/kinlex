@@ -20,6 +20,11 @@
   --info: #557b9c;
   --highlight: #fbe48a;
   --row-hover: #e9e5e1;
+  /* The four grammatical cases, the same in tables and example sentences. */
+  --case-nom: #4f7aa6;
+  --case-akk: #b0573a;
+  --case-dat: #3f8556;
+  --case-gen: #8a5a9b;
   --familiarity-1: #c8553d;
   --familiarity-2: #e07b39;
   --familiarity-3: #e0a526;
@@ -42,6 +47,10 @@
   --info: #91b4d0;
   --highlight: #6b5a1f;
   --row-hover: #24221f;
+  --case-nom: #8fb3d9;
+  --case-akk: #e39478;
+  --case-dat: #8cc79d;
+  --case-gen: #c49ad4;
   --familiarity-1: #e07a62;
   --familiarity-2: #eb9a5c;
   --familiarity-3: #e8b84a;

@@ -48,12 +48,14 @@ interface SidePanelProps {
   label: string
   busy: boolean
   children: ReactNode
+  // For long content with tables, such as a grammar topic.
+  wide?: boolean
   onClose: () => void
 }
 
 // The detail column on the right of a list: a third column beside the page on wide screens, and
 // a sheet over the page on phones. Escape closes it.
-export function SidePanel({ label, busy, children, onClose }: SidePanelProps) {
+export function SidePanel({ label, busy, children, wide = false, onClose }: SidePanelProps) {
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
@@ -79,7 +81,7 @@ export function SidePanel({ label, busy, children, onClose }: SidePanelProps) {
       <aside
         aria-busy={busy}
         aria-label={label}
-        className="fixed inset-y-0 right-0 z-50 flex w-full flex-col border-l border-[var(--line)] bg-[var(--card)] shadow-2xl md:sticky md:top-0 md:z-auto md:h-dvh md:w-[20rem] md:shrink-0 md:shadow-none lg:w-[22rem] xl:w-[24rem]"
+        className={`fixed inset-y-0 right-0 z-50 flex w-full flex-col border-l border-[var(--line)] bg-[var(--card)] shadow-2xl md:sticky md:top-0 md:z-auto md:h-dvh md:shrink-0 md:shadow-none ${wide ? 'md:w-[26rem] lg:w-[34rem] xl:w-[42rem] 2xl:w-[48rem]' : 'md:w-[20rem] lg:w-[22rem] xl:w-[24rem]'}`}
       >
         {children}
       </aside>

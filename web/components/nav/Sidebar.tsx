@@ -8,7 +8,7 @@ import { Link, usePathname } from '@/i18n/navigation'
 import type { SupportedLanguageCode } from '@/lib/languages'
 import { SIDEBAR_STORAGE_KEY } from '@/lib/sidebar'
 
-export type SidebarIcon = 'levels' | 'roots' | 'flashcards' | 'favorites'
+export type SidebarIcon = 'levels' | 'grammar' | 'roots' | 'flashcards' | 'favorites'
 
 export interface SidebarLink {
   href: string
@@ -38,6 +38,9 @@ interface SidebarProps {
 
 const iconPaths: Record<SidebarIcon, ReactNode> = {
   levels: <path d="M5 20v-6M12 20V9M19 20V4" />,
+  grammar: (
+    <path d="M5 19.5V5a2 2 0 0 1 2-2h12v15H7a2 2 0 0 0-2 2Zm0 0A1.5 1.5 0 0 0 6.5 21H19M9 7.5h6M9 11h4" />
+  ),
   roots: <path d="M12 21V9m0 0c0-3 2-5 5-5 0 3-2 5-5 5Zm0 4c0-3-2-5-5-5 0 3 2 5 5 5Z" />,
   flashcards: (
     <>
