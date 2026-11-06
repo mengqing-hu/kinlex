@@ -1,10 +1,10 @@
 'use client'
 
-import Link from 'next/link'
 import { type ReactElement, useState } from 'react'
 
 import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/Popover'
+import { Link, usePathname } from '@/i18n/navigation'
 
 interface SignInPromptProps {
   /** The control a guest clicked; for a guest it opens the prompt instead of doing its job. */
@@ -15,12 +15,14 @@ interface SignInPromptProps {
 // Marking words needs an account. A guest who tries is asked to sign in right there, and comes
 // back to the same page afterwards.
 export function SignInPrompt({ children, message }: SignInPromptProps) {
+  // Without the language: the login page and the sign-in callback keep the current one.
+  const pathname = usePathname()
   const [returnPath, setReturnPath] = useState('/')
 
   return (
     <Popover
       onOpenChange={(open) => {
-        if (open) setReturnPath(`${window.location.pathname}${window.location.search}`)
+        if (open) setReturnPath(`${pathname}${window.location.search}`)
       }}
     >
       <PopoverTrigger asChild>{children}</PopoverTrigger>

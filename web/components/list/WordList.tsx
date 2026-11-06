@@ -1,12 +1,12 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { FilterBar } from '@/components/list/FilterBar'
 import { hiddenSides, type ListOptionsLabels } from '@/components/list/ListOptions'
 import type { SortSelectLabels } from '@/components/list/SortSelect'
 import { type ViewToggleLabels, wordListViews } from '@/components/list/ViewToggle'
+import { useRouter } from '@/i18n/navigation'
 import { normalizePartOfSpeech } from '@/lib/utils/partOfSpeech'
 import type { MorphemeCardLabels } from '@/components/word/MorphemeCard'
 import { WordDetailPanel, type WordPanelLabels } from '@/components/word/WordDetailPanel'

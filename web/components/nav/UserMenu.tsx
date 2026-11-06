@@ -1,11 +1,11 @@
 'use client'
 
 import type { User } from '@supabase/supabase-js'
-import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 import { AccountMenu } from '@/components/auth/AccountMenu'
 import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton'
+import { Link } from '@/i18n/navigation'
 import { getBrowserSupabase } from '@/lib/supabase/browser'
 import { fetchApiData } from '@/lib/client/apiClient'
 import { flushEventQueue } from '@/lib/client/eventQueue'

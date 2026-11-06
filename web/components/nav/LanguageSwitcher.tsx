@@ -1,13 +1,12 @@
 'use client'
 
-import Link from 'next/link'
-
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu'
+import { Link } from '@/i18n/navigation'
 import { supportedLanguages, type SupportedLanguageCode } from '@/lib/languages'
 
 interface LanguageSwitcherProps {

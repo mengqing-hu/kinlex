@@ -1,7 +1,9 @@
 'use client'
 
+import { useLocale } from 'next-intl'
 import { useState } from 'react'
 
+import { getPathname } from '@/i18n/navigation'
 import { getBrowserSupabase } from '@/lib/supabase/browser'
 
 interface GoogleSignInButtonProps {
@@ -22,6 +24,7 @@ export function GoogleSignInButton({
   nextPath = '/me',
   onError,
 }: GoogleSignInButtonProps) {
+  const locale = useLocale()
   const [isRedirecting, setIsRedirecting] = useState(false)
 
   async function handleClick() {
@@ -29,7 +32,7 @@ export function GoogleSignInButton({
 
     // Google sends the user back through Supabase to the same PKCE callback the magic link uses.
     const callbackUrl = new URL('/auth/callback', window.location.origin)
-    callbackUrl.searchParams.set('next', nextPath)
+    callbackUrl.searchParams.set('next', getPathname({ href: nextPath, locale }))
 
     const { error } = await getBrowserSupabase().auth.signInWithOAuth({
       provider: 'google',

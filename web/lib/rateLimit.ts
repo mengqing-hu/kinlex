@@ -2,6 +2,7 @@ import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 import { NextResponse } from 'next/server'
 
+import { isLocale } from '@/i18n/locales'
 import { privateErrorResponse } from '@/lib/http'
 import { isSupportedLanguage } from '@/lib/languages'
 
@@ -72,8 +73,8 @@ export function getRateLimitBucket(pathname: string): RateLimitBucket | null {
   if (pathname.startsWith('/api/v1/')) return 'api'
   if (pathname.startsWith('/api/')) return null
 
-  const [, language = ''] = pathname.split('/')
-  return isSupportedLanguage(language) ? 'pages' : null
+  const [, locale = '', language = ''] = pathname.split('/')
+  return isLocale(locale) && isSupportedLanguage(language) ? 'pages' : null
 }
 
 // The hosting platform's proxy puts the client first in x-forwarded-for.

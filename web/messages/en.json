@@ -271,5 +271,23 @@
       "showExampleMeaning": "Example translation",
       "autoplay": "Play pronunciation automatically"
     }
+  },
+  "settingsPage": {
+    "metadataTitle": "Settings",
+    "title": "Settings",
+    "language": "Language",
+    "languageHint": "The site and the meanings of words are shown in this language.",
+    "timezone": "Timezone",
+    "timezoneHint": "Your daily activity is counted by this timezone.",
+    "publicProfile": "Public profile",
+    "saveError": "The request failed. Please try again.",
+    "deleteTitle": "Delete account",
+    "deleteDescription": "This permanently removes your account, favorites and learning history.",
+    "deleteAction": "Delete account",
+    "deleteConfirm": "Permanently delete your account and all learning data?"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you requested does not exist."
   }
 }

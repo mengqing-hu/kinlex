@@ -1,9 +1,9 @@
 'use client'
 
-import Link from 'next/link'
 import { useState, type ReactNode } from 'react'
 
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/HoverCard'
+import { Link } from '@/i18n/navigation'
 import { fetchApiData } from '@/lib/client/apiClient'
 import { openWordPanelOnClick } from '@/lib/client/searchParams'
 import { getWordPanelPath } from '@/lib/wordPanel'

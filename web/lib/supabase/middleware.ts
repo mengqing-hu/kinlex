@@ -2,11 +2,14 @@ import { createServerClient } from '@supabase/ssr'
 import type { User } from '@supabase/supabase-js'
 import { type NextRequest, NextResponse } from 'next/server'
 
+import { isLocale } from '@/i18n/locales'
 import { config } from '@/lib/config'
 import type { Database } from '@/types/db'
 
-function isProtectedPath(pathname: string) {
-  return pathname === '/me' || pathname.startsWith('/me/')
+// The language of an account page such as /zh/me/settings, or null for any other page.
+function getAccountPageLocale(pathname: string): string | null {
+  const [, locale = '', section] = pathname.split('/')
+  return isLocale(locale) && section === 'me' ? locale : null
 }
 
 export async function updateSession(
@@ -35,10 +38,13 @@ export async function updateSession(
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user && isProtectedPath(request.nextUrl.pathname)) {
+  const accountPageLocale = getAccountPageLocale(request.nextUrl.pathname)
+  if (!user && accountPageLocale) {
     const loginUrl = request.nextUrl.clone()
-    loginUrl.pathname = '/login'
-    loginUrl.searchParams.set('next', `${request.nextUrl.pathname}${request.nextUrl.search}`)
+    loginUrl.pathname = `/${accountPageLocale}/login`
+    // The way back leaves out the language, as the login page expects.
+    const pathWithoutLocale = request.nextUrl.pathname.slice(accountPageLocale.length + 1)
+    loginUrl.searchParams.set('next', `${pathWithoutLocale}${request.nextUrl.search}`)
 
     const redirectResponse = NextResponse.redirect(loginUrl)
     response.cookies.getAll().forEach((cookie) => {

@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { type MouseEvent, useCallback, useState } from 'react'
 
 import { FilterSelect } from '@/components/list/FilterSelect'
@@ -11,6 +10,7 @@ import {
   type MorphemePanelLabels,
 } from '@/components/root/MorphemeDetailPanel'
 import { WordDetailPanel, type WordPanelLabels } from '@/components/word/WordDetailPanel'
+import { Link } from '@/i18n/navigation'
 import {
   updateSearchParameter,
   updateSearchParameters,
