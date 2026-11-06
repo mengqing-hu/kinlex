@@ -3,6 +3,7 @@
     "home": "Kinlex",
     "learningLanguage": "正在学习{language}",
     "levels": "词汇",
+    "grammar": "语法",
     "roots": "构词成分",
     "flashcards": "单词卡",
     "favorites": "收藏",
@@ -13,6 +14,37 @@
     "expandSidebar": "展开侧边栏",
     "openMenu": "打开菜单",
     "closeMenu": "关闭菜单"
+  },
+  "grammarPage": {
+    "metadataTitle": "语法",
+    "chapter": "章节",
+    "allChapters": "全部章节",
+    "introduction": "导言",
+    "empty": "暂时还没有语法内容。",
+    "noMatches": "没有符合搜索条件的语法主题。",
+    "search": "搜索语法",
+    "searchPlaceholder": "搜索语法",
+    "subsection": "个小节",
+    "subsections": "个小节",
+    "panel": {
+      "cases": {
+        "nom": "第一格（主格）",
+        "akk": "第四格（宾格）",
+        "dat": "第三格（与格）",
+        "gen": "第二格（属格）"
+      },
+      "learnFirst": "先学习",
+      "related": "相关主题",
+      "next": "接下来",
+      "previousTopic": "上一个",
+      "nextTopic": "下一个",
+      "noContent": "这个主题暂时还没有内容。"
+    },
+    "views": {
+      "view": "视图",
+      "list": "列表",
+      "cards": "卡片"
+    }
   },
   "footer": {
     "description": "通过词与词之间的联系来学习单词。",

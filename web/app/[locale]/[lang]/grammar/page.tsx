@@ -3,16 +3,18 @@ import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 
 import { GrammarDirectory } from '@/components/grammar/GrammarDirectory'
+import { applyRouteLocale } from '@/i18n/server'
 import { loadGrammarBook } from '@/lib/grammar/loadBook'
 import { isSupportedLanguage } from '@/lib/languages'
 import { getWordListLabels } from '@/lib/wordListLabels'
 
 interface GrammarPageProps {
-  params: Promise<{ lang: string }>
+  params: Promise<{ locale: string; lang: string }>
 }
 
 export async function generateMetadata({ params }: GrammarPageProps): Promise<Metadata> {
   const { lang } = await params
+  await applyRouteLocale(params)
   if (!isSupportedLanguage(lang) || !(await loadGrammarBook(lang))) notFound()
 
   const t = await getTranslations('grammarPage')
@@ -22,6 +24,7 @@ export async function generateMetadata({ params }: GrammarPageProps): Promise<Me
 
 export default async function GrammarPage({ params }: GrammarPageProps) {
   const { lang } = await params
+  await applyRouteLocale(params)
   if (!isSupportedLanguage(lang)) notFound()
   const [t, listLabels, book] = await Promise.all([
     getTranslations('grammarPage'),

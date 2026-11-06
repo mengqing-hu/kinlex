@@ -1,9 +1,9 @@
 'use client'
 
-import Link from 'next/link'
 import { useEffect, useRef } from 'react'
 
 import { PanelCloseButton, panelSectionLabelClass, SidePanel } from '@/components/ui/SidePanel'
+import { Link } from '@/i18n/navigation'
 import { openWordPanelOnClick } from '@/lib/client/searchParams'
 import { findGrammarTopic, type GrammarTopic, listGrammarEntries } from '@/lib/grammar/contents'
 import {
