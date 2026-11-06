@@ -470,6 +470,19 @@ def replace_word_enrichment(
     replace_word_segments(connection, word=word, segments=enrichment.segments)
 
 
+def _available_morpheme_slug(connection: psycopg.Connection[Any], language: str, base: str) -> str:
+    """Slugs are lowercase, so "Wert" (value) and "wert" (worth) need different ones."""
+    candidate = base
+    suffix = 2
+    while connection.execute(
+        "select 1 from public.morphemes where language = %s and slug = %s",
+        (language, candidate),
+    ).fetchone():
+        candidate = f"{base}-{suffix}"
+        suffix += 1
+    return candidate
+
+
 def replace_word_segments(
     connection: psycopg.Connection[Any], *, word: Word, segments: list[Segment]
 ) -> None:
@@ -486,26 +499,31 @@ def replace_word_segments(
             )
             row = connection.execute(
                 """
-                insert into public.morphemes
-                  (language, morpheme, morpheme_type, morpheme_meaning, is_separable, slug)
-                values (%s, %s, %s, %s, %s, %s)
-                on conflict (language, slug)
-                do update set slug = excluded.slug
-                returning id, morpheme
+                select id from public.morphemes
+                where language = %s and morpheme_type = %s and morpheme = %s
                 """,
-                (
-                    word.language,
-                    segment.morpheme,
-                    segment.morpheme_type,
-                    segment.morpheme_meaning,
-                    segment.is_separable,
-                    f"{_slugify(segment.morpheme)}-{kind}",
-                ),
+                (word.language, segment.morpheme_type, segment.morpheme),
             ).fetchone()
-            assert row is not None
-            if row[1] != segment.morpheme:
-                # Two spellings with one slug would silently share a row, name and meaning.
-                raise ValueError(f"morpheme {segment.morpheme!r} has the slug of {row[1]!r}")
+            if row is None:
+                row = connection.execute(
+                    """
+                    insert into public.morphemes
+                      (language, morpheme, morpheme_type, morpheme_meaning, is_separable, slug)
+                    values (%s, %s, %s, %s, %s, %s)
+                    returning id
+                    """,
+                    (
+                        word.language,
+                        segment.morpheme,
+                        segment.morpheme_type,
+                        segment.morpheme_meaning,
+                        segment.is_separable,
+                        _available_morpheme_slug(
+                            connection, word.language, f"{_slugify(segment.morpheme)}-{kind}"
+                        ),
+                    ),
+                ).fetchone()
+                assert row is not None
             morpheme_id = int(row[0])
         connection.execute(
             """
