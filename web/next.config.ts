@@ -19,18 +19,34 @@ const nextConfig: NextConfig = {
     remotePatterns: [],
   },
   // The vocabulary and word part pages used to live under /levels and /roots; old links and
-  // search results move along, keeping their query, such as an open word.
+  // search results move along, keeping their query, such as an open word. Addresses from before
+  // pages had a language go to English.
   async redirects() {
     return [
       {
-        source: '/:lang([a-z]{2,3})/levels/:level',
-        destination: '/:lang/vocabulary/:level',
+        source: '/:locale([a-z]{2,3})/:lang([a-z]{2,3})/levels/:level',
+        destination: '/:locale/:lang/vocabulary/:level',
         permanent: true,
       },
-      { source: '/:lang([a-z]{2,3})/roots', destination: '/:lang/word-parts', permanent: true },
+      {
+        source: '/:locale([a-z]{2,3})/:lang([a-z]{2,3})/roots',
+        destination: '/:locale/:lang/word-parts',
+        permanent: true,
+      },
+      {
+        source: '/:locale([a-z]{2,3})/:lang([a-z]{2,3})/roots/:root',
+        destination: '/:locale/:lang/word-parts/:root',
+        permanent: true,
+      },
+      {
+        source: '/:lang([a-z]{2,3})/levels/:level',
+        destination: '/en/:lang/vocabulary/:level',
+        permanent: true,
+      },
+      { source: '/:lang([a-z]{2,3})/roots', destination: '/en/:lang/word-parts', permanent: true },
       {
         source: '/:lang([a-z]{2,3})/roots/:root',
-        destination: '/:lang/word-parts/:root',
+        destination: '/en/:lang/word-parts/:root',
         permanent: true,
       },
     ]

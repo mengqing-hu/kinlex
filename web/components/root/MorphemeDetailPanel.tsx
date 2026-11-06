@@ -1,9 +1,9 @@
 'use client'
 
-import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 
 import { PanelCloseButton, panelSectionLabelClass, SidePanel } from '@/components/ui/SidePanel'
+import { Link } from '@/i18n/navigation'
 import { fetchApiData } from '@/lib/client/apiClient'
 import { openWordPanelOnClick } from '@/lib/client/searchParams'
 import { formatPartOfSpeech } from '@/lib/utils/partOfSpeech'

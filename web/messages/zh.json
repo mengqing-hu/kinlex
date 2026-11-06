@@ -1,0 +1,293 @@
+{
+  "navigation": {
+    "home": "Kinlex",
+    "learningLanguage": "正在学习{language}",
+    "levels": "词汇",
+    "roots": "构词成分",
+    "flashcards": "单词卡",
+    "favorites": "收藏",
+    "signIn": "登录",
+    "account": "账户",
+    "mainNavigation": "主导航",
+    "collapseSidebar": "收起侧边栏",
+    "expandSidebar": "展开侧边栏",
+    "openMenu": "打开菜单",
+    "closeMenu": "关闭菜单"
+  },
+  "footer": {
+    "description": "通过词与词之间的联系来学习单词。",
+    "copyright": "版权所有 {year} Kinlex"
+  },
+  "rootsPage": {
+    "type": "构词成分",
+    "allTypes": "全部构词成分",
+    "empty": "暂时还没有构词成分。",
+    "noMatches": "没有符合搜索条件的构词成分。",
+    "search": "搜索构词成分",
+    "searchPlaceholder": "搜索构词成分",
+    "word": "个词",
+    "words": "个词",
+    "types": {
+      "prefix": "前缀",
+      "root": "词根",
+      "suffix": "后缀"
+    },
+    "metadataTitle": "德语词根、前缀和后缀",
+    "metadataDescription": "通过词根、前缀和后缀探索德语词族。",
+    "views": {
+      "view": "视图",
+      "list": "列表",
+      "cards": "卡片"
+    },
+    "sorting": {
+      "sort": "排序",
+      "sortBy": "排序方式",
+      "default": "默认",
+      "reverse": "反转顺序",
+      "sorts": {
+        "alphabetical": "A–Z",
+        "words": "单词数量"
+      },
+      "orders": {
+        "alphabetical": {
+          "asc": "从 A 到 Z",
+          "desc": "从 Z 到 A"
+        },
+        "words": {
+          "asc": "单词最少的在前",
+          "desc": "单词最多的在前"
+        }
+      }
+    },
+    "panel": {
+      "words": "单词",
+      "noWords": "暂时还没有单词使用这个构词成分。",
+      "openList": "以完整列表打开"
+    }
+  },
+  "rootPage": {
+    "allRoots": "全部构词成分",
+    "separable": "可分前缀",
+    "words": "含有 {root} 的单词",
+    "types": {
+      "prefix": "前缀",
+      "root": "词根",
+      "suffix": "后缀"
+    },
+    "metadataTitle": "{root} 德语词族",
+    "metadataDescription": "学习含有 {root}（意为 {meaning}）的德语单词。"
+  },
+  "wordDetail": {
+    "plural": "复数：{plural}",
+    "meaning": "释义",
+    "structure": "单词结构",
+    "examples": "例句",
+    "wordFamily": "词族",
+    "noExamples": "暂时还没有例句。",
+    "noRelatedWords": "暂时还没有相关单词。",
+    "playWord": "播放 {word} 的发音",
+    "playExample": "播放例句",
+    "slowAudio": "慢速重播",
+    "closePanel": "关闭详情",
+    "morphemeTypes": {
+      "prefix": "前缀",
+      "root": "词根",
+      "suffix": "后缀"
+    },
+    "partsOfSpeech": {
+      "noun": "名词",
+      "verb": "动词",
+      "adjective": "形容词",
+      "adverb": "副词",
+      "article": "冠词",
+      "conjunction": "连词",
+      "expression": "短语",
+      "interjection": "感叹词",
+      "numeral": "数词",
+      "particle": "小品词",
+      "preposition": "介词",
+      "pronoun": "代词"
+    }
+  },
+  "levelPage": {
+    "backToHome": "Kinlex",
+    "eyebrow": "德语词汇",
+    "title": "{level} 级单词",
+    "allLevelsTitle": "全部德语单词",
+    "description": "通过清晰的释义、例句和单词结构积累德语词汇。",
+    "allLevels": "全部级别",
+    "levelFilter": "级别",
+    "allPartsOfSpeech": "全部词性",
+    "partOfSpeech": "词性",
+    "allTopics": "全部主题",
+    "topic": "主题",
+    "otherTopic": "其他",
+    "otherTopicHint": "没有主题的单词",
+    "searchWords": "搜索",
+    "searchPlaceholder": "搜索德语单词",
+    "loadMore": "加载更多",
+    "loading": "正在加载单词",
+    "empty": "没有符合这些筛选条件的单词。",
+    "loadError": "单词加载失败，请重试。",
+    "retry": "重试",
+    "playWord": "播放 {word} 的发音",
+    "playExample": "播放例句",
+    "slowAudio": "慢速重播",
+    "familiarity": "熟悉度 {level}/5",
+    "openWord": "打开 {word} 的详情",
+    "metadataTitle": "德语 {level} 词汇",
+    "metadataDescription": "通过释义、例句和单词结构学习德语 {level} 词汇。",
+    "allLevelsMetadataTitle": "德语词汇",
+    "allLevelsMetadataDescription": "通过释义、例句和单词结构学习欧标各级别的德语词汇。",
+    "sorting": {
+      "sort": "排序",
+      "sortBy": "排序方式",
+      "default": "默认",
+      "reverse": "反转顺序",
+      "signInHint": "登录后可按学习记录排序",
+      "sorts": {
+        "frequency": "词频",
+        "views": "查看次数",
+        "familiarity": "熟悉度",
+        "last_viewed": "最近查看",
+        "mistakes": "错误次数",
+        "alphabetical": "A–Z"
+      },
+      "orders": {
+        "frequency": {
+          "asc": "最常用的在前",
+          "desc": "最不常用的在前"
+        },
+        "views": {
+          "asc": "查看最少的在前",
+          "desc": "查看最多的在前"
+        },
+        "familiarity": {
+          "asc": "最不熟悉的在前",
+          "desc": "最熟悉的在前"
+        },
+        "last_viewed": {
+          "asc": "最久未查看的在前",
+          "desc": "最近查看的在前"
+        },
+        "mistakes": {
+          "asc": "单词卡错误最少的在前",
+          "desc": "单词卡错误最多的在前"
+        },
+        "alphabetical": {
+          "asc": "从 A 到 Z",
+          "desc": "从 Z 到 A"
+        }
+      }
+    },
+    "views": {
+      "view": "视图",
+      "list": "列表",
+      "cards": "卡片"
+    },
+    "listOptions": {
+      "listOptions": "列表选项",
+      "testYourself": "自我测试",
+      "off": "关闭",
+      "hideWord": "隐藏单词",
+      "hideMeaning": "隐藏释义",
+      "display": "显示",
+      "showActions": "熟悉度和收藏",
+      "actionsHidden": "已隐藏熟悉度和收藏",
+      "thisList": "当前列表",
+      "resetFamiliarity": "重置熟悉度",
+      "clearFavorites": "清空收藏",
+      "confirmResetFamiliarity": "要重置此列表中 {count} 个单词的熟悉度吗？此操作无法撤销。",
+      "confirmClearFavorites": "要将此列表中的 {count} 个单词移出收藏吗？此操作无法撤销。",
+      "cancel": "取消",
+      "reset": "重置",
+      "remove": "移除",
+      "familiarityReset": "已重置 {count} 个单词的熟悉度。",
+      "favoritesCleared": "已将 {count} 个单词移出收藏。",
+      "resetFailed": "操作失败，请重试。"
+    }
+  },
+  "morphemeCard": {
+    "loading": "正在加载词族",
+    "loadError": "词族加载失败。",
+    "retry": "重试",
+    "relatedWords": "相关单词",
+    "noRelatedWords": "暂时还没有相关单词。",
+    "separable": "可分"
+  },
+  "favoritesPage": {
+    "metadataTitle": "收藏",
+    "title": "收藏",
+    "empty": "你还没有收藏任何单词。"
+  },
+  "flashcardsPage": {
+    "metadataTitle": "单词卡",
+    "title": "单词卡",
+    "stillLearning": "还在学",
+    "know": "认识",
+    "progress": "第 {current} 张，共 {total} 张",
+    "flipHintBefore": "按",
+    "flipHintAfter": "或点击卡片翻面",
+    "space": "空格键",
+    "loading": "正在抽取卡片…",
+    "loadError": "卡片加载失败。",
+    "saveError": "上一次的回答没有保存成功。",
+    "retry": "重试",
+    "empty": "暂时没有符合这些设置的单词。",
+    "emptyAction": "更改设置",
+    "roundDone": "本轮完成",
+    "roundSummary": "还在学 {learning} 个 · 认识 {know} 个",
+    "nextRound": "下一轮",
+    "face": {
+      "playWord": "播放 {word} 的发音",
+      "playExample": "播放例句",
+      "slowAudio": "慢速重播",
+      "noMeaning": "暂时还没有释义。",
+      "noRecording": "暂时还没有录音"
+    },
+    "settings": {
+      "title": "设置",
+      "wordsSection": "单词",
+      "wordsHint": "单词选择从下一轮开始生效。",
+      "source": "练习范围",
+      "sources": {
+        "all": "全部单词",
+        "favorites": "收藏",
+        "learning": "还在学"
+      },
+      "levels": "级别",
+      "levelsHint": "不选择表示全部级别。",
+      "cardCount": "每轮卡片数",
+      "cardCountHint": "1–{max}",
+      "startRound": "立即开始新一轮",
+      "cardSection": "卡片",
+      "direction": "先显示",
+      "directions": {
+        "de-en": "德语",
+        "en-de": "释义",
+        "mixed": "混合"
+      },
+      "showExample": "例句",
+      "showExampleMeaning": "例句翻译",
+      "autoplay": "自动播放发音"
+    }
+  },
+  "settingsPage": {
+    "metadataTitle": "设置",
+    "title": "设置",
+    "language": "语言",
+    "languageHint": "网站界面和单词释义都会使用这种语言显示。",
+    "timezone": "时区",
+    "timezoneHint": "每日学习记录按这个时区统计。",
+    "publicProfile": "公开个人资料",
+    "saveError": "请求失败，请重试。",
+    "deleteTitle": "删除账户",
+    "deleteDescription": "这会永久删除你的账户、收藏和学习记录。",
+    "deleteAction": "删除账户",
+    "deleteConfirm": "要永久删除你的账户和全部学习数据吗？"
+  },
+  "notFound": {
+    "title": "页面不存在",
+    "description": "你访问的页面不存在。"
+  }
+}

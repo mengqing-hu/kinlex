@@ -1,8 +1,8 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { useRef, useState, type ReactNode } from 'react'
+import { useRef, useState } from 'react'
 
+import { SettingRow } from '@/components/me/SettingRow'
 import { Avatar } from '@/components/ui/Avatar'
 import { Card } from '@/components/ui/Card'
 import {
@@ -11,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu'
+import { useRouter } from '@/i18n/navigation'
 import { fetchApiData } from '@/lib/client/apiClient'
 import { announceProfile } from '@/lib/client/profileEvents'
 import { getBrowserSupabase } from '@/lib/supabase/browser'
@@ -66,35 +67,6 @@ function saveProfile(update: Partial<Pick<UserProfile, 'displayName' | 'avatarPa
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(update),
   })
-}
-
-// A label on the left, with an optional hint below it, and its value or control on the right.
-function ProfileRow({
-  label,
-  hint,
-  labelFor,
-  children,
-}: {
-  label: string
-  hint?: string
-  labelFor?: string
-  children: ReactNode
-}) {
-  return (
-    <div className="flex min-h-14 items-center justify-between gap-6 py-3">
-      <div className="min-w-0">
-        {labelFor ? (
-          <label className="text-sm text-[var(--ink)]" htmlFor={labelFor}>
-            {label}
-          </label>
-        ) : (
-          <p className="text-sm text-[var(--ink)]">{label}</p>
-        )}
-        {hint ? <p className="mt-0.5 text-sm text-[var(--mute)]">{hint}</p> : null}
-      </div>
-      <div className="flex min-w-0 shrink-0 justify-end">{children}</div>
-    </div>
-  )
 }
 
 function PencilIcon() {
@@ -217,7 +189,7 @@ export function ProfileCard({ profile, userId, email, fallbackName, details }: P
         }}
       />
       <div className="mt-2 divide-y divide-[var(--line)]">
-        <ProfileRow hint="PNG, JPEG, or WebP, up to 10MB." label="Profile photo">
+        <SettingRow hint="PNG, JPEG, or WebP, up to 10MB." label="Profile photo">
           {current.avatarUrl ? (
             // With a picture there is a choice to make, so the click opens a small menu.
             <DropdownMenu>
@@ -250,9 +222,9 @@ export function ProfileCard({ profile, userId, email, fallbackName, details }: P
               {avatar}
             </button>
           )}
-        </ProfileRow>
+        </SettingRow>
 
-        <ProfileRow label="Display name" labelFor="profile-display-name">
+        <SettingRow label="Display name" labelFor="profile-display-name">
           <input
             className="min-h-9 w-56 rounded-lg border border-[var(--line)] bg-[var(--card)] px-3 text-sm text-[var(--ink)] transition-colors placeholder:text-[var(--mute)] hover:border-[var(--mute)] focus-visible:border-[var(--mute)] focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none disabled:opacity-60 sm:w-72"
             disabled={busy === 'name'}
@@ -272,15 +244,15 @@ export function ProfileCard({ profile, userId, email, fallbackName, details }: P
               }
             }}
           />
-        </ProfileRow>
+        </SettingRow>
 
-        <ProfileRow label="Email">
+        <SettingRow label="Email">
           <span className="truncate text-sm text-[var(--mute)]">{email ?? '—'}</span>
-        </ProfileRow>
+        </SettingRow>
         {details.map(([label, value]) => (
-          <ProfileRow key={label} label={label}>
+          <SettingRow key={label} label={label}>
             <span className="text-sm text-[var(--mute)]">{value}</span>
-          </ProfileRow>
+          </SettingRow>
         ))}
       </div>
       <p aria-live="polite" className="text-sm text-red-700 dark:text-red-400">

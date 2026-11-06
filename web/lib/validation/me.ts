@@ -1,5 +1,6 @@
 import { z } from 'zod'
 
+import { locales } from '@/i18n/locales'
 import { wordLevels } from '@/lib/constants'
 import { FLASHCARD_DEFAULT_COUNT, FLASHCARD_MAX_COUNT, flashcardSources } from '@/lib/flashcards'
 
@@ -15,8 +16,9 @@ export const profileUpdateSchema = z
       .string()
       .regex(/^[0-9a-f-]{36}\/[\w-]+\.(webp|png)$/)
       .nullable(),
-    nativeLanguage: languageCodeSchema,
-    uiLanguage: languageCodeSchema,
+    // A language the site can be used in, which is also the one words are explained in.
+    nativeLanguage: z.enum(locales),
+    uiLanguage: z.enum(locales),
     timezone: z.string().trim().min(1).max(100),
     profilePublic: z.boolean(),
   })

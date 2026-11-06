@@ -1,11 +1,10 @@
 'use client'
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { type ReactNode, useEffect, useState, useSyncExternalStore } from 'react'
 
 import { LanguageSwitcher } from '@/components/nav/LanguageSwitcher'
 import { UserMenu } from '@/components/nav/UserMenu'
+import { Link, usePathname } from '@/i18n/navigation'
 import type { SupportedLanguageCode } from '@/lib/languages'
 import { SIDEBAR_STORAGE_KEY } from '@/lib/sidebar'
 

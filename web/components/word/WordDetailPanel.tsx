@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { type ReactNode, useEffect, useRef, useState } from 'react'
 
 import { WordViewTracker } from '@/components/activity/WordViewTracker'
@@ -9,6 +8,7 @@ import { FavoriteButton } from '@/components/favorite/FavoriteButton'
 import { PanelCloseButton, panelSectionLabelClass, SidePanel } from '@/components/ui/SidePanel'
 import { ExampleLine } from '@/components/word/ExampleLine'
 import { MorphemeText } from '@/components/word/MorphemeText'
+import { Link } from '@/i18n/navigation'
 import { fetchApiData } from '@/lib/client/apiClient'
 import { formatPartOfSpeech } from '@/lib/utils/partOfSpeech'
 import { openWordPanelOnClick } from '@/lib/client/searchParams'

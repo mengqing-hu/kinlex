@@ -1,8 +1,6 @@
 'use client'
 
 import type { User } from '@supabase/supabase-js'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 
 import { Avatar } from '@/components/ui/Avatar'
 import {
@@ -12,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu'
+import { Link, useRouter } from '@/i18n/navigation'
 import { getBrowserSupabase } from '@/lib/supabase/browser'
 import type { UserProfile } from '@/types/domain'
 

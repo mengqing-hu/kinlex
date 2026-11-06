@@ -18,4 +18,4 @@ export function Footer({ copyright, description }: FooterProps) {
     </footer>
   )
 }
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
