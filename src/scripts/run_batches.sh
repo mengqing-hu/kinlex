@@ -10,6 +10,10 @@
 
 set -u
 
+# Python refuses to start when stdin is gone, which happens once the terminal that launched a
+# background run is closed.
+exec </dev/null
+
 first=${1:?usage: run_batches.sh FIRST [LAST]}
 last=${2:-$first}
 
