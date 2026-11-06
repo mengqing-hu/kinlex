@@ -28,11 +28,21 @@ WORD_CLASS_PREFIXES = {
     "pronomen": "pronoun",
     "präposition": "preposition",
     "verb": "verb",
+    # Spanish
+    "adjetivo": "adjective",
+    "adverbio": "adverb",
+    "artículo": "article",
+    "conjunción": "conjunction",
+    "interjección": "interjection",
+    "preposición": "preposition",
+    "pronombre": "pronoun",
+    "sustantivo": "noun",
+    "verbo": "verb",
 }
 
 
 def normalize_word_class(value: str) -> str:
-    """Map detailed German CSV labels to a stable broad part of speech."""
+    """Map detailed German or Spanish CSV labels to a stable broad part of speech."""
     normalized = value.strip().casefold()
     for prefix, word_class in WORD_CLASS_PREFIXES.items():
         if normalized.startswith(prefix):
