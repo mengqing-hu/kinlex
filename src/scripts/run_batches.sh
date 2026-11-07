@@ -2,11 +2,15 @@
 # Prepares several vocabulary batches one after another, for a long unattended run:
 #
 #     src/scripts/run_batches.sh 10 14
+#     src/scripts/run_batches.sh 1 21 es --force
 #
-# Each batch gets its database fields, its audio and its review files (`prepare`), then a list of
-# segmentations worth a look. A batch with failures is noted in the log and the next one still
-# runs; its failed words can be retried later with `prepare --batch N`. Everything goes to
-# data/pipeline/de/logs/batches_<first>-<last>.out.
+# The optional third argument is the language (de by default); anything after it is passed on to
+# the pipeline. A German batch gets its database fields, its audio and its review files
+# (`prepare`). A Spanish batch gets its fields and review files only (`fields`), since audio
+# follows once every word is segmented. Each batch then gets a list of segmentations worth a look.
+# A batch with failures is noted in the log and the next one still runs; its failed words can be
+# retried by running the same batch again. Everything goes to
+# data/pipeline/<language>/logs/batches_<first>-<last>.out.
 
 set -u
 
@@ -14,18 +18,31 @@ set -u
 # background run is closed.
 exec </dev/null
 
-first=${1:?usage: run_batches.sh FIRST [LAST]}
+first=${1:?usage: run_batches.sh FIRST [LAST] [LANGUAGE] [PIPELINE OPTIONS...]}
 last=${2:-$first}
+language=${3:-de}
+shift $(($# < 3 ? $# : 3))
+
+case "$language" in
+  de) command=prepare; vocabulary=german ;;
+  es) command=fields; vocabulary=spanish ;;
+  *) echo "unknown language: $language" >&2; exit 2 ;;
+esac
 
 cd "$(dirname "$0")/.."
-log="../data/pipeline/de/logs/batches_${first}-${last}.out"
+mkdir -p "../data/pipeline/$language/logs"
+log="../data/pipeline/$language/logs/batches_${first}-${last}.out"
 
 for batch in $(seq "$first" "$last"); do
   echo "=== batch $batch start $(date) ==="
-  if ! .venv/bin/python -m scripts.process_vocabulary prepare --batch "$batch"; then
+  if ! .venv/bin/python -m scripts.process_vocabulary "$command" --batch "$batch" \
+    --language "$language" \
+    --input "../data/vocabulary/$vocabulary/$vocabulary.csv" \
+    --output-dir "../data/output/$language" \
+    "$@"; then
     echo "!!! batch $batch had failures"
   fi
-  .venv/bin/python -m scripts.check_morphology \
-    --output "../data/output/de/morphology_issues_batch_$(printf '%04d' "$batch").md"
+  .venv/bin/python -m scripts.check_morphology --language "$language" \
+    --output "../data/output/$language/morphology_issues_batch_$(printf '%04d' "$batch").md"
   echo "=== batch $batch done $(date) ==="
 done 2>&1 | tee -a "$log"
