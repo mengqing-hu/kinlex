@@ -42,7 +42,12 @@ from utils.affixes import (
     normalize_segment_types,
 )
 from utils.review_export import export_review_files
-from utils.roots import apply_root_override, load_etymological_roots, load_root_overrides
+from utils.roots import (
+    apply_root_override,
+    load_etymological_roots,
+    load_numbered_roots,
+    load_root_overrides,
+)
 from utils.runtime import (
     Cache,
     RunSummary,
@@ -113,7 +118,7 @@ def validate_lexicon_forms(segments: list[Segment], meanings: AffixMeanings) -> 
     and Greek roots (Spanish), a hyphenated root must be one of them.
     """
     homographs = homograph_keys(meanings)
-    has_etymology = any(kind == "root" for kind, _morpheme in meanings)
+    has_etymology = any(kind == "root" and morpheme.endswith("-") for kind, morpheme in meanings)
     for segment in segments:
         if segment.morpheme_type is None or segment.morpheme is None:
             continue
@@ -125,9 +130,31 @@ def validate_lexicon_forms(segments: list[Segment], meanings: AffixMeanings) -> 
             raise ValidationError(f"{segment.morpheme!r} is not a listed Latin or Greek root")
 
 
-def validate_enrichment(stem: str, segments: list[Segment], meanings: AffixMeanings) -> None:
+def validate_affix_spelling(segments: list[Segment]) -> None:
+    """Spanish lists every spelling of an affix as its own entry, so a part is spelled like its
+    affix: "ante" for -ante, never "iante". Only a final vowel may drop before another part:
+    cercanías has "an" for -ano."""
+    for index, segment in enumerate(segments):
+        if segment.morpheme_type in (None, "root") or segment.morpheme is None:
+            continue
+        letters = spelling_key(affix_key(segment.morpheme))
+        part = spelling_key(segment.word_part.strip())
+        dropped_vowel = (
+            letters[-1:] in ("a", "e", "i", "o", "u")
+            and part == letters[:-1]
+            and index + 1 < len(segments)
+        )
+        if part != letters and not dropped_vowel:
+            raise ValidationError(f"{segment.word_part!r} is not spelled like {segment.morpheme!r}")
+
+
+def validate_enrichment(
+    stem: str, segments: list[Segment], meanings: AffixMeanings, *, language: str
+) -> None:
     validate_segments(stem, segments)
     validate_lexicon_forms(segments, meanings)
+    if language == "es":
+        validate_affix_spelling(segments)
 
 
 def split_article(word: Word) -> tuple[str, str]:
@@ -198,8 +225,13 @@ def apply_source_metadata(
 
 
 def lexicon_meanings(language: str) -> AffixMeanings:
-    """The curated meanings: affixes, plus the Latin and Greek roots where a language lists them."""
-    return load_affix_meanings(language) | load_etymological_roots(language)
+    """The curated meanings: affixes, plus the Latin and Greek roots and the numbered modern roots
+    where a language lists them."""
+    return (
+        load_affix_meanings(language)
+        | load_etymological_roots(language)
+        | load_numbered_roots(language)
+    )
 
 
 def _lexicon_table(meanings: AffixMeanings, kind: str) -> str:
@@ -232,6 +264,12 @@ def _generate_json[T: BaseModel](
 ) -> tuple[T, bool]:
     key = cache_key("database_fields", model, prompt)
     cached = cache.get(key, schema)
+    if cached is not None:
+        # A check added since the answer was cached may reject it; then the model is asked again.
+        try:
+            validate(cached)
+        except ValueError:
+            cached = None
     if cached is not None:
         log_model_call(word, model, cached=True, valid=True)
         return cached, True
@@ -314,7 +352,8 @@ def generate_database_fields(
     tables = {
         "prefixes": _lexicon_table(affixes, "prefix"),
         "suffixes": _lexicon_table(affixes, "suffix"),
-        "etymological_roots": _lexicon_table(affixes, "root"),
+        "etymological_roots": _lexicon_table(load_etymological_roots(language), "root"),
+        "numbered_roots": _lexicon_table(load_numbered_roots(language), "root"),
     }
     cache = Cache(language, "database_fields")
     with model_client(get_settings()) as client:
@@ -339,7 +378,9 @@ def generate_database_fields(
                     sentence_meaning=word.sentence_meaning or "not provided",
                 ),
                 schema=WordEnrichment,
-                validate=lambda value: validate_enrichment(stem, value.segments, affixes),
+                validate=lambda value: validate_enrichment(
+                    stem, value.segments, affixes, language=language
+                ),
                 config=config,
                 summary=summary,
             )

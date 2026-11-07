@@ -26,7 +26,7 @@ Segmentation rules:
   singular, adjectives in the masculine singular, verbs in the infinitive. Examples:
   - incapaz is "in" (in²-) + "capaz" (capaz)
   - deshacer is "des" (des-) + "hac" (hacer) + "er" (null)
-  - acercar is "a" (a¹-) + "cerc" (cerca) + "ar" (null); cercano is "cerc" (cerca) + "ano" (-ano)
+  - acercar is "a" (a¹-) + "cerc" (cerca¹) + "ar" (null); cercano is "cerc" (cerca¹) + "ano" (-ano)
   - frutería is "frut" (fruta) + "ería" (-ería)
   - enamorarse is "en" (en-) + "amor" (amor) + "ar" (null) + "se" (null)
 - Only when a part is not a modern Spanish word, use one of the Latin and Greek roots listed
@@ -44,11 +44,13 @@ Segmentation rules:
   letters in the word: imposible is "im" (im²-) + "posible" (posible), not in²-. Prefixes end
   with a hyphen ("des-"), suffixes start with one ("-ería"); never put a hyphen on both sides.
 - Some spellings have several numbered entries with different meanings. Choose the number whose
-  meaning fits this word: importar has im¹- (in, into), imposible has im²- (not); acercar has a¹-
+  meaning fits this word: inmigrante has in¹- (in, into), incapaz has in²- (not); acercar has a¹-
   (toward), ateo has a²- (not). A listed spelling without its number is invalid.
-- Split a prefix off only when a learner can still see it and the rest is a Spanish word or a
-  listed root. Words whose prefix has merged into the word stay one root: acceder, aportar,
-  asistir, entrar, enseñar, entender, encontrar, empezar, conocer. Never force an uncertain split.
+- Split a prefix off only when a learner can still see it, the rest is a common Spanish word or a
+  listed root, and the word's meaning still follows from its parts. Words whose prefix has merged
+  into the word stay one root: acceder, aportar, asistir, entrar, enseñar, entender, encontrar,
+  empezar, conocer, and importar (to matter; the rare verb portar does not explain it), so
+  importante is "import" (importar) + "ante" (-ante). Never force an uncertain split.
 - A verb's infinitive ending "-ar", "-er" or "-ir" is its own segment with `morpheme_type` null:
   hablar is "habl" (hablar) + "ar" (null). A reflexive verb's final "se" is one more null segment
   after it: levantarse is "levant" (levantar) + "ar" (null) + "se" (null). Verbs too short to have
@@ -56,24 +58,32 @@ Segmentation rules:
   keeps its ending: envejecer is "en" (en-) + "vej" (viejo) + "ecer" (-ecer).
 - Do not split a noun's or adjective's final -o or -a: niño is one root "niño", bonita is one root
   "bonito". When a suffix follows, the vowel is dropped and the root keeps its dictionary form:
-  cercano is "cerc" (cerca) + "ano" (-ano).
+  cercano is "cerc" (cerca¹) + "ano" (-ano).
 - A feminine noun that is the counterpart of a masculine one has the masculine noun as its root
   and stays one part: hija is "hija" (hijo), amiga is "amiga" (amigo), novia is "novia" (novio),
   señora is "señora" (señor). A noun that is its own word keeps its own root: madre, mujer.
 - A plural ending in an entry used only in the plural is a null segment: cercanías is "cerc"
-  (cerca) + "an" (-ano) + "ía" (-ía) + "s" (null).
+  (cerca¹) + "an" (-ano) + "ía" (-ía) + "s" (null).
 - When a noun is the bare stem of a verb, the verb is the root and the noun stays one part:
   trabajo is "trabajo" (trabajar), compra is "compra" (comprar), cuento is "cuento" (contar).
 - A word made from an adjective or noun with a prefix has that adjective or noun as its root when
   the prefix alone does not leave a verb: engordar is "en" (en-) + "gord" (gordo) + "ar" (null);
   empeorar is "em" (em-) + "peor" (peor) + "ar" (null).
-- Do not use folk etymology, and do not choose a root by spelling alone: cercar (to fence in)
-  comes from cerca (fence), not from cerca (near). Choose the root a learner knows today.
+- A compound of a verb and a plural noun has the verb's infinitive and the noun's singular as
+  roots, with the plural "s" a null segment: rascacielos is "rasca" (rascar) + "cielo" (cielo) +
+  "s" (null). The para- of paraguas and parabrisas is the listed prefix para²- (from parar):
+  parabrisas is "para" (para²-) + "brisa" (brisa) + "s" (null). Where two equal vowels meet,
+  they are written once and the prefix gives up its vowel: paraguas is "par" (para²-) + "agua"
+  (agua) + "s" (null).
+- Do not use folk etymology. Some modern roots are spelled alike but unrelated; they are listed
+  below with numbers, and you must use the numbered form whose meaning fits: cerca is "cerca"
+  (cerca¹, near), cercar (to fence in) is "cerc" (cerca², fence) + "ar" (null). A listed root
+  written without its number is invalid. Choose the root a learner knows today.
 - An entry of several words is segmented word by word. Content words are segmented as above.
   Function words (articles, prepositions, conjunctions, pronouns) and the spaces between words
   are null segments, with the spaces attached to them:
   - fin de semana is "fin" (fin) + " de " (null) + "semana" (semana)
-  - cerca de is "cerca" (cerca) + " de" (null); de cerca is "de " (null) + "cerca" (cerca)
+  - cerca de is "cerca" (cerca¹) + " de" (null); de cerca is "de " (null) + "cerca" (cerca¹)
   - correo electrónico is "correo" (correo) + " " (null) + "electrónico" (electrónico)
   A word that has merged into a phrase with a new meaning stays one root: acerca de is "acerca"
   (acerca) + " de" (null).
@@ -93,6 +103,9 @@ $suffixes
 
 Latin and Greek roots:
 $etymological_roots
+
+Modern roots with numbered meanings:
+$numbered_roots
 
 Reply with JSON only:
 {
