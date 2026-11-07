@@ -1,5 +1,6 @@
 'use client'
 
+import { useLocale } from 'next-intl'
 import { useState, type ReactNode } from 'react'
 
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/HoverCard'
@@ -35,8 +36,8 @@ type CardState =
 
 const morphemeRequestCache = new Map<string, Promise<MorphemeWordCollection>>()
 
-function requestMorphemeWords(language: string, morphemeId: number) {
-  const cacheKey = `${language}:${morphemeId}`
+function requestMorphemeWords(language: string, explainLanguage: string, morphemeId: number) {
+  const cacheKey = `${language}:${explainLanguage}:${morphemeId}`
   const cachedRequest = morphemeRequestCache.get(cacheKey)
 
   if (cachedRequest) {
@@ -44,7 +45,7 @@ function requestMorphemeWords(language: string, morphemeId: number) {
   }
 
   const request = fetchApiData<MorphemeWordCollection>(
-    `/api/v1/morphemes/${morphemeId}/words?lang=${encodeURIComponent(language)}`,
+    `/api/v1/morphemes/${morphemeId}/words?${new URLSearchParams({ lang: language, explain: explainLanguage })}`,
   ).catch((error: unknown) => {
     morphemeRequestCache.delete(cacheKey)
     throw error
@@ -56,6 +57,7 @@ function requestMorphemeWords(language: string, morphemeId: number) {
 
 export function MorphemeCard({ children, language, morphemeId, labels }: MorphemeCardProps) {
   const [open, setOpen] = useState(false)
+  const explainLanguage = useLocale()
   const [state, setState] = useState<CardState>({ status: 'idle' })
 
   function load() {
@@ -64,7 +66,7 @@ export function MorphemeCard({ children, language, morphemeId, labels }: Morphem
     }
 
     setState({ status: 'loading' })
-    void requestMorphemeWords(language, morphemeId)
+    void requestMorphemeWords(language, explainLanguage, morphemeId)
       .then((data) => setState({ status: 'loaded', data }))
       .catch(() => setState({ status: 'error' }))
   }

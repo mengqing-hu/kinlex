@@ -21,13 +21,13 @@ interface RootPageProps {
   params: Promise<{ locale: string; lang: string; root: string }>
 }
 
-const loadMorpheme = cache((language: string, slug: string) =>
-  getMorphemeBySlug(getPublicSupabase(), language, slug),
+const loadMorpheme = cache((language: string, slug: string, explainLanguage: string) =>
+  getMorphemeBySlug(getPublicSupabase(), language, slug, explainLanguage),
 )
 
-async function loadMorphemeOrNotFound(language: string, slug: string) {
+async function loadMorphemeOrNotFound(language: string, slug: string, explainLanguage: string) {
   try {
-    return await loadMorpheme(language, slug)
+    return await loadMorpheme(language, slug, explainLanguage)
   } catch (error) {
     if (error instanceof NotFoundError || error instanceof UnsupportedLanguageError) notFound()
     throw error
@@ -37,7 +37,10 @@ async function loadMorphemeOrNotFound(language: string, slug: string) {
 export async function generateStaticParams() {
   const db = getPublicSupabase()
   const groups = await Promise.all(
-    supportedLanguageCodes.map(async (lang) => ({ lang, items: await listMorphemes(db, lang) })),
+    supportedLanguageCodes.map(async (lang) => ({
+      lang,
+      items: await listMorphemes(db, lang, 'en'),
+    })),
   )
   return groups.flatMap(({ lang, items }) => items.map((item) => ({ lang, root: item.slug })))
 }
@@ -46,7 +49,7 @@ export async function generateMetadata({ params }: RootPageProps): Promise<Metad
   const { lang, root } = await params
   const locale = await applyRouteLocale(params)
   const [morpheme, t] = await Promise.all([
-    loadMorphemeOrNotFound(lang, root),
+    loadMorphemeOrNotFound(lang, root, locale),
     getTranslations('rootPage'),
   ])
   const canonicalUrl = new URL(
@@ -62,11 +65,11 @@ export async function generateMetadata({ params }: RootPageProps): Promise<Metad
 
 export default async function RootPage({ params }: RootPageProps) {
   const { lang, root } = await params
-  await applyRouteLocale(params)
-  const morpheme = await loadMorphemeOrNotFound(lang, root)
+  const locale = await applyRouteLocale(params)
+  const morpheme = await loadMorphemeOrNotFound(lang, root, locale)
   const db = getPublicSupabase()
   const [initialPage, filterOptions, t, labels] = await Promise.all([
-    listWords(db, { lang, explain: 'en', morpheme: morpheme.slug, limit: PAGE_SIZE }),
+    listWords(db, { lang, explain: locale, morpheme: morpheme.slug, limit: PAGE_SIZE }),
     listWordFilterOptions(db, lang, { morpheme: morpheme.slug }),
     getTranslations('rootPage'),
     getWordListLabels(),

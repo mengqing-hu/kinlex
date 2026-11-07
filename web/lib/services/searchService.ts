@@ -11,10 +11,11 @@ export async function searchWords(
   db: SupabaseClient<Database>,
   language: string,
   rawQuery: string,
+  explainLanguage: string,
   limit: number,
 ): Promise<{ query: string; items: SearchResult[] }> {
   if (!isSupportedLanguage(language)) throw new UnsupportedLanguageError(language)
 
   const query = normalizeSearchQuery(rawQuery)
-  return { query, items: await findSearchResults(db, language, query, limit) }
+  return { query, items: await findSearchResults(db, language, query, explainLanguage, limit) }
 }

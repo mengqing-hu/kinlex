@@ -1,6 +1,12 @@
 import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js'
 
 import { RepositoryError } from '@/lib/errors'
+import {
+  getMeaningLanguages,
+  pickGlosses,
+  pickMorphemeMeaning,
+  pickText,
+} from '@/lib/repositories/meaningLanguage'
 import { getAudioUrl } from '@/lib/utils/audioUrl'
 import { encodeWordCursor, type WordCursor } from '@/lib/utils/cursor'
 import { normalizePartOfSpeech, partOfSpeechPrefixes } from '@/lib/utils/partOfSpeech'
@@ -113,6 +119,20 @@ function getCursorFilter(cursor: KeysetCursor): string {
   ].join(',')
 }
 
+// Each example's translation in the learner's language, or in English until it is translated.
+function pickTranslations(
+  rows: { example_id: number; text: string; language: string }[],
+  explainLanguage: string,
+): Map<number, string> {
+  const rowsByExampleId = Map.groupBy(rows, ({ example_id }) => example_id)
+  const result = new Map<number, string>()
+  for (const [exampleId, translations] of rowsByExampleId) {
+    const translation = pickText(translations, explainLanguage)
+    if (translation) result.set(exampleId, translation.text)
+  }
+  return result
+}
+
 async function findExampleTokens(
   db: SupabaseClient<Database>,
   exampleIds: number[],
@@ -121,10 +141,10 @@ async function findExampleTokens(
   const { data, error } = await db
     .from('example_tokens')
     .select(
-      'example_id, position, start_offset, end_offset, lemma, word_id, words(slug), example_token_glosses(gloss)',
+      'example_id, position, start_offset, end_offset, lemma, word_id, words(slug), example_token_glosses(gloss, language:meaning_language)',
     )
     .in('example_id', exampleIds)
-    .eq('example_token_glosses.meaning_language', explainLanguage)
+    .in('example_token_glosses.meaning_language', getMeaningLanguages(explainLanguage))
     .order('example_id', { ascending: true })
     .order('position', { ascending: true })
 
@@ -137,7 +157,7 @@ async function findExampleTokens(
       start: token.start_offset,
       end: token.end_offset,
       lemma: token.lemma,
-      gloss: token.example_token_glosses[0]?.gloss ?? null,
+      gloss: pickText(token.example_token_glosses, explainLanguage)?.gloss ?? null,
       wordId: token.word_id,
       wordSlug: token.words?.slug ?? null,
     })
@@ -177,9 +197,9 @@ async function findExamples(
     db.from('examples').select('id, sentence:example_sentence').in('id', exampleIds),
     db
       .from('example_translations')
-      .select('example_id, text:sentence_meaning')
+      .select('example_id, text:sentence_meaning, language:meaning_language')
       .in('example_id', exampleIds)
-      .eq('meaning_language', explainLanguage),
+      .in('meaning_language', getMeaningLanguages(explainLanguage)),
     db
       .from('audio')
       .select('owner_id, path, id')
@@ -196,12 +216,7 @@ async function findExamples(
   const examplesById = new Map<number, ExampleRecord>(
     (examplesResult.data ?? []).map((example) => [example.id, example]),
   )
-  const translationsByExampleId = new Map(
-    (translationsResult.data ?? []).map((translation) => [
-      translation.example_id,
-      translation.text,
-    ]),
-  )
+  const translationsByExampleId = pickTranslations(translationsResult.data ?? [], explainLanguage)
   const audioByExampleId = new Map<number, string>()
   for (const audio of audioResult.data ?? []) {
     if (!audioByExampleId.has(audio.owner_id)) {
@@ -347,10 +362,7 @@ async function toWordListItems(
         morphemeId: segment.morpheme_id,
         type: segment.morphemes?.type ?? null,
       }))
-    const glosses = word.senses
-      .filter(({ gloss_language }) => gloss_language === explainLanguage)
-      .toSorted((left, right) => left.sort_order - right.sort_order)
-      .map(({ gloss }) => gloss)
+    const glosses = pickGlosses(word.senses, explainLanguage)
 
     return {
       id: word.id,
@@ -630,9 +642,9 @@ async function findWordDetailExamples(
     db.from('examples').select('id, sentence:example_sentence, level').in('id', exampleIds),
     db
       .from('example_translations')
-      .select('example_id, text:sentence_meaning')
+      .select('example_id, text:sentence_meaning, language:meaning_language')
       .in('example_id', exampleIds)
-      .eq('meaning_language', explainLanguage),
+      .in('meaning_language', getMeaningLanguages(explainLanguage)),
     db
       .from('audio')
       .select('owner_id, path, id')
@@ -647,12 +659,7 @@ async function findWordDetailExamples(
   assertQuerySucceeded(audioResult.error, 'load word detail example audio')
 
   const examplesById = new Map((examplesResult.data ?? []).map((example) => [example.id, example]))
-  const translationsById = new Map(
-    (translationsResult.data ?? []).map((translation) => [
-      translation.example_id,
-      translation.text,
-    ]),
-  )
+  const translationsById = pickTranslations(translationsResult.data ?? [], explainLanguage)
   const audioById = new Map<number, string>()
   for (const audio of audioResult.data ?? []) {
     if (!audioById.has(audio.owner_id)) {
@@ -745,10 +752,7 @@ async function findRelatedWords(
     gender: word.gender,
     level: word.level,
     sharedMorphemeIds: [...(sharedMorphemesByWordId.get(word.id) ?? [])],
-    glosses: word.senses
-      .filter(({ gloss_language }) => gloss_language === explainLanguage)
-      .toSorted((left, right) => left.sort_order - right.sort_order)
-      .map(({ gloss }) => gloss),
+    glosses: pickGlosses(word.senses, explainLanguage),
     example: examplesByWordId.get(word.id) ?? null,
   }))
 }
@@ -763,10 +767,11 @@ export async function findWordBySlug(
   const { data: word, error } = await db
     .from('words')
     .select(
-      'id, slug, lemma:word, pos:word_class, posDetail:word_class_detail, gender, plural, level, word_morphemes(position, surface:word_part, morpheme_id, morphemes(id, slug, text:morpheme, type:morpheme_type, meaning:morpheme_meaning, separable:is_separable)), senses(gloss:word_meaning, gloss_language:meaning_language, sort_order)',
+      'id, slug, lemma:word, pos:word_class, posDetail:word_class_detail, gender, plural, level, word_morphemes(position, surface:word_part, morpheme_id, morphemes(id, slug, text:morpheme, type:morpheme_type, meaning:morpheme_meaning, separable:is_separable, morpheme_meanings(meaning))), senses(gloss:word_meaning, gloss_language:meaning_language, sort_order)',
     )
     .eq('language', language)
     .eq('slug', slug)
+    .eq('word_morphemes.morphemes.morpheme_meanings.meaning_language', explainLanguage)
     .maybeSingle()
 
   assertQuerySucceeded(error, 'load word detail')
@@ -797,10 +802,7 @@ export async function findWordBySlug(
       gender: word.gender,
       plural: word.plural,
       level: word.level,
-      glosses: word.senses
-        .filter(({ gloss_language }) => gloss_language === explainLanguage)
-        .toSorted((left, right) => left.sort_order - right.sort_order)
-        .map(({ gloss }) => gloss),
+      glosses: pickGlosses(word.senses, explainLanguage),
       segments: word.word_morphemes
         .toSorted((left, right) => left.position - right.position)
         .map((segment) => ({
@@ -811,7 +813,10 @@ export async function findWordBySlug(
                 slug: segment.morphemes.slug,
                 text: segment.morphemes.text,
                 type: segment.morphemes.type,
-                meaning: segment.morphemes.meaning,
+                meaning: pickMorphemeMeaning(
+                  segment.morphemes.meaning,
+                  segment.morphemes.morpheme_meanings,
+                ),
                 separable: segment.morphemes.separable,
               }
             : null,

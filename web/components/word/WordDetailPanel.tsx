@@ -1,5 +1,6 @@
 'use client'
 
+import { useLocale } from 'next-intl'
 import { type ReactNode, useEffect, useRef, useState } from 'react'
 
 import { WordViewTracker } from '@/components/activity/WordViewTracker'
@@ -204,6 +205,7 @@ interface PanelState {
 }
 
 export function WordDetailPanel({ language, slug, labels, onClose }: WordDetailPanelProps) {
+  const explainLanguage = useLocale()
   const [state, setState] = useState<PanelState>({ slug: '', word: null, error: false })
   const [retryVersion, setRetryVersion] = useState(0)
   const bodyRef = useRef<HTMLDivElement>(null)
@@ -211,7 +213,7 @@ export function WordDetailPanel({ language, slug, labels, onClose }: WordDetailP
 
   useEffect(() => {
     const controller = new AbortController()
-    const params = new URLSearchParams({ lang: language, explain: 'en' })
+    const params = new URLSearchParams({ lang: language, explain: explainLanguage })
 
     void fetchApiData<WordDetail>(`/api/v1/words/${encodeURIComponent(slug)}?${params}`, {
       signal: controller.signal,
@@ -225,7 +227,7 @@ export function WordDetailPanel({ language, slug, labels, onClose }: WordDetailP
       })
 
     return () => controller.abort()
-  }, [language, slug, retryVersion])
+  }, [language, explainLanguage, slug, retryVersion])
 
   useEffect(() => {
     bodyRef.current?.scrollTo({ top: 0 })

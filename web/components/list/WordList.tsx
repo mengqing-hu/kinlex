@@ -1,5 +1,6 @@
 'use client'
 
+import { useLocale } from 'next-intl'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { FilterBar } from '@/components/list/FilterBar'
@@ -45,6 +46,8 @@ export interface WordListLabels {
   partOfSpeech: string
   allTopics: string
   topic: string
+  // Topic names in the page's language, by slug; the stored English name stands in otherwise.
+  topicNames: Record<string, string>
   otherTopic: string
   otherTopicHint: string
   searchWords: string
@@ -125,6 +128,7 @@ function listFilterParams(
 
 async function fetchWordPage(
   language: string,
+  explainLanguage: string,
   level: string | undefined,
   query: string,
   partOfSpeech: string,
@@ -145,6 +149,7 @@ async function fetchWordPage(
     morpheme,
     favoritesOnly,
   )
+  params.set('explain', explainLanguage)
   params.set('limit', String(PAGE_SIZE))
 
   if (sort !== 'frequency' || order !== defaultSortOrders.frequency) {
@@ -173,6 +178,7 @@ export function WordList({
   labels,
 }: WordListProps) {
   const router = useRouter()
+  const explainLanguage = useLocale()
   const search = useSearchParamsString()
   const filters = useMemo(() => {
     const params = new URLSearchParams(search)
@@ -233,6 +239,7 @@ export function WordList({
 
     void fetchWordPage(
       language,
+      explainLanguage,
       level,
       debouncedSearchQuery,
       filters.partOfSpeech,
@@ -258,6 +265,7 @@ export function WordList({
     return () => controller.abort()
   }, [
     debouncedSearchQuery,
+    explainLanguage,
     favoritesOnly,
     filters.partOfSpeech,
     filters.topic,
@@ -345,10 +353,13 @@ export function WordList({
     label: labels.partsOfSpeech[value] ?? value,
     count: counts.partsOfSpeech[value] ?? 0,
   }))
-  const topicOptions: WordFilterOption[] = filterOptions.topics.map((option) => ({
-    ...option,
-    count: counts.topics[option.value] ?? 0,
-  }))
+  const topicOptions: WordFilterOption[] = filterOptions.topics
+    .map((option) => ({
+      ...option,
+      label: labels.topicNames[option.value] ?? option.label,
+      count: counts.topics[option.value] ?? 0,
+    }))
+    .toSorted((left, right) => left.label.localeCompare(right.label, explainLanguage))
   async function loadMore() {
     if (!state.nextCursor || isLoadingMore || isRefreshing) {
       return
@@ -359,6 +370,7 @@ export function WordList({
     try {
       const page = await fetchWordPage(
         language,
+        explainLanguage,
         level,
         debouncedSearchQuery,
         filters.partOfSpeech,

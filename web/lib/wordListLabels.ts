@@ -26,6 +26,7 @@ export async function getWordListLabels(): Promise<WordListLabels> {
     partOfSpeech: t('partOfSpeech'),
     allTopics: t('allTopics'),
     topic: t('topic'),
+    topicNames: t.raw('topicNames') as Record<string, string>,
     otherTopic: t('otherTopic'),
     otherTopicHint: t('otherTopicHint'),
     searchWords: t('searchWords'),

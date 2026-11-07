@@ -1,8 +1,11 @@
 import { z } from 'zod'
 
-import { languageCodeSchema } from './common'
+import { languageCodeSchema, optionalLanguageCodeSchema } from './common'
 
-export const rootListParamsSchema = z.object({ lang: languageCodeSchema })
+export const rootListParamsSchema = z.object({
+  lang: languageCodeSchema,
+  explain: optionalLanguageCodeSchema.default('en'),
+})
 
 export const rootSlugSchema = z
   .string({ error: 'root is required' })

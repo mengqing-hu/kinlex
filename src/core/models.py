@@ -113,6 +113,9 @@ class TokenToGloss(Record):
     surface: str
     lemma: str
     word_id: int | None = None
+    # Whether another language took this word's meaning from its entry, which means the entry
+    # was certain to be the word.
+    entry_certain: bool = False
 
 
 class SentenceGlosses(Record):
@@ -140,3 +143,45 @@ class WordTopics(Record):
 
 class WordTopicsReply(Record):
     words: list[WordTopics]
+
+
+class WordToTranslate(Record):
+    id: int
+    word: str
+    word_class: str
+    # The English meanings in display order.
+    meanings: list[str]
+    example_sentence: str | None
+
+
+class MeaningTranslation(Record):
+    id: int
+    meanings: list[str]
+
+
+class WordMeaningsReply(Record):
+    words: list[MeaningTranslation]
+
+
+class SentenceToTranslate(Record):
+    id: int
+    sentence: str
+    translation: str
+
+
+class TranslatedText(Record):
+    id: int
+    text: str
+
+
+class TranslatedTextReply(Record):
+    items: list[TranslatedText]
+
+
+class MorphemeToTranslate(Record):
+    id: int
+    morpheme: str
+    morpheme_type: str
+    meaning: str
+    # A few words that use it, which show the sense the meaning describes.
+    words: list[str]

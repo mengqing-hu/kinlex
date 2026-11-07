@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function FavoritesPage({ params }: FavoritesPageProps) {
   const { lang } = await params
-  await applyRouteLocale(params)
+  const locale = await applyRouteLocale(params)
 
   if (!isSupportedLanguage(lang)) {
     notFound()
@@ -30,7 +30,7 @@ export default async function FavoritesPage({ params }: FavoritesPageProps) {
 
   const { supabase, user } = await requireUser(`/${lang}/favorites`)
   const [initialPage, filterOptions, t, labels] = await Promise.all([
-    listWords(supabase, { lang, explain: 'en', favorites: true, limit: PAGE_SIZE }, user.id),
+    listWords(supabase, { lang, explain: locale, favorites: true, limit: PAGE_SIZE }, user.id),
     listWordFilterOptions(supabase, lang, { favorites: true }, user.id),
     getTranslations('favoritesPage'),
     getWordListLabels(),

@@ -1,6 +1,7 @@
 import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js'
 
 import { RepositoryError } from '@/lib/errors'
+import { pickGlosses, pickMorphemeMeaning } from '@/lib/repositories/meaningLanguage'
 import type { Database } from '@/types/db'
 import type { MorphemeDirectoryItem, MorphemeWordCollection } from '@/types/domain'
 
@@ -17,18 +18,24 @@ export async function findMorphemeWords(
   explainLanguage: string,
   limit: number,
 ): Promise<MorphemeWordCollection | null> {
-  const { data: morpheme, error: morphemeError } = await db
+  const { data: morphemeRow, error: morphemeError } = await db
     .from('morphemes')
     .select(
-      'id, slug, text:morpheme, type:morpheme_type, meaning:morpheme_meaning, separable:is_separable',
+      'id, slug, text:morpheme, type:morpheme_type, meaning:morpheme_meaning, separable:is_separable, morpheme_meanings(meaning)',
     )
     .eq('id', morphemeId)
     .eq('language', language)
+    .eq('morpheme_meanings.meaning_language', explainLanguage)
     .maybeSingle()
 
   assertQuerySucceeded(morphemeError, 'load morpheme')
-  if (!morpheme) {
+  if (!morphemeRow) {
     return null
+  }
+  const { morpheme_meanings, ...morphemeFields } = morphemeRow
+  const morpheme = {
+    ...morphemeFields,
+    meaning: pickMorphemeMeaning(morphemeRow.meaning, morpheme_meanings),
   }
 
   const { data: relations, error: relationsError } = await db
@@ -66,10 +73,7 @@ export async function findMorphemeWords(
           morphemeId: segment.morpheme_id,
           type: segment.morphemes?.type ?? null,
         })),
-      glosses: senses
-        .filter(({ gloss_language }) => gloss_language === explainLanguage)
-        .toSorted((left, right) => left.sort_order - right.sort_order)
-        .map(({ gloss }) => gloss),
+      glosses: pickGlosses(senses, explainLanguage),
     })),
   }
 }
@@ -77,14 +81,16 @@ export async function findMorphemeWords(
 export async function findMorphemeDirectory(
   db: SupabaseClient<Database>,
   language: string,
+  explainLanguage: string,
 ): Promise<MorphemeDirectoryItem[]> {
   const [morphemesResult, relationsResult] = await Promise.all([
     db
       .from('morphemes')
       .select(
-        'id, slug, text:morpheme, type:morpheme_type, meaning:morpheme_meaning, separable:is_separable',
+        'id, slug, text:morpheme, type:morpheme_type, meaning:morpheme_meaning, separable:is_separable, morpheme_meanings(meaning)',
       )
       .eq('language', language)
+      .eq('morpheme_meanings.meaning_language', explainLanguage)
       .order('morpheme_type', { ascending: true })
       .order('morpheme', { ascending: true }),
     db
@@ -107,8 +113,9 @@ export async function findMorphemeDirectory(
     }
   }
 
-  return (morphemesResult.data ?? []).map((morpheme) => ({
+  return (morphemesResult.data ?? []).map(({ morpheme_meanings, ...morpheme }) => ({
     ...morpheme,
+    meaning: pickMorphemeMeaning(morpheme.meaning, morpheme_meanings),
     wordCount: wordCountByMorphemeId.get(morpheme.id) ?? 0,
   }))
 }

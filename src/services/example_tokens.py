@@ -127,7 +127,12 @@ def tokens_without_glosses(
           limit %(limit)s
         )
         select t.example_id, e.example_sentence, tr.sentence_meaning,
-               t.position, t.surface, t.lemma, t.word_id
+               t.position, t.surface, t.lemma, t.word_id,
+               exists (
+                 select 1 from public.example_token_glosses c
+                 where c.example_id = t.example_id and c.position = t.position
+                   and c.source = 'lexicon'
+               )
         from public.example_tokens t
         join pending p on p.example_id = t.example_id
         join public.examples e on e.id = t.example_id
@@ -151,6 +156,7 @@ def tokens_without_glosses(
             surface=row[4],
             lemma=row[5],
             word_id=row[6],
+            entry_certain=row[7],
         )
         for row in rows
     ]

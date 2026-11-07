@@ -18,7 +18,9 @@ export async function GET(request: NextRequest) {
 
   try {
     const db = getPublicSupabase()
-    return contentResponse(await listMorphemes(db, parsedParams.data.lang))
+    return contentResponse(
+      await listMorphemes(db, parsedParams.data.lang, parsedParams.data.explain),
+    )
   } catch (error) {
     if (error instanceof AppError) {
       return contentErrorResponse(error.code, error.message, error.status)

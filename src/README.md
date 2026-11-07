@@ -61,6 +61,7 @@ python -m scripts.process_vocabulary <command> [options]
 | `process`     | `prepare`, then `publish`, unless any word or audio failed.                      |
 | `consistency` | Reapplies the lexicon to every stored segmentation and expands nested roots.     |
 | `annotate`    | Splits example sentences into words with their meaning there, for hover on the site. |
+| `translate`   | Translates English word, sentence and word part meanings into another language.  |
 
 Options:
 
@@ -72,6 +73,8 @@ Options:
 - `--dry-run` (`consistency` only) prints the changes without saving them.
 - `--lexicon-only` (`annotate` only) stores the words and the meanings the vocabulary settles,
   without calling the LLM.
+- `--meaning-language CODE` (`translate` and `annotate`) is the language words are explained in,
+  such as `zh`; it defaults to `en`.
 - `--input PATH`, `--language CODE`, and `--output-dir PATH` override the defaults.
 
 Generation is idempotent. Without `--force`, completed rows are skipped and failed rows remain
@@ -94,6 +97,23 @@ asked, 20 sentences per call, only for words whose entry lists several meanings 
 words that are not in the vocabulary, such as articles. The command is idempotent: it tokenizes
 only examples without tokens and asks only for meanings still missing, so rerunning it retries
 failed batches. `--limit N` counts examples; `--force` tokenizes every example again.
+
+## Other meaning languages
+
+The website explains words in the language a learner uses it in, and shows English wherever that
+language has no meaning yet. English comes from the CSV; every other language is translated from
+it, then annotated:
+
+```bash
+kinlex-pipeline translate --meaning-language zh   # word meanings, sentences, word parts
+kinlex-pipeline annotate --meaning-language zh    # hover meanings in the example sentences
+```
+
+`translate` asks the LLM in batches (40 words, 25 sentences or 50 word parts per call) for what the
+language is still missing, and again for a word part whose English meaning changed since. Run it
+first: `annotate` takes a word's translated meaning when it has only one and the English pass was
+certain of the word, and asks the LLM for the rest with the translated sentence beside it.
+`--limit N` applies to each of the three parts of `translate`; `--force` translates everything again.
 
 ## Batch workflow
 

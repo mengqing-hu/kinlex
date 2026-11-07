@@ -1,5 +1,6 @@
 'use client'
 
+import { useLocale } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 
 import { PanelCloseButton, panelSectionLabelClass, SidePanel } from '@/components/ui/SidePanel'
@@ -55,6 +56,7 @@ export function MorphemeDetailPanel({
   labels,
   onClose,
 }: MorphemeDetailPanelProps) {
+  const explainLanguage = useLocale()
   const [state, setState] = useState<PanelState>({ morphemeId: 0, words: null, error: false })
   const [retryVersion, setRetryVersion] = useState(0)
   const bodyRef = useRef<HTMLDivElement>(null)
@@ -62,7 +64,11 @@ export function MorphemeDetailPanel({
 
   useEffect(() => {
     const controller = new AbortController()
-    const params = new URLSearchParams({ lang: language, limit: String(WORD_LIMIT) })
+    const params = new URLSearchParams({
+      lang: language,
+      explain: explainLanguage,
+      limit: String(WORD_LIMIT),
+    })
 
     void fetchApiData<MorphemeWordCollection>(`/api/v1/morphemes/${morpheme.id}/words?${params}`, {
       signal: controller.signal,
@@ -76,7 +82,7 @@ export function MorphemeDetailPanel({
       })
 
     return () => controller.abort()
-  }, [language, morpheme.id, retryVersion])
+  }, [language, explainLanguage, morpheme.id, retryVersion])
 
   useEffect(() => {
     bodyRef.current?.scrollTo({ top: 0 })

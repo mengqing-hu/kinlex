@@ -29,20 +29,22 @@ export async function getMorphemeWords(
 export async function listMorphemes(
   db: SupabaseClient<Database>,
   language: string,
+  explainLanguage: string,
 ): Promise<MorphemeDirectoryItem[]> {
   if (!isSupportedLanguage(language)) {
     throw new UnsupportedLanguageError(language)
   }
 
-  return findMorphemeDirectory(db, language)
+  return findMorphemeDirectory(db, language, explainLanguage)
 }
 
 export async function getMorphemeBySlug(
   db: SupabaseClient<Database>,
   language: string,
   slug: string,
+  explainLanguage: string,
 ): Promise<MorphemeDirectoryItem> {
-  const morphemes = await listMorphemes(db, language)
+  const morphemes = await listMorphemes(db, language, explainLanguage)
   const morpheme = morphemes.find((candidate) => candidate.slug === slug)
 
   if (!morpheme) {

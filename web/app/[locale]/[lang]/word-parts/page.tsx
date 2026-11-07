@@ -40,11 +40,11 @@ export async function generateMetadata({ params }: RootsPageProps): Promise<Meta
 
 export default async function RootsPage({ params }: RootsPageProps) {
   const { lang } = await params
-  await applyRouteLocale(params)
+  const locale = await applyRouteLocale(params)
   if (!isSupportedLanguage(lang)) notFound()
 
   const [items, t, listLabels] = await Promise.all([
-    listMorphemes(getPublicSupabase(), lang),
+    listMorphemes(getPublicSupabase(), lang, locale),
     getTranslations('rootsPage'),
     getWordListLabels(),
   ])

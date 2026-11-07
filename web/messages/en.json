@@ -121,6 +121,7 @@
     "partOfSpeech": "Word type",
     "allTopics": "All topics",
     "topic": "Topic",
+    "topicNames": {},
     "otherTopic": "Other",
     "otherTopicHint": "Words without a topic",
     "searchWords": "Search",

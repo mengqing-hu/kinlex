@@ -4,6 +4,9 @@ spaCy splits each sentence, finds every word's dictionary form, and joins a sepa
 to its verb ("hast ... vor" is vorhaben). A word whose vocabulary entry has a single meaning takes
 that meaning; the language model is asked only for the rest, in batches of sentences: words whose
 entry lists several meanings ("from, of") and words that are not in the vocabulary at all.
+
+English is annotated first, while splitting the sentences. Another language reuses that split and
+needs its word meanings and sentence translations first (the translate command).
 """
 
 import json
@@ -13,6 +16,7 @@ from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING
 
 from config import Config, get_settings
+from core.meaning_languages import language_name
 from core.models import (
     ExampleToken,
     LexiconEntry,
@@ -30,14 +34,15 @@ if TYPE_CHECKING:
     from spacy.tokens import Doc
 
 SPACY_MODEL = "de_core_news_md"
-PROMPT = "token_glosses_v1"
-MEANING_LANGUAGE = "en"
+PROMPT = "token_glosses_v2"
 SENTENCES_PER_CALL = 20
 MAX_GLOSS_LENGTH = 60
 
 _LEAD = re.compile(r"^(?:der|die|das|sich) (?=\S)")
 # A meaning that lists alternatives ("from, of", "to drive; to travel") needs the sentence to pick.
-_SEVERAL_MEANINGS = re.compile(r"[,;/]")
+# Chinese and Japanese meanings use full-width commas, semicolons and slashes and the
+# enumeration comma (U+FF0C, U+FF1B, U+FF0F, U+3001).
+_SEVERAL_MEANINGS = re.compile("[,;/\uff0c\uff1b\uff0f\u3001]")
 # The vocabulary word classes each spaCy part of speech may belong to.
 _CLASSES_BY_POS: dict[str, frozenset[str]] = {
     "NOUN": frozenset({"noun"}),
@@ -244,6 +249,15 @@ def _batches(rows: Sequence[TokenToGloss]) -> list[list[TokenToGloss]]:
     ]
 
 
+def _settled_gloss(row: TokenToGloss, lexicon: Lexicon) -> str | None:
+    """The entry's meaning for a word already split, when the entry was certain to be the word
+    and has a single meaning in this language."""
+    entry = lexicon.by_id.get(row.word_id) if row.word_id is not None else None
+    if entry is None or not row.entry_certain or not entry.gloss:
+        return None
+    return None if _SEVERAL_MEANINGS.search(entry.gloss) else entry.gloss
+
+
 def annotate_examples(
     config: Config,
     *,
@@ -251,19 +265,21 @@ def annotate_examples(
     limit: int | None,
     force: bool,
     use_model: bool = True,
+    meaning_language: str = "en",
 ) -> TaskResult:
     """Tokenize examples that have no tokens yet, then fill in the meanings still missing.
 
     Both steps are idempotent: a rerun tokenizes only new examples and asks the model only for
     words that still lack a meaning, so a failed batch is retried by running the command again.
     """
+    language_name(meaning_language)
     setup_logging("annotate", language)
     summary = RunSummary("annotate", language)
     nlp = load_spacy()
     with db.connect() as connection:
         lexicon = Lexicon(
             example_tokens.lexicon_entries(
-                connection, language=language, meaning_language=MEANING_LANGUAGE
+                connection, language=language, meaning_language=meaning_language
             )
         )
         examples = example_tokens.examples_to_tokenize(
@@ -279,7 +295,7 @@ def annotate_examples(
                         TokenGloss(
                             example_id=example_id,
                             position=token.position,
-                            meaning_language=MEANING_LANGUAGE,
+                            meaning_language=meaning_language,
                             gloss=token.lexicon_gloss,
                             source="lexicon",
                         )
@@ -288,9 +304,27 @@ def annotate_examples(
                     ],
                 )
         get_logger().info("tokenized %d examples", len(examples))
-        pending = example_tokens.tokens_without_glosses(
-            connection, language=language, meaning_language=MEANING_LANGUAGE, limit=limit
+        missing = example_tokens.tokens_without_glosses(
+            connection, language=language, meaning_language=meaning_language, limit=limit
         )
+        # Words split in an earlier run take their entry's meaning in this language, as new ones
+        # did above.
+        settled = [
+            TokenGloss(
+                example_id=row.example_id,
+                position=row.position,
+                meaning_language=meaning_language,
+                gloss=gloss,
+                source="lexicon",
+            )
+            for row in missing
+            if (gloss := _settled_gloss(row, lexicon))
+        ]
+        with connection.transaction():
+            example_tokens.upsert_glosses(connection, settled)
+        settled_keys = {(gloss.example_id, gloss.position) for gloss in settled}
+        pending = [row for row in missing if (row.example_id, row.position) not in settled_keys]
+        get_logger().info("took %d meanings from the vocabulary", len(settled))
 
     if not use_model or not pending:
         get_logger().info("%d words still need a meaning from the model", len(pending))
@@ -309,7 +343,10 @@ def annotate_examples(
                 cache=cache,
                 word=f"examples {batch[0].example_id}-{batch[-1].example_id}",
                 model=model,
-                prompt=template.substitute(sentences=_request(batch, lexicon)),
+                prompt=template.substitute(
+                    language=language_name(meaning_language),
+                    sentences=_request(batch, lexicon),
+                ),
                 schema=TokenGlossReply,
                 validate=lambda value: _validate_reply(value, batch),
                 config=config,
@@ -320,7 +357,7 @@ def annotate_examples(
                 TokenGloss(
                     example_id=row.example_id,
                     position=row.position,
-                    meaning_language=MEANING_LANGUAGE,
+                    meaning_language=meaning_language,
                     gloss=answered[row.example_id][str(row.position)].strip(),
                     source="model",
                 )

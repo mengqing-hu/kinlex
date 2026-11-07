@@ -16,8 +16,8 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const { lang, q, limit } = parsedParams.data
-    return contentResponse(await searchWords(getPublicSupabase(), lang, q, limit))
+    const { lang, q, explain, limit } = parsedParams.data
+    return contentResponse(await searchWords(getPublicSupabase(), lang, q, explain, limit))
   } catch (error) {
     if (error instanceof AppError) {
       return contentErrorResponse(error.code, error.message, error.status)

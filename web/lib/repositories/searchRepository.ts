@@ -1,6 +1,7 @@
 import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js'
 
 import { RepositoryError } from '@/lib/errors'
+import { pickGlosses } from '@/lib/repositories/meaningLanguage'
 import type { Database } from '@/types/db'
 import type { SearchResult } from '@/types/domain'
 
@@ -12,6 +13,7 @@ export async function findSearchResults(
   db: SupabaseClient<Database>,
   language: string,
   query: string,
+  explainLanguage: string,
   limit: number,
 ): Promise<SearchResult[]> {
   const { data: matches, error: matchError } = await db.rpc('search_words_fuzzy', {
@@ -37,9 +39,7 @@ export async function findSearchResults(
     const word = wordsById.get(wordId)
     if (!word) return []
 
-    const gloss = word.senses
-      .filter((sense) => sense.gloss_language === 'en')
-      .toSorted((left, right) => left.sort_order - right.sort_order)[0]?.gloss
+    const gloss = pickGlosses(word.senses, explainLanguage)[0]
 
     return [{ ...word, senses: undefined, gloss: gloss ?? null }]
   })

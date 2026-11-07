@@ -324,6 +324,35 @@ export type Database = {
           },
         ]
       }
+      morpheme_meanings: {
+        Row: {
+          meaning: string
+          meaning_language: string
+          morpheme_id: number
+          source_meaning: string
+        }
+        Insert: {
+          meaning: string
+          meaning_language: string
+          morpheme_id: number
+          source_meaning: string
+        }
+        Update: {
+          meaning?: string
+          meaning_language?: string
+          morpheme_id?: number
+          source_meaning?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "morpheme_meanings_morpheme_id_fkey"
+            columns: ["morpheme_id"]
+            isOneToOne: false
+            referencedRelation: "morphemes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       morphemes: {
         Row: {
           id: number

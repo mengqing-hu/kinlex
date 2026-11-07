@@ -14,7 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const morphemeGroups = await Promise.all(
     supportedLanguageCodes.map(async (language) => ({
       language,
-      morphemes: await listMorphemes(supabase, language),
+      morphemes: await listMorphemes(supabase, language, 'en'),
     })),
   )
 

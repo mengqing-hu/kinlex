@@ -22,7 +22,7 @@ export default async function WordPage({ params }: WordPageProps) {
 
   let result
   try {
-    result = await getWordDetail(getPublicSupabase(), slug, { lang, explain: 'en' })
+    result = await getWordDetail(getPublicSupabase(), slug, { lang, explain: locale })
   } catch (error) {
     if (error instanceof NotFoundError || error instanceof UnsupportedLanguageError) {
       notFound()

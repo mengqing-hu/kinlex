@@ -101,7 +101,7 @@ export default async function LevelPage({ params }: LevelPageProps) {
   let filterOptions
   try {
     ;[initialPage, filterOptions] = await Promise.all([
-      listWords(db, { lang, explain: 'en', level, limit: PAGE_SIZE }),
+      listWords(db, { lang, explain: locale, level, limit: PAGE_SIZE }),
       listWordFilterOptions(db, lang, { level }),
     ])
   } catch (error) {

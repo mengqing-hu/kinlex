@@ -1,5 +1,6 @@
 'use client'
 
+import { useLocale } from 'next-intl'
 import { type MouseEvent, type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 
 import { useAudioPlayer } from '@/components/audio/AudioProvider'
@@ -75,9 +76,10 @@ function fill(template: string, values: Record<string, string | number>): string
   )
 }
 
-function fetchRound(language: string, deck: DeckQuery) {
+function fetchRound(language: string, explainLanguage: string, deck: DeckQuery) {
   const params = new URLSearchParams({
     lang: language,
+    explain: explainLanguage,
     limit: String(deck.count),
     source: deck.source,
   })
@@ -112,6 +114,7 @@ function Icon({ children }: { children: ReactNode }) {
 
 export function FlashcardSession({ language, labels }: FlashcardSessionProps) {
   const { playAudio } = useAudioPlayer()
+  const explainLanguage = useLocale()
   const [settings, setSettings] = useState(defaultFlashcardSettings)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [phase, setPhase] = useState<Phase>('loading')
@@ -148,7 +151,7 @@ export function FlashcardSession({ language, labels }: FlashcardSessionProps) {
   const drawRound = useCallback(
     (deck: DeckQuery, restoredSettings?: FlashcardSettings) => {
       const request = ++roundRequest.current
-      return fetchRound(language, deck).then(
+      return fetchRound(language, explainLanguage, deck).then(
         (cards) => {
           if (request !== roundRequest.current) return
           if (restoredSettings) setSettings(restoredSettings)
@@ -159,7 +162,7 @@ export function FlashcardSession({ language, labels }: FlashcardSessionProps) {
         },
       )
     },
-    [language, showRound],
+    [language, explainLanguage, showRound],
   )
 
   function startRound() {

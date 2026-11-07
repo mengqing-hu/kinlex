@@ -19,6 +19,7 @@ from core.pipeline import (
     publish_vocabulary,
 )
 from core.topics import classify_topics
+from core.translation import translate_meanings
 from services.clients import revalidate_website
 from utils.runtime import get_logger
 
@@ -65,6 +66,11 @@ def _add_common_options(parser: argparse.ArgumentParser) -> None:
         action="store_true",
         help="annotate only: store tokens and vocabulary meanings without calling the LLM",
     )
+    parser.add_argument(
+        "--meaning-language",
+        default="en",
+        help="translate and annotate: the language words are explained in, e.g. zh; defaults to en",
+    )
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -85,6 +91,10 @@ def _parser() -> argparse.ArgumentParser:
         ("consistency", "expand roots that name other segmented words, across all batches"),
         ("annotate", "split example sentences into words with their meanings, for hover"),
         ("topics", "sort words into topics, for the topic filter and topic pages"),
+        (
+            "translate",
+            "translate English word, sentence and word part meanings into --meaning-language",
+        ),
     ):
         command = commands.add_parser(name, help=help_text)
         _add_common_options(command)
@@ -167,9 +177,29 @@ def main() -> int:
             limit=args.limit,
             force=args.force,
             use_model=not args.lexicon_only,
+            meaning_language=args.meaning_language,
         )
         print(f"annotate: processed {result.processed}, failed {result.failed}")
         return 1 if result.failed else 0
+
+    if args.command == "translate":
+        if args.batch is not None:
+            raise ValueError("translate works through what is still missing; use --limit")
+        translated = translate_meanings(
+            get_config(),
+            language=args.language,
+            meaning_language=args.meaning_language,
+            limit=args.limit,
+            force=args.force,
+        )
+        for name, part in (
+            ("words", translated.words),
+            ("sentences", translated.sentences),
+            ("word parts", translated.morphemes),
+        ):
+            print(f"translate {name}: {part.processed} batches done, {part.failed} failed")
+        _revalidate(sum(part.processed for part in (translated.words, translated.sentences)))
+        return 1 if translated.failed else 0
 
     offset, limit, file_stem = _selection(args)
     config = get_config()
