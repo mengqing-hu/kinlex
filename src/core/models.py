@@ -55,7 +55,11 @@ class Segment(Record):
 
 
 class WordEnrichment(Record):
-    gender: Literal["der", "die", "das"] | None = None
+    # German stores the article the CSV gives (der, die, das); Spanish asks the model for the
+    # gender, with "m/f" for nouns used with both articles (el/la estudiante).
+    gender: Literal["der", "die", "das", "m", "f", "m/f"] | None = None
+    # The article shown before a Spanish noun, which the gender does not settle: el agua is "f".
+    article: Literal["el", "la", "el/la", "los", "las"] | None = None
     plural: str | None = None
     segments: list[Segment]
 
@@ -64,6 +68,7 @@ class ReviewMetadata(Record):
     word: str
     word_class: str
     gender: str | None = None
+    article: str | None = None
     plural: str | None = None
     generation_model: str | None = None
     segments: list[Segment]

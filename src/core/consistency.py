@@ -16,14 +16,15 @@ from dataclasses import dataclass
 
 from core.models import Segment, Word
 
-# The model sometimes writes a part in its root's spelling ("Wort" inside "Wörterbuch"). Folding
-# umlauts keeps lengths, so parts can still be sliced from the entry's own letters.
-_UMLAUTS = str.maketrans("äöü", "aou")
+# The model sometimes writes a part in its root's spelling ("Wort" inside "Wörterbuch", "frio"
+# inside "enfriar"). Folding umlauts and accents keeps lengths, so parts can still be sliced from
+# the entry's own letters.
+_DIACRITICS = str.maketrans("äöüáéíóú", "aouaeiou")
 
 
 def spelling_key(text: str) -> str:
     # lower() rather than casefold(): "ß" must stay one character so parts can be sliced.
-    return text.lower().translate(_UMLAUTS)
+    return text.lower().translate(_DIACRITICS)
 
 
 @dataclass(frozen=True)
@@ -84,6 +85,11 @@ def make_roots_consistent(entries: list[tuple[Word, list[Segment]]]) -> Consiste
             target_parts = resolve(target, visiting | {index})
             if all(part.morpheme_type is None for part in target_parts):
                 # An unsegmented word (the preposition statt) says nothing about the root statt-.
+                parts.append(segment)
+                continue
+            typed = [part for part in target_parts if part.morpheme_type is not None]
+            if len(typed) == 1 and typed[0].morpheme == segment.morpheme:
+                # The word is this root plus an ending (hacer = hac + er): nothing to expand.
                 parts.append(segment)
                 continue
             if len(target_parts) == 1:

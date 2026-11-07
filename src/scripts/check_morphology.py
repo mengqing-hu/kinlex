@@ -18,8 +18,7 @@ from services import db
 from utils.affixes import affix_key, load_affix_meanings, load_root_homographs
 from utils.roots import load_lowercase_roots
 
-DEFAULT_INPUT = REPO_ROOT / "data" / "vocabulary" / "german" / "german.csv"
-DEFAULT_OUTPUT = REPO_ROOT / "data" / "output" / "de" / "morphology_issues.md"
+VOCABULARY = {"de": "german", "es": "spanish"}
 
 
 @dataclass
@@ -231,10 +230,15 @@ def build_report(language: str, input_path: Path) -> str:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Flag likely segmentation errors.")
-    parser.add_argument("--language", default="de")
-    parser.add_argument("--input", type=Path, default=DEFAULT_INPUT)
-    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--language", default="de", choices=sorted(VOCABULARY))
+    parser.add_argument("--input", type=Path, help="defaults to the language's vocabulary CSV")
+    parser.add_argument("--output", type=Path, help="defaults to data/output/<language>/")
     args = parser.parse_args()
+    name = VOCABULARY[args.language]
+    args.input = args.input or REPO_ROOT / "data" / "vocabulary" / name / f"{name}.csv"
+    args.output = args.output or REPO_ROOT / "data" / "output" / args.language / (
+        "morphology_issues.md"
+    )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(build_report(args.language, args.input), encoding="utf-8")
     print(f"report: {args.output}")

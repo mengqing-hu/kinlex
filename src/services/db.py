@@ -313,7 +313,7 @@ def review_metadata(
 ) -> dict[tuple[str, str], ReviewMetadata]:
     words = connection.execute(
         """
-        select id, word, word_class, gender, plural,
+        select id, word, word_class, gender, article, plural,
                model_info #>> '{word_enrichment,model}' as generation_model
         from public.words
         where language = %s and source = 'vocabulary_csv'
@@ -326,8 +326,9 @@ def review_metadata(
             word=row[1],
             word_class=row[2],
             gender=row[3],
-            plural=row[4],
-            generation_model=row[5],
+            article=row[4],
+            plural=row[5],
+            generation_model=row[6],
             segments=segments_by_word[int(row[0])],
         )
         for row in words
@@ -456,12 +457,13 @@ def replace_word_enrichment(
     connection.execute(
         """
         update public.words
-        set gender = %s, plural = %s,
+        set gender = %s, article = %s, plural = %s,
             model_info = coalesce(model_info, '{}'::jsonb) || %s
         where id = %s
         """,
         (
             enrichment.gender,
+            enrichment.article,
             enrichment.plural,
             Jsonb({"word_enrichment": {"model": model, "prompt": prompt}}),
             word.id,

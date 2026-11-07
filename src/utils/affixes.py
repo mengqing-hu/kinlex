@@ -50,9 +50,23 @@ def load_root_homographs(language: str) -> frozenset[str]:
     return frozenset(key.casefold() for key in _load_lexicon(language).get("root_homographs", {}))
 
 
+# Homographs carry a superscript number next to their letters: a¹- (toward) and a²- (not).
+_HOMOGRAPH_NUMBERS = str.maketrans("", "", "⁰¹²³⁴⁵⁶⁷⁸⁹")
+
+
 def affix_key(morpheme: str) -> str:
-    """Compare roots and affixes by their letters: "groß-", "Groß" and "groß" share one key."""
-    return morpheme.strip("-").casefold()
+    """Compare roots and affixes by their letters: "groß-", "Groß" and "groß" share one key, and
+    so do "a¹-" and "a²-"."""
+    return morpheme.translate(_HOMOGRAPH_NUMBERS).strip("-").casefold()
+
+
+def homograph_keys(meanings: AffixMeanings) -> frozenset[tuple[str, str]]:
+    """The type and letters of every numbered entry: ("prefix", "a") for a¹- and a²-."""
+    return frozenset(
+        (kind, affix_key(morpheme))
+        for kind, morpheme in meanings
+        if morpheme.translate(_HOMOGRAPH_NUMBERS) != morpheme
+    )
 
 
 def apply_affix_meanings(segments: list[Segment], meanings: AffixMeanings) -> list[Segment]:
@@ -82,7 +96,12 @@ def normalize_segment_types(
 
     Meanings of converted prefixes come from apply_affix_meanings, which runs afterwards.
     """
-    prefixes = {affix_key(morpheme): morpheme for kind, morpheme in meanings if kind == "prefix"}
+    by_key: dict[str, list[str]] = {}
+    for kind, listed in meanings:
+        if kind == "prefix":
+            by_key.setdefault(affix_key(listed), []).append(listed)
+    # A homograph (a¹-, a²-) cannot be chosen from the spelling alone.
+    prefixes = {key: listed[0] for key, listed in by_key.items() if len(listed) == 1}
     last_typed = max(
         (index for index, segment in enumerate(segments) if segment.morpheme_type is not None),
         default=-1,

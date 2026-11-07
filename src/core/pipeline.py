@@ -19,6 +19,7 @@ from core.consistency import (
     spelling_key,
     split_lead,
 )
+from core.meaning_languages import language_name
 from core.models import AudioResult, AudioTarget, Segment, Word, WordEnrichment
 from core.verb_stems import use_verb_stems, verb_infinitives
 from services import db
@@ -34,12 +35,14 @@ from services.clients import (
 from services.storage import AudioStorage
 from utils.affixes import (
     AffixMeanings,
+    affix_key,
     apply_affix_meanings,
+    homograph_keys,
     load_affix_meanings,
     normalize_segment_types,
 )
 from utils.review_export import export_review_files
-from utils.roots import apply_root_override, load_root_overrides
+from utils.roots import apply_root_override, load_etymological_roots, load_root_overrides
 from utils.runtime import (
     Cache,
     RunSummary,
@@ -54,7 +57,14 @@ from utils.vocabulary import read_vocabulary
 _FENCE = re.compile(r"^```(?:json)?\s*|\s*```$", re.MULTILINE)
 _ARTICLE = re.compile(r"^(?:der|die|das) (?=\S)")
 _REFLEXIVE = re.compile(r"^sich (?=\S)")
-PROMPT = "word_enrichment_v2"
+PROMPTS = {"de": "word_enrichment_v2", "es": "word_enrichment_es_v1"}
+
+
+def enrichment_prompt(language: str) -> str:
+    try:
+        return PROMPTS[language]
+    except KeyError as error:
+        raise ValueError(f"no word enrichment prompt for language {language!r}") from error
 
 
 class PipelineError(RuntimeError):
@@ -96,6 +106,30 @@ def validate_segments(word: str, segments: list[Segment]) -> None:
         raise ValidationError("an unsplit word must be one segment")
 
 
+def validate_lexicon_forms(segments: list[Segment], meanings: AffixMeanings) -> None:
+    """Reject parts the curated lexicon cannot place, so the model is asked again.
+
+    A homograph must carry its number (a¹- or a²-, not a-), and where the language lists Latin
+    and Greek roots (Spanish), a hyphenated root must be one of them.
+    """
+    homographs = homograph_keys(meanings)
+    has_etymology = any(kind == "root" for kind, _morpheme in meanings)
+    for segment in segments:
+        if segment.morpheme_type is None or segment.morpheme is None:
+            continue
+        if (segment.morpheme_type, segment.morpheme) in meanings:
+            continue
+        if (segment.morpheme_type, affix_key(segment.morpheme)) in homographs:
+            raise ValidationError(f"{segment.morpheme!r} needs its homograph number")
+        if has_etymology and segment.morpheme_type == "root" and segment.morpheme.endswith("-"):
+            raise ValidationError(f"{segment.morpheme!r} is not a listed Latin or Greek root")
+
+
+def validate_enrichment(stem: str, segments: list[Segment], meanings: AffixMeanings) -> None:
+    validate_segments(stem, segments)
+    validate_lexicon_forms(segments, meanings)
+
+
 def split_article(word: Word) -> tuple[str, str]:
     """Split 'das Brot' into ('das ', 'Brot') and 'sich freuen' into ('sich ', 'freuen')."""
     pattern = {"noun": _ARTICLE, "verb": _REFLEXIVE}.get(word.word_class)
@@ -135,11 +169,17 @@ def apply_source_metadata(
 ) -> WordEnrichment:
     """Set what the CSV already states instead of trusting the model with it.
 
-    The article gives a noun's gender ("Nomen (Pl.)" entries have none). "Verb (trennbar)" marks a
-    separable verb: its first part, when that part is a prefix, separates; every other verb prefix
-    does not (vorbereiten: vor- separable, be- not).
+    A German entry's article gives a noun's gender ("Nomen (Pl.)" entries have none). Spanish
+    entries have no article, so a noun keeps the gender and article the model gave; other word
+    classes have neither. "Verb (trennbar)" marks a separable verb: its first part, when that part
+    is a prefix, separates; every other verb prefix does not (vorbereiten: vor- separable, be- not).
     """
-    gender = lead.strip() if lead and word_class == "noun" and "Pl." not in label else None
+    gender: str | None = enrichment.gender
+    article: str | None = enrichment.article
+    if word_class != "noun":
+        gender, article = None, None
+    elif lead:
+        gender, article = (None if "Pl." in label else lead.strip()), None
     segments = list(enrichment.segments)
     separable = "trennbar" in label
     first_typed = next((i for i, s in enumerate(segments) if s.morpheme_type is not None), None)
@@ -152,7 +192,20 @@ def apply_source_metadata(
         # The model segments only the stem; the article or "sich" is stored as an untyped part
         # so the segments still spell the full entry.
         segments.insert(0, Segment(word_part=lead))
-    return enrichment.model_copy(update={"gender": gender, "segments": segments})
+    return enrichment.model_copy(
+        update={"gender": gender, "article": article, "segments": segments}
+    )
+
+
+def lexicon_meanings(language: str) -> AffixMeanings:
+    """The curated meanings: affixes, plus the Latin and Greek roots where a language lists them."""
+    return load_affix_meanings(language) | load_etymological_roots(language)
+
+
+def _lexicon_table(meanings: AffixMeanings, kind: str) -> str:
+    return "\n".join(
+        f"{morpheme}: {meaning}" for (type_, morpheme), meaning in meanings.items() if type_ == kind
+    )
 
 
 def _extract_json(text: str) -> object:
@@ -174,6 +227,8 @@ def _generate_json[T: BaseModel](
     validate: Callable[[T], None],
     config: Config,
     summary: RunSummary,
+    # translate, topics and annotate still work on German only and use this default.
+    system: str = "You are a careful German dictionary editor. Reply with JSON only.",
 ) -> tuple[T, bool]:
     key = cache_key("database_fields", model, prompt)
     cached = cache.get(key, schema)
@@ -183,11 +238,7 @@ def _generate_json[T: BaseModel](
     last_error: Exception | None = None
     for _attempt in range(config.retries):
         started = time.monotonic()
-        text = llm.complete(
-            model,
-            "You are a careful German dictionary editor. Reply with JSON only.",
-            prompt,
-        )
+        text = llm.complete(model, system, prompt)
         summary.add_model_calls(1)
         try:
             value = schema.model_validate(_extract_json(text))
@@ -241,7 +292,7 @@ def generate_database_fields(
     summary = RunSummary("database_fields", language)
     items = read_vocabulary(input_path, language=language, offset=offset, limit=limit)
     labels = {(item.word, item.word_class): item.word_class_label for item in items}
-    affixes = load_affix_meanings(language)
+    affixes = lexicon_meanings(language)
     overrides = load_root_overrides(language)
     with db.connect() as connection:
         with connection.transaction():
@@ -257,7 +308,14 @@ def generate_database_fields(
     if not words:
         summary.write()
         return TaskResult(0, 0)
-    prompt = read_prompt(PROMPT)
+    prompt_name = enrichment_prompt(language)
+    prompt = read_prompt(prompt_name)
+    system = f"You are a careful {language_name(language)} dictionary editor. Reply with JSON only."
+    tables = {
+        "prefixes": _lexicon_table(affixes, "prefix"),
+        "suffixes": _lexicon_table(affixes, "suffix"),
+        "etymological_roots": _lexicon_table(affixes, "root"),
+    }
     cache = Cache(language, "database_fields")
     with model_client(get_settings()) as client:
         llm = create_llm(client, config)
@@ -270,7 +328,9 @@ def generate_database_fields(
                 cache=cache,
                 word=word.word,
                 model=config.providers.llm.model,
+                system=system,
                 prompt=prompt.substitute(
+                    tables,
                     word=word.word,
                     stem=stem,
                     word_class=label,
@@ -279,7 +339,7 @@ def generate_database_fields(
                     sentence_meaning=word.sentence_meaning or "not provided",
                 ),
                 schema=WordEnrichment,
-                validate=lambda value: validate_segments(stem, value.segments),
+                validate=lambda value: validate_enrichment(stem, value.segments, affixes),
                 config=config,
                 summary=summary,
             )
@@ -303,7 +363,7 @@ def generate_database_fields(
                     word=word,
                     enrichment=enrichment,
                     model=config.providers.llm.model,
-                    prompt=PROMPT,
+                    prompt=prompt_name,
                 )
             return word, cached
 
@@ -327,7 +387,7 @@ def apply_root_consistency(*, language: str, dry_run: bool = False) -> Consisten
     It runs over the whole vocabulary because a later batch can segment a word that an earlier
     batch used as a root (Bahnhof inside Hauptbahnhof).
     """
-    affixes = load_affix_meanings(language)
+    affixes = lexicon_meanings(language)
     overrides = load_root_overrides(language)
     with db.connect() as connection, connection.transaction():
         stored = db.segmented_words(connection, language=language)
@@ -337,7 +397,10 @@ def apply_root_consistency(*, language: str, dry_run: bool = False) -> Consisten
             lead, body = split_lead(segments)
             stem = "".join(segment.word_part for segment in body)
             body = postprocess_stem(word, stem, body, affixes=affixes, overrides=overrides)
-            updated.append((word, lead + use_verb_stems(word, body, verbs)))
+            # Spanish names a verb root by its infinitive (hacer), so only German renames it.
+            if language == "de":
+                body = use_verb_stems(word, body, verbs)
+            updated.append((word, lead + body))
         result = make_roots_consistent(updated)
         # Report every word that differs from what is stored, whichever step changed it.
         final = {change.word.id: change.after for change in result.changes}
