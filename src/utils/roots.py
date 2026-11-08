@@ -56,8 +56,8 @@ def load_etymological_roots(language: str) -> AffixMeanings:
 
 @cache
 def load_numbered_roots(language: str) -> AffixMeanings:
-    """Modern roots spelled alike but unrelated, such as ("root", "cerca¹") for near and
-    ("root", "cerca²") for fence (cercar). Hand-maintained; the model must pick the number."""
+    """Modern stems spelled alike but unrelated, such as ("root", "cerc1-") for near (cerca) and
+    ("root", "cerc2-") for fence (cercar). Hand-maintained; the model must pick the number."""
     return {
         ("root", root): meaning
         for root, meaning in _load(language).get("numbered_roots", {}).items()

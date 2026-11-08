@@ -50,20 +50,28 @@ def load_root_homographs(language: str) -> frozenset[str]:
     return frozenset(key.casefold() for key in _load_lexicon(language).get("root_homographs", {}))
 
 
-# Homographs carry a superscript number next to their letters: a¹- (toward) and a²- (not).
-_HOMOGRAPH_NUMBERS = str.maketrans("", "", "⁰¹²³⁴⁵⁶⁷⁸⁹")
+# Homographs carry a number next to their letters: a1- (toward) and a2- (not).
+_HOMOGRAPH_NUMBERS = str.maketrans("", "", "0123456789")
 
 
 def affix_key(morpheme: str) -> str:
     """Compare roots and affixes by their letters: "groß-", "Groß" and "groß" share one key, and
-    so do "a¹-" and "a²-"."""
+    so do "a1-" and "a2-"."""
     return morpheme.translate(_HOMOGRAPH_NUMBERS).strip("-").casefold()
 
 
+def homograph_key(kind: str, morpheme: str) -> str:
+    """The spelling numbered entries share: "a" for a1- and a2-. A root keeps its hyphen, so the
+    word sal (salt) is not taken for the stem sal1- (salt) or sal2- (jump)."""
+    if kind == "root":
+        return morpheme.translate(_HOMOGRAPH_NUMBERS).casefold()
+    return affix_key(morpheme)
+
+
 def homograph_keys(meanings: AffixMeanings) -> frozenset[tuple[str, str]]:
-    """The type and letters of every numbered entry: ("prefix", "a") for a¹- and a²-."""
+    """The type and spelling of every numbered entry: ("prefix", "a") for a1- and a2-."""
     return frozenset(
-        (kind, affix_key(morpheme))
+        (kind, homograph_key(kind, morpheme))
         for kind, morpheme in meanings
         if morpheme.translate(_HOMOGRAPH_NUMBERS) != morpheme
     )
@@ -100,7 +108,7 @@ def normalize_segment_types(
     for kind, listed in meanings:
         if kind == "prefix":
             by_key.setdefault(affix_key(listed), []).append(listed)
-    # A homograph (a¹-, a²-) cannot be chosen from the spelling alone.
+    # A homograph (a1-, a2-) cannot be chosen from the spelling alone.
     prefixes = {key: listed[0] for key, listed in by_key.items() if len(listed) == 1}
     last_typed = max(
         (index for index, segment in enumerate(segments) if segment.morpheme_type is not None),

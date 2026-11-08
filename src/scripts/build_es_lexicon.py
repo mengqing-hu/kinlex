@@ -6,9 +6,10 @@ Run from src/ whenever data/vocabulary/spanish/spanish_roots_affixes.csv changes
 
 Every spelling in a row's `entry` and `variants` becomes its own dictionary entry with the row's
 meaning, so a word's part is always written as it appears in the word: imposible is im- + posible,
-not a hidden in-. A spelling listed by several rows is a homograph and gets a superscript number
-in row order, kept inside the hyphen so prefixes still end with "-": a¹- (to, toward), a²- (away),
-a³- (not). The report lists every homograph and every malformed spelling for review.
+not a hidden in-. A spelling listed by several rows is a homograph and gets a number in row order,
+kept inside the hyphen so prefixes still end with "-": a1- (to, toward), a2- (not). Spanish
+morphemes never contain digits, so the number cannot be mistaken for a letter; the website shows
+it as a superscript. The report lists every homograph and every malformed spelling for review.
 
 Only the generated keys are rewritten: `prefix` and `suffix` in lexicon/es_affixes.json and
 `etymological_roots` in lexicon/es_roots.json. Hand-edited keys such as `overrides` are kept.
@@ -32,9 +33,6 @@ ROOTS_PATH = LEXICON_ROOT / "es_roots.json"
 
 _CATEGORIES = ("prefix", "suffix", "root")
 _NO_VARIANTS = {"", "—", "-"}
-_SUPERSCRIPTS = str.maketrans("0123456789", "⁰¹²³⁴⁵⁶⁷⁸⁹")
-# Unicode puts ¹ after ² and ³, so entries sort by their plain digits instead.
-_DIGITS = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹", "0123456789")
 
 
 @dataclass(frozen=True)
@@ -56,8 +54,8 @@ def _is_well_formed(category: str, form: str) -> bool:
 
 
 def number_homograph(category: str, form: str, number: int) -> str:
-    """Put the superscript next to the letters: a¹-, -al¹, cap¹-."""
-    mark = str(number).translate(_SUPERSCRIPTS)
+    """Put the number next to the letters: a1-, -al1, cap1-."""
+    mark = str(number)
     return f"{form}{mark}" if category == "suffix" else f"{form[:-1]}{mark}-"
 
 
@@ -113,11 +111,7 @@ def build(
         for name, spelling in numbered:
             entries[category][name] = spelling.meaning
     return {
-        category: dict(
-            sorted(
-                values.items(), key=lambda item: item[0].strip("-").translate(_DIGITS).casefold()
-            )
-        )
+        category: dict(sorted(values.items(), key=lambda item: item[0].strip("-").casefold()))
         for category, values in entries.items()
     }, homographs
 

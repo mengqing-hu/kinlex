@@ -37,6 +37,7 @@ from utils.affixes import (
     AffixMeanings,
     affix_key,
     apply_affix_meanings,
+    homograph_key,
     homograph_keys,
     load_affix_meanings,
     normalize_segment_types,
@@ -62,7 +63,7 @@ from utils.vocabulary import read_vocabulary
 _FENCE = re.compile(r"^```(?:json)?\s*|\s*```$", re.MULTILINE)
 _ARTICLE = re.compile(r"^(?:der|die|das) (?=\S)")
 _REFLEXIVE = re.compile(r"^sich (?=\S)")
-PROMPTS = {"de": "word_enrichment_v2", "es": "word_enrichment_es_v1"}
+PROMPTS = {"de": "word_enrichment_v2", "es": "word_enrichment_es_v2"}
 
 
 def enrichment_prompt(language: str) -> str:
@@ -112,28 +113,23 @@ def validate_segments(word: str, segments: list[Segment]) -> None:
 
 
 def validate_lexicon_forms(segments: list[Segment], meanings: AffixMeanings) -> None:
-    """Reject parts the curated lexicon cannot place, so the model is asked again.
-
-    A homograph must carry its number (a¹- or a²-, not a-), and where the language lists Latin
-    and Greek roots (Spanish), a hyphenated root must be one of them.
-    """
+    """Reject a homograph written without its number (a- for a1- or a2-), so the model is asked
+    again."""
     homographs = homograph_keys(meanings)
-    has_etymology = any(kind == "root" and morpheme.endswith("-") for kind, morpheme in meanings)
     for segment in segments:
         if segment.morpheme_type is None or segment.morpheme is None:
             continue
         if (segment.morpheme_type, segment.morpheme) in meanings:
             continue
-        if (segment.morpheme_type, affix_key(segment.morpheme)) in homographs:
+        key = homograph_key(segment.morpheme_type, segment.morpheme)
+        if (segment.morpheme_type, key) in homographs:
             raise ValidationError(f"{segment.morpheme!r} needs its homograph number")
-        if has_etymology and segment.morpheme_type == "root" and segment.morpheme.endswith("-"):
-            raise ValidationError(f"{segment.morpheme!r} is not a listed Latin or Greek root")
 
 
 def validate_affix_spelling(segments: list[Segment]) -> None:
     """Spanish lists every spelling of an affix as its own entry, so a part is spelled like its
-    affix: "ante" for -ante, never "iante". Only a final vowel may drop before another part:
-    cercanías has "an" for -ano."""
+    affix: "ante" for -ante, never "iante". Only a final vowel may drop before another part
+    (cercanías has "an" for -ano), and a final -o may be -a (característica has -ístico)."""
     for index, segment in enumerate(segments):
         if segment.morpheme_type in (None, "root") or segment.morpheme is None:
             continue
@@ -144,13 +140,45 @@ def validate_affix_spelling(segments: list[Segment]) -> None:
             and part == letters[:-1]
             and index + 1 < len(segments)
         )
-        if part != letters and not dropped_vowel:
+        feminine = letters.endswith("o") and part == letters[:-1] + "a"
+        if part != letters and not dropped_vowel and not feminine:
             raise ValidationError(f"{segment.word_part!r} is not spelled like {segment.morpheme!r}")
+
+
+_VOWELS = frozenset("aeiouáéíóú")
+
+
+def tidy_segments(segments: list[Segment], language: str) -> list[Segment]:
+    """Settle two Spanish layouts the model writes either way before they are checked.
+
+    A linking vowel the model kept on a suffix becomes its own null part, so the suffix is spelled
+    as listed: "ación" for -ción is "a" + "ción". An entry made only of function words (desde que)
+    is one null part.
+    """
+    if language != "es":
+        return segments
+    if len(segments) > 1 and all(segment.morpheme_type is None for segment in segments):
+        return [Segment(word_part="".join(segment.word_part for segment in segments))]
+    tidied: list[Segment] = []
+    for segment in segments:
+        part = segment.word_part
+        if (
+            segment.morpheme_type == "suffix"
+            and segment.morpheme is not None
+            and len(part) > 1
+            and part[0].lower() in _VOWELS
+            and spelling_key(part[1:]) == spelling_key(affix_key(segment.morpheme))
+        ):
+            tidied.append(Segment(word_part=part[0]))
+            segment = segment.model_copy(update={"word_part": part[1:]})
+        tidied.append(segment)
+    return tidied
 
 
 def validate_enrichment(
     stem: str, segments: list[Segment], meanings: AffixMeanings, *, language: str
 ) -> None:
+    segments = tidy_segments(segments, language)
     validate_segments(stem, segments)
     validate_lexicon_forms(segments, meanings)
     if language == "es":
@@ -389,7 +417,7 @@ def generate_database_fields(
                     "segments": postprocess_stem(
                         word,
                         stem,
-                        restore_spelling(stem, enrichment.segments),
+                        restore_spelling(stem, tidy_segments(enrichment.segments, language)),
                         affixes=affixes,
                         overrides=overrides,
                     )
