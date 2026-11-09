@@ -135,7 +135,7 @@ export function MorphemeCard({ children, language, morphemeId, labels }: Morphem
                           ? word.segments.map((segment, index) =>
                               segment.morphemeId === morphemeId ? (
                                 <span
-                                  className="rounded-sm bg-[var(--highlight)] px-0.5"
+                                  className="rounded-sm bg-[var(--highlight)]"
                                   key={`${index}-${segment.surface}`}
                                 >
                                   {segment.surface}
