@@ -65,7 +65,7 @@ function PanelWord({
   )
 
   return (
-    <article className="space-y-4">
+    <article className="space-y-6">
       <WordViewTracker language={language} wordId={word.id} />
       {/* Stays at the top while the rest scrolls, so the word and close button remain in view. */}
       <header className="sticky top-0 z-10 -mx-4 -mt-3 border-b border-[var(--line)] bg-[var(--card)] px-4 pt-3 pb-2">
@@ -95,7 +95,7 @@ function PanelWord({
 
       <section>
         <h3 className={panelSectionLabelClass}>{labels.meaning}</h3>
-        <ol className="list-decimal space-y-0.5 pl-4 text-sm leading-5 text-[var(--ink)] marker:text-[var(--mute)]">
+        <ol className="list-decimal space-y-1 rounded-xl border border-[var(--line)] bg-[var(--bg)]/60 py-2.5 pr-3 pl-8 text-sm leading-5 text-[var(--ink)] marker:font-semibold marker:text-[var(--mute)]">
           {word.glosses.map((gloss) => (
             <li key={gloss}>{gloss}</li>
           ))}
@@ -105,7 +105,7 @@ function PanelWord({
       {morphemes.length > 0 ? (
         <section>
           <h3 className={panelSectionLabelClass}>{labels.structure}</h3>
-          <ul className="space-y-1 text-sm">
+          <ul className="space-y-1 rounded-xl border border-[var(--line)] bg-[var(--bg)]/60 p-3 text-sm">
             {morphemes.map(({ surface, morpheme }, index) => (
               <li className="flex items-baseline gap-2" key={`${index}-${surface}`}>
                 <span
@@ -144,9 +144,12 @@ function PanelWord({
       <section>
         <h3 className={panelSectionLabelClass}>{labels.wordFamily}</h3>
         {word.relatedWords.length > 0 ? (
-          <ul className="divide-y divide-[var(--line)]">
+          <ul className="space-y-1.5">
             {word.relatedWords.map((related) => (
-              <li className="py-2 first:pt-0 last:pb-0" key={related.id}>
+              <li
+                className="rounded-xl px-2 py-2.5 transition-colors odd:bg-[var(--bg)]/70 hover:bg-[var(--row-hover)]"
+                key={related.id}
+              >
                 <div className="flex items-baseline gap-1.5">
                   <Link
                     className="font-semibold text-[var(--ink)] hover:text-[var(--root)] hover:underline"

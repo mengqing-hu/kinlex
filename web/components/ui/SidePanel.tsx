@@ -17,7 +17,7 @@ export const panelIconButtonClass =
   'inline-flex size-7 shrink-0 items-center justify-center rounded-md text-[var(--mute)] hover:bg-[var(--bg)] hover:text-[var(--ink)] focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none'
 
 export const panelSectionLabelClass =
-  'mb-1.5 text-[11px] font-semibold tracking-wider text-[var(--mute)] uppercase'
+  "mb-2 flex items-center gap-2 text-xs font-bold tracking-[0.08em] text-[var(--ink)] uppercase before:h-4 before:w-1 before:rounded-full before:bg-[var(--root)] before:content-['']"
 
 export function PanelCloseButton({ label, onClose }: { label: string; onClose: () => void }) {
   return (
