@@ -10,6 +10,7 @@ import {
   type MorphemePanelLabels,
 } from '@/components/root/MorphemeDetailPanel'
 import { WordDetailPanel, type WordPanelLabels } from '@/components/word/WordDetailPanel'
+import { MorphemeLabel } from '@/components/word/MorphemeLabel'
 import { Link } from '@/i18n/navigation'
 import {
   updateSearchParameter,
@@ -49,23 +50,39 @@ const defaultRootSortOrders: Record<RootSort, SortOrder> = { alphabetical: 'asc'
 
 // Ignores the hyphens that mark prefixes and suffixes, so "-ung" sorts under u.
 function compareText(left: MorphemeDirectoryItem, right: MorphemeDirectoryItem): number {
-  return left.text.replaceAll('-', '').localeCompare(right.text.replaceAll('-', ''), 'de')
+  return shownText(left)
+    .replaceAll('-', '')
+    .localeCompare(shownText(right).replaceAll('-', ''), 'de')
 }
 
-// Lower case, without the hyphens that mark prefixes and suffixes and without accents, so "über-"
+// The spelling the card shows first, so the list is in the order a reader sees: dia- under d.
+function shownText(item: MorphemeDirectoryItem): string {
+  return item.spellings[0] ?? item.text
+}
+
+// Lower case, without the hyphens that mark prefixes and suffixes, homograph numbers and accents,
+// so "über-"
 // is found by "über", "uber" and, written the German way without umlauts, "ueber".
 function searchKey(value: string): string {
-  return value.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase().replaceAll('-', '').trim()
+  return value
+    .normalize('NFKD')
+    .replace(/\p{M}/gu, '')
+    .replace(/\d/g, '')
+    .toLowerCase()
+    .replaceAll('-', '')
+    .trim()
 }
 
 function withoutUmlautSpelling(key: string): string {
   return key.replaceAll('ae', 'a').replaceAll('oe', 'o').replaceAll('ue', 'u')
 }
 
-// Only the word part itself, not its meaning.
+// Only the word part itself and its spellings, not its meaning: "im" finds in- (im-, i-).
 function matchesSearch(item: MorphemeDirectoryItem, key: string): boolean {
-  const text = searchKey(item.text)
-  return text.includes(key) || text.includes(withoutUmlautSpelling(key))
+  return [item.text, ...item.spellings].some((spelling) => {
+    const text = searchKey(spelling)
+    return text.includes(key) || text.includes(withoutUmlautSpelling(key))
+  })
 }
 
 export function RootDirectory({ items, labels, language }: RootDirectoryProps) {
@@ -189,7 +206,7 @@ export function RootDirectory({ items, labels, language }: RootDirectoryProps) {
                           prefetch={false}
                         >
                           <span className="text-lg font-semibold text-[var(--ink)]">
-                            {item.text}
+                            <MorphemeLabel spellings={item.spellings} text={item.text} />
                           </span>
                           {/* Always two lines tall, so every card has the same size. */}
                           <span
@@ -217,7 +234,7 @@ export function RootDirectory({ items, labels, language }: RootDirectoryProps) {
                           prefetch={false}
                         >
                           <span className="truncate text-sm font-semibold text-[var(--ink)]">
-                            {item.text}
+                            <MorphemeLabel spellings={item.spellings} text={item.text} />
                           </span>
                           <span className="truncate text-sm text-[var(--mute)]">
                             {item.meaning}

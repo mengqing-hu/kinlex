@@ -362,6 +362,7 @@ export type Database = {
           morpheme_meaning: string
           morpheme_type: string
           slug: string
+          spellings: string[] | null
         }
         Insert: {
           id?: never
@@ -371,6 +372,7 @@ export type Database = {
           morpheme_meaning: string
           morpheme_type: string
           slug: string
+          spellings?: string[] | null
         }
         Update: {
           id?: never
@@ -380,6 +382,7 @@ export type Database = {
           morpheme_meaning?: string
           morpheme_type?: string
           slug?: string
+          spellings?: string[] | null
         }
         Relationships: []
       }

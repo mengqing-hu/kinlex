@@ -8,6 +8,9 @@ export interface MorphemeSummary {
   id: number
   slug: string
   text: string
+  // The spellings the words use, most used first, as the site shows the word part: in- (im-, i-).
+  // Empty when the pipeline has not filled them; the text is shown instead.
+  spellings: string[]
   type: string
   meaning: string
   separable: boolean | null
@@ -132,6 +135,7 @@ export interface MorphemeDirectoryItem {
   id: number
   slug: string
   text: string
+  spellings: string[]
   type: string
   meaning: string
   separable: boolean | null

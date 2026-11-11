@@ -767,7 +767,7 @@ export async function findWordBySlug(
   const { data: word, error } = await db
     .from('words')
     .select(
-      'id, slug, lemma:word, pos:word_class, posDetail:word_class_detail, gender, plural, level, word_morphemes(position, surface:word_part, morpheme_id, morphemes(id, slug, text:morpheme, type:morpheme_type, meaning:morpheme_meaning, separable:is_separable, morpheme_meanings(meaning))), senses(gloss:word_meaning, gloss_language:meaning_language, sort_order)',
+      'id, slug, lemma:word, pos:word_class, posDetail:word_class_detail, gender, plural, level, word_morphemes(position, surface:word_part, morpheme_id, morphemes(id, slug, text:morpheme, spellings, type:morpheme_type, meaning:morpheme_meaning, separable:is_separable, morpheme_meanings(meaning))), senses(gloss:word_meaning, gloss_language:meaning_language, sort_order)',
     )
     .eq('language', language)
     .eq('slug', slug)
@@ -812,6 +812,7 @@ export async function findWordBySlug(
                 id: segment.morphemes.id,
                 slug: segment.morphemes.slug,
                 text: segment.morphemes.text,
+                spellings: segment.morphemes.spellings ?? [],
                 type: segment.morphemes.type,
                 meaning: pickMorphemeMeaning(
                   segment.morphemes.meaning,

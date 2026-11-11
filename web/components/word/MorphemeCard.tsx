@@ -4,6 +4,7 @@ import { useLocale } from 'next-intl'
 import { useState, type ReactNode } from 'react'
 
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/HoverCard'
+import { MorphemeLabel } from '@/components/word/MorphemeLabel'
 import { Link } from '@/i18n/navigation'
 import { fetchApiData } from '@/lib/client/apiClient'
 import { openWordPanelOnClick } from '@/lib/client/searchParams'
@@ -109,7 +110,12 @@ export function MorphemeCard({ children, language, morphemeId, labels }: Morphem
         ) : (
           <div>
             <p className="flex items-baseline gap-2">
-              <span className="text-base font-semibold">{state.data.morpheme.text}</span>
+              <span className="text-base font-semibold">
+                <MorphemeLabel
+                  spellings={state.data.morpheme.spellings}
+                  text={state.data.morpheme.text}
+                />
+              </span>
               <span className="text-[11px] font-semibold tracking-wide text-[var(--mute)] uppercase">
                 {labels.morphemeTypes[state.data.morpheme.type] ?? state.data.morpheme.type}
                 {state.data.morpheme.separable ? `, ${labels.separable}` : ''}

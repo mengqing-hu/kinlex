@@ -4,6 +4,7 @@ import { cache } from 'react'
 import { getTranslations } from 'next-intl/server'
 
 import { WordList } from '@/components/list/WordList'
+import { MorphemeLabel } from '@/components/word/MorphemeLabel'
 import { getPathname, Link } from '@/i18n/navigation'
 import { applyRouteLocale } from '@/i18n/server'
 import { getWordListLabels } from '@/lib/wordListLabels'
@@ -13,6 +14,7 @@ import { supportedLanguageCodes } from '@/lib/languages'
 import { getMorphemeBySlug, listMorphemes } from '@/lib/services/morphemeService'
 import { listWordFilterOptions, listWords } from '@/lib/services/wordService'
 import { getPublicSupabase } from '@/lib/supabase/server'
+import { morphemeLabelText } from '@/lib/utils/homograph'
 
 export const revalidate = 3600
 const PAGE_SIZE = 20
@@ -57,8 +59,11 @@ export async function generateMetadata({ params }: RootPageProps): Promise<Metad
     config.siteUrl,
   ).toString()
   return {
-    title: t('metadataTitle', { root: morpheme.text }),
-    description: t('metadataDescription', { root: morpheme.text, meaning: morpheme.meaning }),
+    title: t('metadataTitle', { root: morphemeLabelText(morpheme) }),
+    description: t('metadataDescription', {
+      root: morphemeLabelText(morpheme),
+      meaning: morpheme.meaning,
+    }),
     alternates: { canonical: canonicalUrl },
   }
 }
@@ -87,11 +92,13 @@ export default async function RootPage({ params }: RootPageProps) {
         <p className="text-sm font-semibold tracking-widest text-[var(--root)] uppercase">
           {t(`types.${morpheme.type}`)}
         </p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">{morpheme.text}</h1>
+        <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
+          <MorphemeLabel spellings={morpheme.spellings} text={morpheme.text} />
+        </h1>
         <p className="mt-4 text-lg leading-8 text-[var(--mute)]">{morpheme.meaning}</p>
         {morpheme.separable ? <p className="mt-3 text-sm font-semibold">{t('separable')}</p> : null}
       </header>
-      <section className="mt-8" aria-label={t('words', { root: morpheme.text })}>
+      <section className="mt-8" aria-label={t('words', { root: morphemeLabelText(morpheme) })}>
         <WordList
           filterOptions={filterOptions}
           initialPage={initialPage}

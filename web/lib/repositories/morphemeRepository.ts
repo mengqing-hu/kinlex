@@ -21,7 +21,7 @@ export async function findMorphemeWords(
   const { data: morphemeRow, error: morphemeError } = await db
     .from('morphemes')
     .select(
-      'id, slug, text:morpheme, type:morpheme_type, meaning:morpheme_meaning, separable:is_separable, morpheme_meanings(meaning)',
+      'id, slug, text:morpheme, spellings, type:morpheme_type, meaning:morpheme_meaning, separable:is_separable, morpheme_meanings(meaning)',
     )
     .eq('id', morphemeId)
     .eq('language', language)
@@ -35,6 +35,7 @@ export async function findMorphemeWords(
   const { morpheme_meanings, ...morphemeFields } = morphemeRow
   const morpheme = {
     ...morphemeFields,
+    spellings: morphemeRow.spellings ?? [],
     meaning: pickMorphemeMeaning(morphemeRow.meaning, morpheme_meanings),
   }
 
@@ -78,44 +79,41 @@ export async function findMorphemeWords(
   }
 }
 
+// PostgREST returns at most this many rows per request (max_rows in supabase/config.toml), and a
+// language has several thousand word parts, so the directory is read page by page.
+const DIRECTORY_PAGE_SIZE = 1000
+
 export async function findMorphemeDirectory(
   db: SupabaseClient<Database>,
   language: string,
   explainLanguage: string,
 ): Promise<MorphemeDirectoryItem[]> {
-  const [morphemesResult, relationsResult] = await Promise.all([
-    db
+  const items: MorphemeDirectoryItem[] = []
+  for (let from = 0; ; from += DIRECTORY_PAGE_SIZE) {
+    const { data, error } = await db
       .from('morphemes')
       .select(
-        'id, slug, text:morpheme, type:morpheme_type, meaning:morpheme_meaning, separable:is_separable, morpheme_meanings(meaning)',
+        'id, slug, text:morpheme, spellings, type:morpheme_type, meaning:morpheme_meaning, separable:is_separable, morpheme_meanings(meaning), word_morphemes(count)',
       )
       .eq('language', language)
       .eq('morpheme_meanings.meaning_language', explainLanguage)
       .order('morpheme_type', { ascending: true })
-      .order('morpheme', { ascending: true }),
-    db
-      .from('word_morphemes')
-      .select('morpheme_id, words!inner(language)')
-      .not('morpheme_id', 'is', null)
-      .eq('words.language', language),
-  ])
+      .order('morpheme', { ascending: true })
+      .order('id', { ascending: true })
+      .range(from, from + DIRECTORY_PAGE_SIZE - 1)
 
-  assertQuerySucceeded(morphemesResult.error, 'load morpheme directory')
-  assertQuerySucceeded(relationsResult.error, 'count morpheme words')
-
-  const wordCountByMorphemeId = new Map<number, number>()
-  for (const relation of relationsResult.data ?? []) {
-    if (relation.morpheme_id !== null) {
-      wordCountByMorphemeId.set(
-        relation.morpheme_id,
-        (wordCountByMorphemeId.get(relation.morpheme_id) ?? 0) + 1,
-      )
+    assertQuerySucceeded(error, 'load morpheme directory')
+    for (const { morpheme_meanings, word_morphemes, ...morpheme } of data ?? []) {
+      const wordCount = word_morphemes[0]?.count ?? 0
+      // A word part no word uses any more, left behind when words were segmented again.
+      if (wordCount === 0) continue
+      items.push({
+        ...morpheme,
+        spellings: morpheme.spellings ?? [],
+        meaning: pickMorphemeMeaning(morpheme.meaning, morpheme_meanings),
+        wordCount,
+      })
     }
+    if ((data?.length ?? 0) < DIRECTORY_PAGE_SIZE) return items
   }
-
-  return (morphemesResult.data ?? []).map(({ morpheme_meanings, ...morpheme }) => ({
-    ...morpheme,
-    meaning: pickMorphemeMeaning(morpheme.meaning, morpheme_meanings),
-    wordCount: wordCountByMorphemeId.get(morpheme.id) ?? 0,
-  }))
 }

@@ -4,9 +4,11 @@ import { useLocale } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 
 import { PanelCloseButton, panelSectionLabelClass, SidePanel } from '@/components/ui/SidePanel'
+import { MorphemeLabel } from '@/components/word/MorphemeLabel'
 import { Link } from '@/i18n/navigation'
 import { fetchApiData } from '@/lib/client/apiClient'
 import { openWordPanelOnClick } from '@/lib/client/searchParams'
+import { morphemeLabelText } from '@/lib/utils/homograph'
 import { formatPartOfSpeech } from '@/lib/utils/partOfSpeech'
 import { getWordPanelPath } from '@/lib/wordPanel'
 import type { MorphemeDirectoryItem, MorphemeWord, MorphemeWordCollection } from '@/types/domain'
@@ -96,7 +98,7 @@ export function MorphemeDetailPanel({
   ].filter(Boolean)
 
   return (
-    <SidePanel busy={isLoading} label={morpheme.text} onClose={onClose}>
+    <SidePanel busy={isLoading} label={morphemeLabelText(morpheme)} onClose={onClose}>
       <div className="flex-1 overflow-y-auto px-4 pt-3 pb-4" ref={bodyRef}>
         <article className="space-y-4">
           {/* Stays at the top while the words scroll, so the word part and close button remain
@@ -106,7 +108,7 @@ export function MorphemeDetailPanel({
               <h2
                 className={`min-w-0 flex-1 truncate text-xl font-semibold tracking-tight ${morphemeColors[morpheme.type] ?? 'text-[var(--ink)]'}`}
               >
-                {morpheme.text}
+                <MorphemeLabel spellings={morpheme.spellings} text={morpheme.text} />
               </h2>
               <PanelCloseButton label={labels.close} onClose={onClose} />
             </div>
