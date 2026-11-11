@@ -77,18 +77,23 @@ Null segments besides the endings above:
   (null).
 
 Prefixes, suffixes and Latin and Greek roots:
-- Prefixes and suffixes come from the lists below. Use the listed spelling that matches the
-  letters in the word: imposible is "im" (im2-) + "posible" (posible). Prefixes end with a hyphen
-  ("des-"), suffixes start with one ("-ería"). A suffix may end in -a where the list has -o:
-  característica is "caracter" (caracter-) + "ística" (-ístico).
-- Some spellings have several numbered entries with different meanings. Choose the number whose
+- Prefixes, suffixes and Latin and Greek roots come from the lists below. Each line is one entry:
+  its name, the other spellings it takes ("also"), and its meaning. `morpheme` is the entry's
+  name, exactly as listed with any number; `word_part` is the letters in the word, which must be
+  one of the entry's spellings: imposible is "im" (in2-) + "posible" (posible); irresponsable is
+  "ir" (in2-) + "respons" (respons-) + "a" (null) + "ble" (-ble); diálogo is "dia" (di-) + "log"
+  (log-) + "o" (null). Prefixes end with a hyphen ("des-"), suffixes start with one ("-ería"). A
+  suffix may end in -a where the spelling has -o: característica is "caracter" (caracter-) +
+  "ística" (-ístico).
+- Some spellings belong to several entries with different meanings. Choose the entry whose
   meaning fits this word: inmigrante has in1- (in, into), incapaz has in2- (not); acercar has a1-
-  (toward), ateo has a2- (not). A listed spelling without its number is invalid. This holds for
-  stems too: mano is "man" (man2-, hand) + "o" (null).
+  (toward), ateo has a2- (not); diálogo has di- (through), difusión has dis- (apart). A name
+  without its number is invalid. This holds for stems too: mano is "man" (man2-, hand) + "o"
+  (null); salir is "sal" (sal3-, go out) + "ir" (null).
 - Link a word to a stem, through a prefix or a suffix, only when the connection can be told in
   one short phrase that still fits the word's meaning today: verdura (green things) is "verd"
   (verd-) + "ura" (-ura); envase (what goods are put into) is "en" (en-) + "vas" (vas-) + "e"
-  (null); pastilla (a little piece of paste) is "past" (past-) + "illa" (-illa). When the link
+  (null); pastilla (a little piece of paste) is "past" (past-) + "illa" (-illo). When the link
   needs history to understand, the word keeps its own stem: armario (wardrobe) is "armari"
   (armari-) + "o" (null), not arm- (weapon) + -ario.
 - Split a prefix off only when a learner can still see it, the rest is a common Spanish word or
@@ -109,6 +114,8 @@ Prefixes, suffixes and Latin and Greek roots:
   fence) + "ar" (null).
 
 Compounds and phrases:
+- A prefix whose last vowel meets the same vowel is written once: restablecer is "re" (re-) +
+  "stablec" (establec-) + "er" (null), as in establecer.
 - A compound of a verb and a plural noun: rascacielos is "rasc" (rasc-) + "a" (null) + "ciel"
   (ciel-) + "o" (null) + "s" (null). The para- of paraguas and parabrisas is the listed prefix
   para2- (from parar); where two equal vowels meet they are written once: paraguas is "par"

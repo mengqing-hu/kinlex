@@ -3,9 +3,11 @@
 import json
 import re
 import time
+from collections import Counter
 from collections.abc import Callable, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
+from functools import cache
 from pathlib import Path
 
 import pydantic
@@ -35,16 +37,19 @@ from services.clients import (
 from services.storage import AudioStorage
 from utils.affixes import (
     AffixMeanings,
+    EntryForms,
     affix_key,
     apply_affix_meanings,
     homograph_key,
     homograph_keys,
+    load_affix_forms,
     load_affix_meanings,
     normalize_segment_types,
 )
 from utils.review_export import export_review_files
 from utils.roots import (
     apply_root_override,
+    load_etymological_forms,
     load_etymological_roots,
     load_numbered_roots,
     load_root_overrides,
@@ -112,9 +117,11 @@ def validate_segments(word: str, segments: list[Segment]) -> None:
         raise ValidationError("an unsplit word must be one segment")
 
 
-def validate_lexicon_forms(segments: list[Segment], meanings: AffixMeanings) -> None:
-    """Reject a homograph written without its number (a- for a1- or a2-), so the model is asked
-    again."""
+def validate_lexicon_forms(
+    segments: list[Segment], meanings: AffixMeanings, owners: dict[tuple[str, str], list[str]]
+) -> None:
+    """Reject a part the lexicon cannot place, so the model is asked again: a homograph without
+    its number (a- for a1- or a2-), or a spelling several entries share (im- is in1- and in2-)."""
     homographs = homograph_keys(meanings)
     for segment in segments:
         if segment.morpheme_type is None or segment.morpheme is None:
@@ -124,24 +131,30 @@ def validate_lexicon_forms(segments: list[Segment], meanings: AffixMeanings) -> 
         key = homograph_key(segment.morpheme_type, segment.morpheme)
         if (segment.morpheme_type, key) in homographs:
             raise ValidationError(f"{segment.morpheme!r} needs its homograph number")
+        if len(owners.get((segment.morpheme_type, segment.morpheme), [])) > 1:
+            raise ValidationError(f"{segment.morpheme!r} is spelled by several entries; name one")
 
 
-def validate_affix_spelling(segments: list[Segment]) -> None:
-    """Spanish lists every spelling of an affix as its own entry, so a part is spelled like its
-    affix: "ante" for -ante, never "iante". Only a final vowel may drop before another part
-    (cercanías has "an" for -ano), and a final -o may be -a (característica has -ístico)."""
+def _spells(part: str, form: str, *, more_follow: bool) -> bool:
+    """Whether a part is written with this spelling of an affix. Only a final vowel may drop
+    before another part (cercanías has "an" for -ano), and a final -o may be -a (característica
+    has -ístico)."""
+    letters = spelling_key(affix_key(form))
+    part = spelling_key(part.strip())
+    dropped_vowel = letters[-1:] in ("a", "e", "i", "o", "u") and part == letters[:-1]
+    feminine = letters.endswith("o") and part == letters[:-1] + "a"
+    return part == letters or (dropped_vowel and more_follow) or feminine
+
+
+def validate_affix_spelling(segments: list[Segment], forms: EntryForms) -> None:
+    """A Spanish affix part is written with one of its entry's spellings: "ante" for -ante, never
+    "iante"; "im" for in2-, whose spellings are in-, im-, i- and ir-."""
     for index, segment in enumerate(segments):
         if segment.morpheme_type in (None, "root") or segment.morpheme is None:
             continue
-        letters = spelling_key(affix_key(segment.morpheme))
-        part = spelling_key(segment.word_part.strip())
-        dropped_vowel = (
-            letters[-1:] in ("a", "e", "i", "o", "u")
-            and part == letters[:-1]
-            and index + 1 < len(segments)
-        )
-        feminine = letters.endswith("o") and part == letters[:-1] + "a"
-        if part != letters and not dropped_vowel and not feminine:
+        spellings = forms.get((segment.morpheme_type, segment.morpheme), (segment.morpheme,))
+        more_follow = index + 1 < len(segments)
+        if not any(_spells(segment.word_part, form, more_follow=more_follow) for form in spellings):
             raise ValidationError(f"{segment.word_part!r} is not spelled like {segment.morpheme!r}")
 
 
@@ -149,25 +162,36 @@ _VOWELS = frozenset("aeiouáéíóú")
 
 
 def tidy_segments(segments: list[Segment], language: str) -> list[Segment]:
-    """Settle two Spanish layouts the model writes either way before they are checked.
+    """Settle the Spanish layouts the model writes either way before they are checked.
 
-    A linking vowel the model kept on a suffix becomes its own null part, so the suffix is spelled
-    as listed: "ación" for -ción is "a" + "ción". An entry made only of function words (desde que)
-    is one null part.
+    A part named by one of its spellings takes its entry's name, when only one entry has that
+    spelling: dia- is di-. A linking vowel the model kept on a suffix becomes its own null part, so
+    the suffix is spelled as listed: "ación" for -ción is "a" + "ción". An entry made only of
+    function words (desde que) is one null part.
     """
     if language != "es":
         return segments
     if len(segments) > 1 and all(segment.morpheme_type is None for segment in segments):
         return [Segment(word_part="".join(segment.word_part for segment in segments))]
+    forms = lexicon_forms(language)
+    owners = spelling_owners(language)
     tidied: list[Segment] = []
     for segment in segments:
+        morpheme_type, morpheme = segment.morpheme_type, segment.morpheme
+        if morpheme_type is None or morpheme is None:
+            tidied.append(segment)
+            continue
+        names = owners.get((morpheme_type, morpheme), [])
+        if (morpheme_type, morpheme) not in forms and len(names) == 1:
+            morpheme = names[0]
+            segment = segment.model_copy(update={"morpheme": morpheme})
         part = segment.word_part
+        spellings = forms.get((morpheme_type, morpheme), (morpheme,))
         if (
-            segment.morpheme_type == "suffix"
-            and segment.morpheme is not None
+            morpheme_type == "suffix"
             and len(part) > 1
             and part[0].lower() in _VOWELS
-            and spelling_key(part[1:]) == spelling_key(affix_key(segment.morpheme))
+            and any(spelling_key(part[1:]) == spelling_key(affix_key(form)) for form in spellings)
         ):
             tidied.append(Segment(word_part=part[0]))
             segment = segment.model_copy(update={"word_part": part[1:]})
@@ -180,9 +204,9 @@ def validate_enrichment(
 ) -> None:
     segments = tidy_segments(segments, language)
     validate_segments(stem, segments)
-    validate_lexicon_forms(segments, meanings)
+    validate_lexicon_forms(segments, meanings, spelling_owners(language))
     if language == "es":
-        validate_affix_spelling(segments)
+        validate_affix_spelling(segments, lexicon_forms(language))
 
 
 def split_article(word: Word) -> tuple[str, str]:
@@ -262,10 +286,32 @@ def lexicon_meanings(language: str) -> AffixMeanings:
     )
 
 
-def _lexicon_table(meanings: AffixMeanings, kind: str) -> str:
-    return "\n".join(
-        f"{morpheme}: {meaning}" for (type_, morpheme), meaning in meanings.items() if type_ == kind
-    )
+@cache
+def lexicon_forms(language: str) -> EntryForms:
+    """The spellings of every listed affix and Latin or Greek root, by entry."""
+    return load_affix_forms(language) | load_etymological_forms(language)
+
+
+@cache
+def spelling_owners(language: str) -> dict[tuple[str, str], list[str]]:
+    """The entries that list each spelling: ("prefix", "im-") is in1- and in2-."""
+    owners: dict[tuple[str, str], list[str]] = {}
+    for (morpheme_type, name), spellings in lexicon_forms(language).items():
+        for form in spellings:
+            owners.setdefault((morpheme_type, form), []).append(name)
+    return owners
+
+
+def _lexicon_table(meanings: AffixMeanings, forms: EntryForms, kind: str) -> str:
+    """One entry a line: its name, the other spellings it takes, and its meaning."""
+    lines = []
+    for (type_, name), meaning in meanings.items():
+        if type_ != kind:
+            continue
+        others = [form for form in forms.get((type_, name), (name,)) if form != name]
+        spelled = f" (also {', '.join(others)})" if others else ""
+        lines.append(f"{name}{spelled}: {meaning}")
+    return "\n".join(lines)
 
 
 def _extract_json(text: str) -> object:
@@ -378,10 +424,12 @@ def generate_database_fields(
     prompt = read_prompt(prompt_name)
     system = f"You are a careful {language_name(language)} dictionary editor. Reply with JSON only."
     tables = {
-        "prefixes": _lexicon_table(affixes, "prefix"),
-        "suffixes": _lexicon_table(affixes, "suffix"),
-        "etymological_roots": _lexicon_table(load_etymological_roots(language), "root"),
-        "numbered_roots": _lexicon_table(load_numbered_roots(language), "root"),
+        "prefixes": _lexicon_table(affixes, lexicon_forms(language), "prefix"),
+        "suffixes": _lexicon_table(affixes, lexicon_forms(language), "suffix"),
+        "etymological_roots": _lexicon_table(
+            load_etymological_roots(language), lexicon_forms(language), "root"
+        ),
+        "numbered_roots": _lexicon_table(load_numbered_roots(language), {}, "root"),
     }
     cache = Cache(language, "database_fields")
     with model_client(get_settings()) as client:
@@ -465,8 +513,11 @@ def apply_root_consistency(*, language: str, dry_run: bool = False) -> Consisten
         for word, segments in stored:
             lead, body = split_lead(segments)
             stem = "".join(segment.word_part for segment in body)
-            body = postprocess_stem(word, stem, body, affixes=affixes, overrides=overrides)
-            # Spanish names a verb root by its infinitive (hacer), so only German renames it.
+            body = postprocess_stem(
+                word, stem, tidy_segments(body, language), affixes=affixes, overrides=overrides
+            )
+            # German verb roots are named by the infinitive and renamed to the stem here; Spanish
+            # stems come from the model already.
             if language == "de":
                 body = use_verb_stems(word, body, verbs)
             updated.append((word, lead + body))
@@ -484,7 +535,53 @@ def apply_root_consistency(*, language: str, dry_run: bool = False) -> Consisten
         if not dry_run:
             for change in result.changes:
                 db.replace_word_segments(connection, word=change.word, segments=change.after)
+            db.sync_affix_meanings(connection, language=language, meanings=affixes)
+            db.update_morpheme_spellings(
+                connection,
+                shown_spellings(db.morpheme_parts(connection, language=language), language),
+            )
     return result
+
+
+def _numbered(spelling: str, number: str) -> str:
+    """Put an entry's number into a spelling the way entries are named: in2-, -al1, cerc1-."""
+    if spelling.endswith("-"):
+        return f"{spelling[:-1]}{number}-"
+    return f"{spelling}{number}"
+
+
+def shown_spellings(
+    parts: dict[tuple[int, str, str], list[str]], language: str
+) -> dict[int, list[str]]:
+    """The spellings the site shows for each used morpheme, most used first.
+
+    A listed entry shows the spellings its words use: in2- is in- (im-, i-) when no word has ir-.
+    Any other morpheme shows its name. Morphemes of one type that would show the same first
+    spelling are numbered in the order of their names, as in1- and in2- both show in-; a number
+    on a spelling no other morpheme shows would tell a reader nothing, so it is left out.
+    """
+    forms = lexicon_forms(language)
+    shown: dict[int, list[str]] = {}
+    names: dict[int, str] = {}
+    firsts: dict[tuple[str, str], list[int]] = {}
+    for (morpheme_id, morpheme_type, name), word_parts in parts.items():
+        spellings = forms.get((morpheme_type, name), ())
+        counts: Counter[str] = Counter()
+        for part in word_parts:
+            form = next((f for f in spellings if _spells(part, f, more_follow=True)), None)
+            if form is not None:
+                counts[form] += 1
+        used = sorted(counts, key=lambda form: (-counts[form], spellings.index(form)))
+        shown[morpheme_id] = used or [re.sub(r"\d", "", name)]
+        names[morpheme_id] = name
+        firsts.setdefault((morpheme_type, shown[morpheme_id][0]), []).append(morpheme_id)
+    for ids in firsts.values():
+        if len(ids) < 2:
+            continue
+        for number, morpheme_id in enumerate(sorted(ids, key=names.__getitem__), start=1):
+            first, *rest = shown[morpheme_id]
+            shown[morpheme_id] = [_numbered(first, str(number)), *rest]
+    return shown
 
 
 def generate_tts_audio(

@@ -7,10 +7,14 @@ the model's own meaning is kept only for affixes the dictionary does not list ye
 The dictionary also decides whether a part is an affix at all. The model labels the same part
 differently from word to word ("groß" a root in Großvater but a prefix in Großmutter), which splits
 related words across two morphemes, so normalize_segment_types settles the type before saving.
+
+An entry is either a meaning (German: one spelling per entry) or a meaning with every spelling the
+entry takes (Spanish: in2- is spelled in-, im-, i- or ir-, as in incapaz, imposible, ilegal).
 """
 
 import json
 from functools import cache
+from typing import Any
 
 from config import PIPELINE_ROOT
 from core.models import Segment
@@ -18,27 +22,52 @@ from core.models import Segment
 LEXICON_ROOT = PIPELINE_ROOT / "lexicon"
 
 AffixMeanings = dict[tuple[str, str], str]
+# The spellings of each entry, keyed like AffixMeanings; the entry's name is the first.
+EntryForms = dict[tuple[str, str], tuple[str, ...]]
 _AFFIX_TYPES = ("prefix", "suffix")
 
 
 @cache
-def _load_lexicon(language: str) -> dict[str, dict[str, str]]:
+def _load_lexicon(language: str) -> dict[str, dict[str, Any]]:
     path = LEXICON_ROOT / f"{language}_affixes.json"
     if not path.is_file():
         return {}
-    data: dict[str, dict[str, str]] = json.loads(path.read_text(encoding="utf-8"))
+    data: dict[str, dict[str, Any]] = json.loads(path.read_text(encoding="utf-8"))
     return data
+
+
+def entry_meanings(morpheme_type: str, entries: dict[str, Any]) -> AffixMeanings:
+    return {
+        (morpheme_type, name): entry if isinstance(entry, str) else entry["meaning"]
+        for name, entry in entries.items()
+    }
+
+
+def entry_forms(morpheme_type: str, entries: dict[str, Any]) -> EntryForms:
+    return {
+        (morpheme_type, name): (name,) if isinstance(entry, str) else tuple(entry["forms"])
+        for name, entry in entries.items()
+    }
 
 
 @cache
 def load_affix_meanings(language: str) -> AffixMeanings:
     """Map (morpheme_type, morpheme) such as ("prefix", "ver-") to its curated meaning."""
     data = _load_lexicon(language)
-    return {
-        (morpheme_type, morpheme): meaning
-        for morpheme_type in _AFFIX_TYPES
-        for morpheme, meaning in data.get(morpheme_type, {}).items()
-    }
+    meanings: AffixMeanings = {}
+    for morpheme_type in _AFFIX_TYPES:
+        meanings |= entry_meanings(morpheme_type, data.get(morpheme_type, {}))
+    return meanings
+
+
+@cache
+def load_affix_forms(language: str) -> EntryForms:
+    """Map each prefix and suffix entry to its spellings: ("prefix", "in2-") to in-, im-, i-."""
+    data = _load_lexicon(language)
+    forms: EntryForms = {}
+    for morpheme_type in _AFFIX_TYPES:
+        forms |= entry_forms(morpheme_type, data.get(morpheme_type, {}))
+    return forms
 
 
 @cache

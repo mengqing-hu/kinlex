@@ -3,6 +3,7 @@
 import re
 import sys
 import unicodedata
+from collections import defaultdict
 from collections.abc import Iterator
 from contextlib import contextmanager
 from functools import cache
@@ -534,6 +535,47 @@ def replace_word_segments(
             """,
             (word.id, position, segment.word_part, morpheme_id),
         )
+
+
+def morpheme_parts(
+    connection: psycopg.Connection[Any], *, language: str
+) -> dict[tuple[int, str, str], list[str]]:
+    """Every used morpheme, as (id, type, name), with the word parts that spell it."""
+    parts: dict[tuple[int, str, str], list[str]] = defaultdict(list)
+    for morpheme_id, morpheme_type, morpheme, word_part in connection.execute(
+        """
+        select m.id, m.morpheme_type, m.morpheme, wm.word_part
+        from public.morphemes m
+        join public.word_morphemes wm on wm.morpheme_id = m.id
+        where m.language = %s
+        """,
+        (language,),
+    ):
+        parts[(int(morpheme_id), morpheme_type, morpheme)].append(word_part)
+    return parts
+
+
+def update_morpheme_spellings(
+    connection: psycopg.Connection[Any], spellings: dict[int, list[str]]
+) -> int:
+    """Store the spellings shown for each morpheme; returns how many changed."""
+    if not spellings:
+        return 0
+    ids = list(spellings)
+    rows = connection.execute(
+        """
+        update public.morphemes m
+        set spellings = d.spellings
+        from (
+          select id, string_to_array(joined, '|') as spellings
+          from unnest(%s::bigint[], %s::text[]) as s(id, joined)
+        ) d
+        where m.id = d.id and m.spellings is distinct from d.spellings
+        returning m.id
+        """,
+        (ids, ["|".join(spellings[morpheme_id]) for morpheme_id in ids]),
+    ).fetchall()
+    return len(rows)
 
 
 def sync_affix_meanings(

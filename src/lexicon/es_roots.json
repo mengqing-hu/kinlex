@@ -1,609 +1,2324 @@
 {
   "numbered_roots": {
     "cerc1-": "near",
-    "cerc2-": "fence"
+    "cerc2-": "fence",
+    "sal3-": "go out, leave",
+    "par3-": "stop",
+    "cap2-": "cape, layer",
+    "her2-": "wound",
+    "mis3-": "Mass (church service)"
   },
   "etymological_roots": {
-    "ac-": "do, act, drive",
-    "act-": "do, act, drive",
-    "acu-": "water",
-    "aer-": "air",
-    "ag-": "do, act, drive",
-    "agr-": "field",
-    "agri-": "field",
-    "agu-": "water",
-    "alt-": "high",
-    "am-": "love",
-    "ambul-": "walk, go",
-    "amor-": "love",
-    "ani-": "year",
-    "anim-": "life, spirit, mind",
-    "ann-": "year",
-    "antrop-": "human being",
-    "anu-": "year",
-    "apt-": "fit, suitable",
-    "aqu-": "water",
-    "arbor-": "tree",
-    "arc-": "rule; ancient",
-    "arqu-": "rule; ancient",
-    "art-": "skill, craft",
-    "aster-": "star",
-    "astr-": "star",
-    "auct-": "increase; originator",
-    "aud-": "hear",
-    "aug-": "increase; originator",
-    "aum-": "increase; originator",
-    "aut-": "increase; originator",
-    "beb-": "drink",
-    "bell-": "war",
-    "bi-": "life",
-    "bib-": "drink",
-    "bibli-": "book",
-    "bio-": "life",
-    "brev-": "short",
-    "bél-": "war",
-    "cab-": "head",
-    "cad-": "fall",
-    "cae-": "fall",
-    "camp-": "field",
-    "can-": "sing",
-    "cant-": "sing",
-    "cap1-": "take, seize, hold",
-    "cap2-": "head",
-    "capit-": "head",
-    "capt-": "take, seize, hold",
-    "cardi-": "heart",
-    "carn-": "flesh, meat",
-    "cas-": "fall",
-    "cated-": "seat, chair",
-    "cav-": "hollow",
-    "ced-": "go, yield",
-    "ceed-": "go, yield",
-    "celer-": "swift",
-    "cend-": "climb",
-    "cens-": "assess, judge",
-    "centr-": "centre",
-    "cep-": "take, seize, hold",
-    "cept-": "take, seize, hold",
-    "cert-": "sure",
-    "ces-": "go, yield",
-    "cicl-": "circle, cycle",
-    "cid1-": "fall",
-    "cid2-": "cut; kill",
-    "cien-": "know",
-    "ciert-": "sure",
-    "cine-": "movement",
-    "cip-": "take, seize, hold",
-    "cis-": "cut; kill",
-    "cit-": "call, set in motion",
-    "ciud-": "citizen, city",
-    "civ-": "citizen, city",
-    "clam-": "cry out, call",
-    "clar-": "clear, bright",
-    "clin-": "lean, bend",
-    "clu-": "close, shut",
-    "clud-": "close, shut",
-    "clus-": "close, shut",
-    "cogn-": "know",
-    "col-": "till, cultivate; worship",
-    "conoc-": "know",
-    "cor-": "heart",
-    "cord-": "heart",
-    "corp-": "body",
-    "corr-": "run",
-    "cosm-": "world, order",
-    "cracia-": "power, rule",
-    "crat-": "power, rule",
-    "cre-": "believe, trust",
-    "crec-": "grow",
-    "cred-": "believe, trust",
-    "cresc-": "grow",
-    "cri-": "judge, separate",
-    "cript-": "hidden",
-    "cris-": "judge, separate",
-    "crit-": "judge, separate",
-    "crom-": "colour",
-    "cron-": "time",
-    "cuerp-": "body",
-    "cuev-": "hollow",
-    "culp-": "blame, fault",
-    "cult-": "till, cultivate; worship",
-    "cur-": "care",
-    "curr-": "run",
-    "curs-": "run",
-    "dam-": "harm, loss",
-    "damn-": "harm, loss",
-    "dañ-": "harm, loss",
-    "dec-": "say, tell",
-    "dem-": "people",
-    "den-": "harm, loss",
-    "dent-": "tooth",
-    "derm-": "skin",
-    "dic-": "say, tell",
-    "dict-": "say, tell",
-    "dient-": "tooth",
-    "dign-": "worthy",
-    "dinam-": "power, force",
-    "dobl-": "two",
-    "doc-": "teach",
-    "doct-": "teach",
-    "dog-": "opinion, belief",
-    "dol-": "pain, grief",
-    "dom-": "master; house",
-    "domin-": "master; house",
-    "dorm-": "sleep",
-    "dox-": "opinion, belief",
-    "drom-": "run, course",
-    "du-": "two",
-    "duc-": "lead, bring",
-    "duct-": "lead, bring",
-    "duel-": "pain, grief",
-    "dupl-": "two",
-    "duz-": "lead, bring",
-    "eco-": "house, environment",
-    "enn-": "year",
-    "ept-": "fit, suitable",
-    "equ-": "equal",
-    "erg-": "work",
-    "err-": "wander; mistake",
-    "escrib-": "write",
-    "escrit-": "write",
-    "esfer-": "sphere",
-    "estel-": "star",
-    "estes-": "feeling, perception",
-    "estet-": "feeling, perception",
-    "etn-": "people, race",
-    "fabr-": "make, do",
-    "fac-": "make, do",
-    "fact-": "make, do",
-    "fag-": "eat",
-    "fals-": "false",
-    "fam-": "renown, talk",
-    "fe-": "faith, trust",
-    "fec-": "make, do",
-    "fer-": "carry, bear",
-    "fi-": "faith, trust",
-    "fic-": "make, do",
-    "fid-": "faith, trust",
-    "fil-": "love, friend",
-    "fin-": "end, limit",
-    "firm-": "firm, strong",
-    "fis-": "nature",
-    "flect-": "bend",
-    "flex-": "bend",
-    "flor-": "flower",
-    "flu-": "flow",
-    "foc-": "hearth; focus",
-    "fon-": "sound, voice",
-    "form-": "shape",
-    "fort-": "strong",
-    "fos-": "light",
-    "fot-": "light",
-    "fra-": "brother",
-    "fract-": "break",
-    "frag-": "break",
-    "frang-": "break",
-    "frat-": "brother",
-    "frent-": "forehead, front",
-    "front-": "forehead, front",
-    "fueg-": "hearth; focus",
-    "fuer-": "strong",
-    "fug-": "flee",
-    "fum-": "smoke",
-    "fund1-": "bottom, base",
-    "fund2-": "pour, melt",
-    "fus-": "pour, melt",
-    "gam-": "marriage",
-    "gastr-": "stomach",
-    "gen-": "birth, kind, produce",
-    "gener-": "birth, kind, produce",
-    "geo-": "earth",
-    "ger-": "carry, bear",
-    "gest-": "carry, bear",
-    "gin-": "woman",
-    "glos-": "tongue, language",
-    "glot-": "tongue, language",
-    "grac-": "pleasing, thanks",
-    "grad1-": "step, go",
-    "grad2-": "pleasing, thanks",
-    "graf-": "write, draw",
-    "gram-": "letter, written",
-    "grand-": "big",
-    "grat-": "pleasing, thanks",
-    "grav-": "heavy",
-    "gred-": "step, go",
-    "greg-": "flock, group",
-    "gres-": "step, go",
-    "hab-": "have, hold, dwell",
-    "hac-": "make, do",
-    "hemat-": "blood",
-    "hemo-": "blood",
-    "hepat-": "liver",
-    "her1-": "stick",
-    "her2-": "heir",
-    "hered-": "heir",
-    "hes-": "stick",
-    "hib-": "have, hold, dwell",
-    "hidr-": "water",
-    "hom-": "man, human",
-    "hosp-": "host, guest",
-    "host-": "host, guest",
-    "hum1-": "smoke",
-    "hum2-": "ground, low",
-    "iatr-": "healer, medicine",
-    "icon-": "image",
-    "igu-": "equal",
-    "imag-": "image, likeness",
-    "ject-": "throw",
-    "jet-": "throw",
-    "jud-": "judge",
-    "juic-": "judge",
-    "junct-": "join",
-    "junt-": "join",
-    "jur-": "law, right; swear",
-    "jus-": "law, right; swear",
-    "juv-": "young",
-    "juz-": "judge",
-    "lab-": "work",
-    "labor-": "work",
-    "lact-": "milk",
-    "lad-": "side",
-    "lat-": "side",
-    "lav-": "wash",
-    "le-": "read; choose, gather",
-    "lech-": "milk",
-    "lect-": "read; choose, gather",
-    "leg1-": "law",
-    "leg2-": "read; choose, gather",
-    "leng-": "tongue, language",
-    "letr-": "letter",
-    "lev-": "light; raise",
-    "li-": "bind, tie",
-    "liber-": "free",
-    "lig1-": "read; choose, gather",
-    "lig2-": "bind, tie",
-    "lingu-": "tongue, language",
-    "lis-": "loosening, dissolving",
-    "lit-": "stone",
-    "liter-": "letter",
-    "llen-": "full, fill",
-    "loc-": "place",
-    "locu-": "speak",
-    "log-": "word, reason, study",
-    "loqu-": "speak",
-    "luc-": "light",
-    "lud-": "play",
-    "lum-": "light",
-    "lun-": "light",
-    "lus1-": "light",
-    "lus2-": "play",
-    "magn-": "great",
-    "man1-": "madness, obsession",
-    "man2-": "hand",
-    "mand-": "order, entrust",
-    "manu-": "hand",
-    "mar-": "sea",
-    "mater-": "mother",
-    "matr-": "mother",
-    "may-": "great",
-    "mecan-": "machine",
-    "med-": "middle",
-    "medi-": "middle",
-    "medic-": "heal",
-    "memor-": "remember",
-    "men-": "small, less",
-    "mend-": "order, entrust",
-    "mens-": "measure",
-    "ment-": "mind",
-    "merc-": "trade, goods",
-    "merg-": "dip, sink",
-    "mers-": "dip, sink",
-    "met-": "measure",
-    "metr-": "measure",
-    "migr-": "move, wander",
-    "mim-": "imitate",
-    "min-": "small, less",
-    "mir-": "look, wonder",
-    "mis1-": "hatred",
-    "mis2-": "send, let go",
-    "mit1-": "send, let go",
-    "mit2-": "myth, story",
-    "mob-": "move",
-    "mod-": "measure, manner",
-    "monstr-": "show",
-    "mor-": "die, death",
-    "mord-": "bite",
-    "morf-": "form, shape",
-    "mors-": "bite",
-    "mort-": "die, death",
-    "mostr-": "show",
-    "mot-": "move",
-    "mov-": "move",
-    "mud-": "change",
-    "muer-": "die, death",
-    "muev-": "move",
-    "mult-": "many",
-    "mun-": "duty; gift; shared",
-    "mut-": "change",
-    "nac-": "born",
-    "nat-": "born",
-    "naut-": "sailor, ship",
-    "nav-": "ship",
-    "neg-": "deny",
-    "neum-": "lung, air",
-    "neur-": "nerve",
-    "noc-": "harm",
-    "noch-": "night",
-    "noct-": "night",
-    "nom1-": "law, arrangement",
-    "nom2-": "name",
-    "nombr-": "name",
-    "norm-": "rule, standard",
-    "nov-": "new",
-    "nox-": "harm",
-    "nuev-": "new",
-    "numer-": "number",
-    "nutr-": "nourish",
-    "obr-": "work",
-    "ocul-": "eye",
-    "od-": "hate",
-    "odonc-": "tooth",
-    "odont-": "tooth",
-    "ond-": "wave",
-    "onim-": "name",
-    "oper-": "work",
-    "or-": "speak, pray",
-    "orat-": "speak, pray",
-    "ord-": "order",
-    "orden-": "order",
-    "orto-": "straight, correct",
-    "oste-": "bone",
-    "osteo-": "bone",
-    "oí-": "hear",
-    "pac-": "peace",
-    "pan-": "bread",
-    "par1-": "equal",
-    "par2-": "prepare, get ready",
-    "part-": "part, share",
-    "pas-": "suffer, feel",
-    "pass-": "suffer, feel",
-    "pat-": "feeling; suffering, disease",
-    "pater-": "father; homeland",
-    "patr-": "father; homeland",
-    "paz-": "peace",
-    "pe-": "foot",
-    "pec-": "look, see",
-    "ped1-": "child",
-    "ped2-": "foot",
-    "ped3-": "seek, ask",
-    "pel-": "drive, push",
-    "pend-": "hang; weigh; pay",
-    "pens-": "hang; weigh; pay",
-    "pet-": "seek, ask",
-    "pict-": "paint",
-    "pie-": "foot",
-    "pint-": "paint",
-    "plac-": "please",
-    "plast-": "mould, form",
-    "plaud-": "clap",
-    "plaus-": "clap",
-    "ple-": "fold",
-    "plen-": "full, fill",
-    "plet-": "full, fill",
-    "plex-": "fold",
-    "pli-": "fold",
-    "plic-": "fold",
-    "pneum-": "lung, air",
-    "pobl-": "people",
-    "pod-": "be able, power",
-    "pol-": "city, state",
-    "polis-": "city, state",
-    "polit-": "city, state",
-    "pon-": "put, place",
-    "popul-": "people",
-    "port-": "carry",
-    "pos1-": "put, place",
-    "pos2-": "be able, power",
-    "posit-": "put, place",
-    "pot-": "be able, power",
-    "prehend-": "seize, grasp",
-    "pren-": "seize, grasp",
-    "pres1-": "seize, grasp",
-    "pres2-": "press",
-    "press-": "press",
-    "prim1-": "press",
-    "prim2-": "first",
-    "princ-": "first",
-    "pris-": "seize, grasp",
-    "priv-": "own; deprived",
-    "prob-": "test; good",
-    "prueb-": "test; good",
-    "psic-": "mind, soul",
-    "psiqu-": "mind, soul",
-    "publ-": "people",
-    "pueb-": "people",
-    "puls-": "drive, push",
-    "punct-": "point, prick",
-    "pung-": "point, prick",
-    "punt-": "point, prick",
-    "pus-": "put, place",
-    "put-": "think, reckon",
-    "quer-": "seek, ask",
-    "quir-": "seek, ask",
-    "quis-": "seek, ask",
-    "radi-": "ray",
-    "radic-": "root",
-    "rap-": "seize",
-    "rapt-": "seize",
-    "raíz-": "root",
-    "rect-": "straight; rule",
-    "reg-": "straight; rule",
-    "rid-": "laugh",
-    "rig-": "straight; rule",
-    "ris-": "laugh",
-    "rog-": "ask",
-    "romp-": "break",
-    "rot-": "wheel",
-    "rued-": "wheel",
-    "rup-": "break",
-    "rupt-": "break",
-    "sac-": "enough",
-    "sacr-": "holy",
-    "sagr-": "holy",
-    "sal1-": "salt",
-    "sal2-": "jump",
-    "salu-": "safe, healthy",
-    "salv-": "safe, healthy",
-    "san-": "healthy",
-    "sant-": "holy",
-    "sat-": "enough",
-    "satis-": "enough",
-    "scend-": "climb",
-    "sci-": "know",
-    "scop-": "look, examine",
-    "scrib-": "write",
-    "script-": "write",
-    "sec-": "cut",
-    "sect-": "cut",
-    "secu-": "follow",
-    "sed-": "sit",
-    "seg-": "cut",
-    "sem1-": "sign, meaning",
-    "sem2-": "like, same",
-    "sen-": "old",
-    "sens-": "feel, perceive",
-    "sent-": "feel, perceive",
-    "sequ-": "follow",
-    "serv-": "keep; serve",
-    "ses-": "sit",
-    "señ-": "mark, sign",
-    "sfer-": "sphere",
-    "sid-": "sit",
-    "sign-": "mark, sign",
-    "sigu-": "follow",
-    "sil-": "jump",
-    "simil-": "like, same",
-    "simul-": "like, same",
-    "sist-": "stand",
-    "soci-": "companion",
-    "sof-": "wise",
-    "sol1-": "alone",
-    "sol2-": "sun",
-    "solu-": "loosen, release",
-    "solv-": "loosen, release",
-    "son-": "sound",
-    "spec-": "look, see",
-    "spect-": "look, see",
-    "spic-": "look, see",
-    "spir-": "breathe",
-    "st-": "stand",
-    "sta-": "stand",
-    "stat-": "stand",
-    "stell-": "star",
-    "strict-": "bind, tighten",
-    "string-": "bind, tighten",
-    "stru-": "build",
-    "struct-": "build",
-    "sult-": "jump",
-    "sum-": "take",
-    "sumpt-": "take",
-    "surg-": "rise",
-    "tac-": "silent",
-    "tact1-": "touch",
-    "tact2-": "arrangement, order",
-    "tang-": "touch",
-    "tax-": "arrangement, order",
-    "te-": "god",
-    "tech-": "cover",
-    "tecn-": "art, skill",
-    "tect-": "cover",
-    "teg-": "cover",
-    "tej-": "weave",
-    "tem-": "fear",
-    "temp-": "time",
-    "tempor-": "time",
-    "ten-": "hold",
-    "tend-": "stretch, strive",
-    "tens-": "stretch, strive",
-    "tent1-": "hold",
-    "tent2-": "stretch, strive",
-    "tent3-": "try",
-    "teo-": "god",
-    "term-": "heat",
-    "termin-": "end, boundary",
-    "terr-": "earth, land",
-    "tes-": "place, put",
-    "test-": "witness",
-    "tet-": "place, put",
-    "text-": "weave",
-    "tien-": "hold",
-    "tierr-": "earth, land",
-    "tim-": "fear",
-    "tin-": "hold",
-    "tip-": "type, stamp",
-    "tol-": "bear, endure",
-    "top-": "place",
-    "torc-": "twist",
-    "torn-": "turn",
-    "tors-": "twist",
-    "tort-": "twist",
-    "tox-": "poison",
-    "tra-": "pull, draw",
-    "tract-": "pull, draw",
-    "trah-": "pull, draw",
-    "trib-": "give, assign",
-    "turb-": "disturb, stir",
-    "umbr-": "shadow",
-    "un-": "one",
-    "und-": "wave",
-    "urb-": "city",
-    "us-": "use",
-    "ut-": "use",
-    "vac-": "empty",
-    "vací-": "empty",
-    "vad-": "go",
-    "vag-": "wander",
-    "val-": "strong, worth",
-    "vari-": "different, varied",
-    "vas-": "go",
-    "ve-": "see",
-    "ven-": "come",
-    "venc-": "conquer",
-    "vent1-": "come",
-    "vent2-": "wind",
-    "ver-": "true",
-    "verb-": "word",
-    "vers-": "turn",
-    "vert-": "turn",
-    "vest-": "clothe",
-    "vet-": "old",
-    "vi-": "way, road",
-    "via-": "way, road",
-    "vict-": "conquer",
-    "vid1-": "see",
-    "vid2-": "live, life",
-    "vien1-": "come",
-    "vien2-": "wind",
-    "vig-": "lively, watchful",
-    "vinc-": "conquer",
-    "vir-": "poison",
-    "vis-": "see",
-    "vist-": "see",
-    "vit-": "live, life",
-    "viv-": "live, life",
-    "voc-": "call, voice",
-    "vol-": "wish, will",
-    "volu-": "roll, turn",
-    "volut-": "roll, turn",
-    "volv-": "roll, turn",
-    "vor-": "devour",
-    "vot-": "vow",
-    "voz-": "call, voice",
-    "vulg-": "common people",
-    "vuln-": "wound",
-    "xen-": "foreign, stranger",
-    "yect-": "throw",
-    "zo-": "animal, life",
-    "árbol-": "tree"
+    "aer-": {
+      "meaning": "air",
+      "forms": [
+        "aer-"
+      ]
+    },
+    "ag-": {
+      "meaning": "do, act, drive",
+      "forms": [
+        "ag-",
+        "act-",
+        "ac-"
+      ]
+    },
+    "agr-": {
+      "meaning": "field",
+      "forms": [
+        "agr-",
+        "agri-"
+      ]
+    },
+    "alt-": {
+      "meaning": "high",
+      "forms": [
+        "alt-"
+      ]
+    },
+    "am-": {
+      "meaning": "love",
+      "forms": [
+        "am-",
+        "amor-"
+      ]
+    },
+    "ambul-": {
+      "meaning": "walk, go",
+      "forms": [
+        "ambul-"
+      ]
+    },
+    "anim-": {
+      "meaning": "life, spirit, mind",
+      "forms": [
+        "anim-"
+      ]
+    },
+    "ann-": {
+      "meaning": "year",
+      "forms": [
+        "ann-",
+        "enn-",
+        "anu-",
+        "ani-"
+      ]
+    },
+    "antrop-": {
+      "meaning": "human being",
+      "forms": [
+        "antrop-"
+      ]
+    },
+    "apt-": {
+      "meaning": "fit, suitable",
+      "forms": [
+        "apt-",
+        "ept-"
+      ]
+    },
+    "aqu-": {
+      "meaning": "water",
+      "forms": [
+        "aqu-",
+        "agu-",
+        "acu-"
+      ]
+    },
+    "arbor-": {
+      "meaning": "tree",
+      "forms": [
+        "arbor-",
+        "árbol-"
+      ]
+    },
+    "arc-": {
+      "meaning": "rule; ancient",
+      "forms": [
+        "arc-",
+        "arqu-"
+      ]
+    },
+    "art-": {
+      "meaning": "skill, craft",
+      "forms": [
+        "art-"
+      ]
+    },
+    "astr-": {
+      "meaning": "star",
+      "forms": [
+        "astr-",
+        "aster-"
+      ]
+    },
+    "aud-": {
+      "meaning": "hear",
+      "forms": [
+        "aud-",
+        "oí-"
+      ]
+    },
+    "aug-": {
+      "meaning": "increase; originator",
+      "forms": [
+        "aug-",
+        "aut-",
+        "auct-",
+        "aum-"
+      ]
+    },
+    "bell-": {
+      "meaning": "war",
+      "forms": [
+        "bell-",
+        "bél-"
+      ]
+    },
+    "bib-": {
+      "meaning": "drink",
+      "forms": [
+        "bib-",
+        "beb-"
+      ]
+    },
+    "bibli-": {
+      "meaning": "book",
+      "forms": [
+        "bibli-"
+      ]
+    },
+    "bio-": {
+      "meaning": "life",
+      "forms": [
+        "bio-",
+        "bi-"
+      ]
+    },
+    "brev-": {
+      "meaning": "short",
+      "forms": [
+        "brev-"
+      ]
+    },
+    "cad-": {
+      "meaning": "fall",
+      "forms": [
+        "cad-",
+        "cid-",
+        "cas-",
+        "cae-"
+      ]
+    },
+    "camp-": {
+      "meaning": "field",
+      "forms": [
+        "camp-"
+      ]
+    },
+    "can-": {
+      "meaning": "sing",
+      "forms": [
+        "can-",
+        "cant-"
+      ]
+    },
+    "cap1-": {
+      "meaning": "take, seize, hold",
+      "forms": [
+        "cap-",
+        "capt-",
+        "cep-",
+        "cip-",
+        "cept-"
+      ]
+    },
+    "capit-": {
+      "meaning": "head",
+      "forms": [
+        "capit-",
+        "cab-",
+        "cap-"
+      ]
+    },
+    "cardi-": {
+      "meaning": "heart",
+      "forms": [
+        "cardi-"
+      ]
+    },
+    "carn-": {
+      "meaning": "flesh, meat",
+      "forms": [
+        "carn-"
+      ]
+    },
+    "cated-": {
+      "meaning": "seat, chair",
+      "forms": [
+        "cated-"
+      ]
+    },
+    "cav-": {
+      "meaning": "hollow",
+      "forms": [
+        "cav-",
+        "cuev-"
+      ]
+    },
+    "ced-": {
+      "meaning": "go, yield",
+      "forms": [
+        "ced-",
+        "ces-",
+        "ceed-"
+      ]
+    },
+    "celer-": {
+      "meaning": "swift",
+      "forms": [
+        "celer-"
+      ]
+    },
+    "cens-": {
+      "meaning": "assess, judge",
+      "forms": [
+        "cens-"
+      ]
+    },
+    "centr-": {
+      "meaning": "centre",
+      "forms": [
+        "centr-"
+      ]
+    },
+    "cert-": {
+      "meaning": "sure",
+      "forms": [
+        "cert-",
+        "ciert-"
+      ]
+    },
+    "cicl-": {
+      "meaning": "circle, cycle",
+      "forms": [
+        "cicl-"
+      ]
+    },
+    "cid-": {
+      "meaning": "cut; kill",
+      "forms": [
+        "cid-",
+        "cis-"
+      ]
+    },
+    "cine-": {
+      "meaning": "movement",
+      "forms": [
+        "cine-"
+      ]
+    },
+    "cit-": {
+      "meaning": "call, set in motion",
+      "forms": [
+        "cit-"
+      ]
+    },
+    "civ-": {
+      "meaning": "citizen, city",
+      "forms": [
+        "civ-",
+        "ciud-"
+      ]
+    },
+    "clam-": {
+      "meaning": "cry out, call",
+      "forms": [
+        "clam-"
+      ]
+    },
+    "clar-": {
+      "meaning": "clear, bright",
+      "forms": [
+        "clar-"
+      ]
+    },
+    "clin-": {
+      "meaning": "lean, bend",
+      "forms": [
+        "clin-"
+      ]
+    },
+    "clud-": {
+      "meaning": "close, shut",
+      "forms": [
+        "clud-",
+        "clus-",
+        "clu-"
+      ]
+    },
+    "cogn-": {
+      "meaning": "know",
+      "forms": [
+        "cogn-",
+        "conoc-"
+      ]
+    },
+    "col-": {
+      "meaning": "till, cultivate; worship",
+      "forms": [
+        "col-",
+        "cult-"
+      ]
+    },
+    "cor-": {
+      "meaning": "heart",
+      "forms": [
+        "cor-",
+        "cord-"
+      ]
+    },
+    "corp-": {
+      "meaning": "body",
+      "forms": [
+        "corp-",
+        "cuerp-"
+      ]
+    },
+    "cosm-": {
+      "meaning": "world, order",
+      "forms": [
+        "cosm-"
+      ]
+    },
+    "crat-": {
+      "meaning": "power, rule",
+      "forms": [
+        "crat-",
+        "cracia-"
+      ]
+    },
+    "cred-": {
+      "meaning": "believe, trust",
+      "forms": [
+        "cred-",
+        "cre-"
+      ]
+    },
+    "cresc-": {
+      "meaning": "grow",
+      "forms": [
+        "cresc-",
+        "crec-"
+      ]
+    },
+    "cri-": {
+      "meaning": "judge, separate",
+      "forms": [
+        "cri-",
+        "crit-",
+        "cris-"
+      ]
+    },
+    "cript-": {
+      "meaning": "hidden",
+      "forms": [
+        "cript-"
+      ]
+    },
+    "crom-": {
+      "meaning": "colour",
+      "forms": [
+        "crom-"
+      ]
+    },
+    "cron-": {
+      "meaning": "time",
+      "forms": [
+        "cron-"
+      ]
+    },
+    "culp-": {
+      "meaning": "blame, fault",
+      "forms": [
+        "culp-"
+      ]
+    },
+    "cur-": {
+      "meaning": "care",
+      "forms": [
+        "cur-"
+      ]
+    },
+    "curr-": {
+      "meaning": "run",
+      "forms": [
+        "curr-",
+        "curs-",
+        "corr-"
+      ]
+    },
+    "dam-": {
+      "meaning": "harm, loss",
+      "forms": [
+        "dam-",
+        "damn-",
+        "dañ-",
+        "den-"
+      ]
+    },
+    "dem-": {
+      "meaning": "people",
+      "forms": [
+        "dem-"
+      ]
+    },
+    "dent-": {
+      "meaning": "tooth",
+      "forms": [
+        "dent-",
+        "dient-"
+      ]
+    },
+    "derm-": {
+      "meaning": "skin",
+      "forms": [
+        "derm-"
+      ]
+    },
+    "dic-": {
+      "meaning": "say, tell",
+      "forms": [
+        "dic-",
+        "dict-",
+        "dec-"
+      ]
+    },
+    "dign-": {
+      "meaning": "worthy",
+      "forms": [
+        "dign-"
+      ]
+    },
+    "dinam-": {
+      "meaning": "power, force",
+      "forms": [
+        "dinam-"
+      ]
+    },
+    "doc-": {
+      "meaning": "teach",
+      "forms": [
+        "doc-",
+        "doct-"
+      ]
+    },
+    "dog-": {
+      "meaning": "opinion, belief",
+      "forms": [
+        "dog-",
+        "dox-"
+      ]
+    },
+    "dol-": {
+      "meaning": "pain, grief",
+      "forms": [
+        "dol-",
+        "duel-"
+      ]
+    },
+    "domin-": {
+      "meaning": "master; house",
+      "forms": [
+        "domin-",
+        "dom-"
+      ]
+    },
+    "dorm-": {
+      "meaning": "sleep",
+      "forms": [
+        "dorm-"
+      ]
+    },
+    "drom-": {
+      "meaning": "run, course",
+      "forms": [
+        "drom-"
+      ]
+    },
+    "du-": {
+      "meaning": "two",
+      "forms": [
+        "du-",
+        "dupl-",
+        "dobl-"
+      ]
+    },
+    "duc-": {
+      "meaning": "lead, bring",
+      "forms": [
+        "duc-",
+        "duct-",
+        "duz-"
+      ]
+    },
+    "eco-": {
+      "meaning": "house, environment",
+      "forms": [
+        "eco-"
+      ]
+    },
+    "equ-": {
+      "meaning": "equal",
+      "forms": [
+        "equ-",
+        "igu-"
+      ]
+    },
+    "erg-": {
+      "meaning": "work",
+      "forms": [
+        "erg-"
+      ]
+    },
+    "err-": {
+      "meaning": "wander; mistake",
+      "forms": [
+        "err-"
+      ]
+    },
+    "esfer-": {
+      "meaning": "sphere",
+      "forms": [
+        "esfer-",
+        "sfer-"
+      ]
+    },
+    "estet-": {
+      "meaning": "feeling, perception",
+      "forms": [
+        "estet-",
+        "estes-"
+      ]
+    },
+    "etn-": {
+      "meaning": "people, race",
+      "forms": [
+        "etn-"
+      ]
+    },
+    "fac-": {
+      "meaning": "make, do",
+      "forms": [
+        "fac-",
+        "fic-",
+        "fec-",
+        "hac-",
+        "fact-",
+        "fabr-"
+      ]
+    },
+    "fag-": {
+      "meaning": "eat",
+      "forms": [
+        "fag-"
+      ]
+    },
+    "fals-": {
+      "meaning": "false",
+      "forms": [
+        "fals-"
+      ]
+    },
+    "fam-": {
+      "meaning": "renown, talk",
+      "forms": [
+        "fam-"
+      ]
+    },
+    "fer-": {
+      "meaning": "carry, bear",
+      "forms": [
+        "fer-"
+      ]
+    },
+    "fid-": {
+      "meaning": "faith, trust",
+      "forms": [
+        "fid-",
+        "fi-",
+        "fe-"
+      ]
+    },
+    "fil-": {
+      "meaning": "love, friend",
+      "forms": [
+        "fil-"
+      ]
+    },
+    "fin-": {
+      "meaning": "end, limit",
+      "forms": [
+        "fin-"
+      ]
+    },
+    "firm-": {
+      "meaning": "firm, strong",
+      "forms": [
+        "firm-"
+      ]
+    },
+    "fis-": {
+      "meaning": "nature",
+      "forms": [
+        "fis-"
+      ]
+    },
+    "flect-": {
+      "meaning": "bend",
+      "forms": [
+        "flect-",
+        "flex-"
+      ]
+    },
+    "flor-": {
+      "meaning": "flower",
+      "forms": [
+        "flor-"
+      ]
+    },
+    "flu-": {
+      "meaning": "flow",
+      "forms": [
+        "flu-"
+      ]
+    },
+    "foc-": {
+      "meaning": "hearth; focus",
+      "forms": [
+        "foc-",
+        "fueg-"
+      ]
+    },
+    "fon-": {
+      "meaning": "sound, voice",
+      "forms": [
+        "fon-"
+      ]
+    },
+    "form-": {
+      "meaning": "shape",
+      "forms": [
+        "form-"
+      ]
+    },
+    "fort-": {
+      "meaning": "strong",
+      "forms": [
+        "fort-",
+        "fuer-"
+      ]
+    },
+    "fot-": {
+      "meaning": "light",
+      "forms": [
+        "fot-",
+        "fos-"
+      ]
+    },
+    "frag-": {
+      "meaning": "break",
+      "forms": [
+        "frag-",
+        "fract-",
+        "frang-"
+      ]
+    },
+    "frat-": {
+      "meaning": "brother",
+      "forms": [
+        "frat-",
+        "fra-"
+      ]
+    },
+    "front-": {
+      "meaning": "forehead, front",
+      "forms": [
+        "front-",
+        "frent-"
+      ]
+    },
+    "fug-": {
+      "meaning": "flee",
+      "forms": [
+        "fug-"
+      ]
+    },
+    "fum-": {
+      "meaning": "smoke",
+      "forms": [
+        "fum-",
+        "hum-"
+      ]
+    },
+    "fund-": {
+      "meaning": "bottom, base",
+      "forms": [
+        "fund-"
+      ]
+    },
+    "fus-": {
+      "meaning": "pour, melt",
+      "forms": [
+        "fus-",
+        "fund-"
+      ]
+    },
+    "gam-": {
+      "meaning": "marriage",
+      "forms": [
+        "gam-"
+      ]
+    },
+    "gastr-": {
+      "meaning": "stomach",
+      "forms": [
+        "gastr-"
+      ]
+    },
+    "gen-": {
+      "meaning": "birth, kind, produce",
+      "forms": [
+        "gen-",
+        "gener-"
+      ]
+    },
+    "geo-": {
+      "meaning": "earth",
+      "forms": [
+        "geo-"
+      ]
+    },
+    "gest-": {
+      "meaning": "carry, bear",
+      "forms": [
+        "gest-",
+        "ger-"
+      ]
+    },
+    "gin-": {
+      "meaning": "woman",
+      "forms": [
+        "gin-"
+      ]
+    },
+    "glos-": {
+      "meaning": "tongue, language",
+      "forms": [
+        "glos-",
+        "glot-"
+      ]
+    },
+    "grad-": {
+      "meaning": "step, go",
+      "forms": [
+        "grad-",
+        "gres-",
+        "gred-"
+      ]
+    },
+    "graf-": {
+      "meaning": "write, draw",
+      "forms": [
+        "graf-"
+      ]
+    },
+    "gram-": {
+      "meaning": "letter, written",
+      "forms": [
+        "gram-"
+      ]
+    },
+    "grand-": {
+      "meaning": "big",
+      "forms": [
+        "grand-"
+      ]
+    },
+    "grat-": {
+      "meaning": "pleasing, thanks",
+      "forms": [
+        "grat-",
+        "grac-",
+        "grad-"
+      ]
+    },
+    "grav-": {
+      "meaning": "heavy",
+      "forms": [
+        "grav-"
+      ]
+    },
+    "greg-": {
+      "meaning": "flock, group",
+      "forms": [
+        "greg-"
+      ]
+    },
+    "hab-": {
+      "meaning": "have, hold, dwell",
+      "forms": [
+        "hab-",
+        "hib-"
+      ]
+    },
+    "hemo-": {
+      "meaning": "blood",
+      "forms": [
+        "hemo-",
+        "hemat-"
+      ]
+    },
+    "hepat-": {
+      "meaning": "liver",
+      "forms": [
+        "hepat-"
+      ]
+    },
+    "her1-": {
+      "meaning": "stick",
+      "forms": [
+        "her-",
+        "hes-"
+      ]
+    },
+    "hered-": {
+      "meaning": "heir",
+      "forms": [
+        "hered-",
+        "her-"
+      ]
+    },
+    "hidr-": {
+      "meaning": "water",
+      "forms": [
+        "hidr-"
+      ]
+    },
+    "hom-": {
+      "meaning": "man, human",
+      "forms": [
+        "hom-"
+      ]
+    },
+    "hosp-": {
+      "meaning": "host, guest",
+      "forms": [
+        "hosp-",
+        "host-"
+      ]
+    },
+    "hum-": {
+      "meaning": "ground, low",
+      "forms": [
+        "hum-"
+      ]
+    },
+    "iatr-": {
+      "meaning": "healer, medicine",
+      "forms": [
+        "iatr-"
+      ]
+    },
+    "icon-": {
+      "meaning": "image",
+      "forms": [
+        "icon-"
+      ]
+    },
+    "imag-": {
+      "meaning": "image, likeness",
+      "forms": [
+        "imag-"
+      ]
+    },
+    "ject-": {
+      "meaning": "throw",
+      "forms": [
+        "ject-",
+        "yect-",
+        "jet-"
+      ]
+    },
+    "jud-": {
+      "meaning": "judge",
+      "forms": [
+        "jud-",
+        "juic-",
+        "juz-"
+      ]
+    },
+    "junct-": {
+      "meaning": "join",
+      "forms": [
+        "junct-",
+        "junt-"
+      ]
+    },
+    "jur-": {
+      "meaning": "law, right; swear",
+      "forms": [
+        "jur-",
+        "jus-"
+      ]
+    },
+    "juv-": {
+      "meaning": "young",
+      "forms": [
+        "juv-"
+      ]
+    },
+    "lab-": {
+      "meaning": "work",
+      "forms": [
+        "lab-",
+        "labor-"
+      ]
+    },
+    "lact-": {
+      "meaning": "milk",
+      "forms": [
+        "lact-",
+        "lech-"
+      ]
+    },
+    "lat-": {
+      "meaning": "side",
+      "forms": [
+        "lat-",
+        "lad-"
+      ]
+    },
+    "lav-": {
+      "meaning": "wash",
+      "forms": [
+        "lav-"
+      ]
+    },
+    "leg1-": {
+      "meaning": "law",
+      "forms": [
+        "leg-"
+      ]
+    },
+    "leg2-": {
+      "meaning": "read; choose, gather",
+      "forms": [
+        "leg-",
+        "lect-",
+        "lig-",
+        "le-"
+      ]
+    },
+    "lev-": {
+      "meaning": "light; raise",
+      "forms": [
+        "lev-"
+      ]
+    },
+    "liber-": {
+      "meaning": "free",
+      "forms": [
+        "liber-"
+      ]
+    },
+    "lig-": {
+      "meaning": "bind, tie",
+      "forms": [
+        "lig-",
+        "li-"
+      ]
+    },
+    "lingu-": {
+      "meaning": "tongue, language",
+      "forms": [
+        "lingu-",
+        "leng-"
+      ]
+    },
+    "lis-": {
+      "meaning": "loosening, dissolving",
+      "forms": [
+        "lis-"
+      ]
+    },
+    "lit-": {
+      "meaning": "stone",
+      "forms": [
+        "lit-"
+      ]
+    },
+    "liter-": {
+      "meaning": "letter",
+      "forms": [
+        "liter-",
+        "letr-"
+      ]
+    },
+    "loc-": {
+      "meaning": "place",
+      "forms": [
+        "loc-"
+      ]
+    },
+    "log-": {
+      "meaning": "word, reason, study",
+      "forms": [
+        "log-"
+      ]
+    },
+    "loqu-": {
+      "meaning": "speak",
+      "forms": [
+        "loqu-",
+        "locu-"
+      ]
+    },
+    "luc-": {
+      "meaning": "light",
+      "forms": [
+        "luc-",
+        "lum-",
+        "lun-",
+        "lus-"
+      ]
+    },
+    "lud-": {
+      "meaning": "play",
+      "forms": [
+        "lud-",
+        "lus-"
+      ]
+    },
+    "magn-": {
+      "meaning": "great",
+      "forms": [
+        "magn-",
+        "may-"
+      ]
+    },
+    "man1-": {
+      "meaning": "madness, obsession",
+      "forms": [
+        "man-"
+      ]
+    },
+    "man2-": {
+      "meaning": "hand",
+      "forms": [
+        "man-",
+        "manu-"
+      ]
+    },
+    "mand-": {
+      "meaning": "order, entrust",
+      "forms": [
+        "mand-",
+        "mend-"
+      ]
+    },
+    "mar-": {
+      "meaning": "sea",
+      "forms": [
+        "mar-"
+      ]
+    },
+    "matr-": {
+      "meaning": "mother",
+      "forms": [
+        "matr-",
+        "mater-"
+      ]
+    },
+    "mecan-": {
+      "meaning": "machine",
+      "forms": [
+        "mecan-"
+      ]
+    },
+    "med-": {
+      "meaning": "middle",
+      "forms": [
+        "med-",
+        "medi-"
+      ]
+    },
+    "medic-": {
+      "meaning": "heal",
+      "forms": [
+        "medic-"
+      ]
+    },
+    "memor-": {
+      "meaning": "remember",
+      "forms": [
+        "memor-"
+      ]
+    },
+    "mens-": {
+      "meaning": "measure",
+      "forms": [
+        "mens-"
+      ]
+    },
+    "ment-": {
+      "meaning": "mind",
+      "forms": [
+        "ment-"
+      ]
+    },
+    "merc-": {
+      "meaning": "trade, goods",
+      "forms": [
+        "merc-"
+      ]
+    },
+    "merg-": {
+      "meaning": "dip, sink",
+      "forms": [
+        "merg-",
+        "mers-"
+      ]
+    },
+    "metr-": {
+      "meaning": "measure",
+      "forms": [
+        "metr-",
+        "met-"
+      ]
+    },
+    "migr-": {
+      "meaning": "move, wander",
+      "forms": [
+        "migr-"
+      ]
+    },
+    "mim-": {
+      "meaning": "imitate",
+      "forms": [
+        "mim-"
+      ]
+    },
+    "min-": {
+      "meaning": "small, less",
+      "forms": [
+        "min-",
+        "men-"
+      ]
+    },
+    "mir-": {
+      "meaning": "look, wonder",
+      "forms": [
+        "mir-"
+      ]
+    },
+    "mis1-": {
+      "meaning": "hatred",
+      "forms": [
+        "mis-"
+      ]
+    },
+    "mis2-": {
+      "meaning": "send, let go",
+      "forms": [
+        "mis-",
+        "mit-"
+      ]
+    },
+    "mit-": {
+      "meaning": "myth, story",
+      "forms": [
+        "mit-"
+      ]
+    },
+    "mod-": {
+      "meaning": "measure, manner",
+      "forms": [
+        "mod-"
+      ]
+    },
+    "monstr-": {
+      "meaning": "show",
+      "forms": [
+        "monstr-",
+        "mostr-"
+      ]
+    },
+    "mor-": {
+      "meaning": "die, death",
+      "forms": [
+        "mor-",
+        "mort-",
+        "muer-"
+      ]
+    },
+    "mord-": {
+      "meaning": "bite",
+      "forms": [
+        "mord-",
+        "mors-"
+      ]
+    },
+    "morf-": {
+      "meaning": "form, shape",
+      "forms": [
+        "morf-"
+      ]
+    },
+    "mov-": {
+      "meaning": "move",
+      "forms": [
+        "mov-",
+        "mot-",
+        "mob-",
+        "muev-"
+      ]
+    },
+    "mult-": {
+      "meaning": "many",
+      "forms": [
+        "mult-"
+      ]
+    },
+    "mun-": {
+      "meaning": "duty; gift; shared",
+      "forms": [
+        "mun-"
+      ]
+    },
+    "mut-": {
+      "meaning": "change",
+      "forms": [
+        "mut-",
+        "mud-"
+      ]
+    },
+    "nat-": {
+      "meaning": "born",
+      "forms": [
+        "nat-",
+        "nac-"
+      ]
+    },
+    "naut-": {
+      "meaning": "sailor, ship",
+      "forms": [
+        "naut-"
+      ]
+    },
+    "nav-": {
+      "meaning": "ship",
+      "forms": [
+        "nav-"
+      ]
+    },
+    "neg-": {
+      "meaning": "deny",
+      "forms": [
+        "neg-"
+      ]
+    },
+    "neur-": {
+      "meaning": "nerve",
+      "forms": [
+        "neur-"
+      ]
+    },
+    "noc-": {
+      "meaning": "harm",
+      "forms": [
+        "noc-",
+        "nox-"
+      ]
+    },
+    "noct-": {
+      "meaning": "night",
+      "forms": [
+        "noct-",
+        "noch-"
+      ]
+    },
+    "nom1-": {
+      "meaning": "law, arrangement",
+      "forms": [
+        "nom-"
+      ]
+    },
+    "nom2-": {
+      "meaning": "name",
+      "forms": [
+        "nom-",
+        "nombr-"
+      ]
+    },
+    "norm-": {
+      "meaning": "rule, standard",
+      "forms": [
+        "norm-"
+      ]
+    },
+    "nov-": {
+      "meaning": "new",
+      "forms": [
+        "nov-",
+        "nuev-"
+      ]
+    },
+    "numer-": {
+      "meaning": "number",
+      "forms": [
+        "numer-"
+      ]
+    },
+    "nutr-": {
+      "meaning": "nourish",
+      "forms": [
+        "nutr-"
+      ]
+    },
+    "ocul-": {
+      "meaning": "eye",
+      "forms": [
+        "ocul-"
+      ]
+    },
+    "od-": {
+      "meaning": "hate",
+      "forms": [
+        "od-"
+      ]
+    },
+    "odont-": {
+      "meaning": "tooth",
+      "forms": [
+        "odont-",
+        "odonc-"
+      ]
+    },
+    "onim-": {
+      "meaning": "name",
+      "forms": [
+        "onim-"
+      ]
+    },
+    "oper-": {
+      "meaning": "work",
+      "forms": [
+        "oper-",
+        "obr-"
+      ]
+    },
+    "or-": {
+      "meaning": "speak, pray",
+      "forms": [
+        "or-",
+        "orat-"
+      ]
+    },
+    "ord-": {
+      "meaning": "order",
+      "forms": [
+        "ord-",
+        "orden-"
+      ]
+    },
+    "orto-": {
+      "meaning": "straight, correct",
+      "forms": [
+        "orto-"
+      ]
+    },
+    "oste-": {
+      "meaning": "bone",
+      "forms": [
+        "oste-",
+        "osteo-"
+      ]
+    },
+    "pac-": {
+      "meaning": "peace",
+      "forms": [
+        "pac-",
+        "paz-"
+      ]
+    },
+    "pan-": {
+      "meaning": "bread",
+      "forms": [
+        "pan-"
+      ]
+    },
+    "par1-": {
+      "meaning": "equal",
+      "forms": [
+        "par-"
+      ]
+    },
+    "par2-": {
+      "meaning": "prepare, get ready",
+      "forms": [
+        "par-"
+      ]
+    },
+    "part-": {
+      "meaning": "part, share",
+      "forms": [
+        "part-"
+      ]
+    },
+    "pass-": {
+      "meaning": "suffer, feel",
+      "forms": [
+        "pass-",
+        "pas-"
+      ]
+    },
+    "pat-": {
+      "meaning": "feeling; suffering, disease",
+      "forms": [
+        "pat-"
+      ]
+    },
+    "patr-": {
+      "meaning": "father; homeland",
+      "forms": [
+        "patr-",
+        "pater-"
+      ]
+    },
+    "ped1-": {
+      "meaning": "child",
+      "forms": [
+        "ped-"
+      ]
+    },
+    "ped2-": {
+      "meaning": "foot",
+      "forms": [
+        "ped-",
+        "pie-",
+        "pe-"
+      ]
+    },
+    "pel-": {
+      "meaning": "drive, push",
+      "forms": [
+        "pel-",
+        "puls-"
+      ]
+    },
+    "pend-": {
+      "meaning": "hang; weigh; pay",
+      "forms": [
+        "pend-",
+        "pens-"
+      ]
+    },
+    "pet-": {
+      "meaning": "seek, ask",
+      "forms": [
+        "pet-",
+        "ped-"
+      ]
+    },
+    "pict-": {
+      "meaning": "paint",
+      "forms": [
+        "pict-",
+        "pint-"
+      ]
+    },
+    "plac-": {
+      "meaning": "please",
+      "forms": [
+        "plac-"
+      ]
+    },
+    "plast-": {
+      "meaning": "mould, form",
+      "forms": [
+        "plast-"
+      ]
+    },
+    "plaud-": {
+      "meaning": "clap",
+      "forms": [
+        "plaud-",
+        "plaus-"
+      ]
+    },
+    "plen-": {
+      "meaning": "full, fill",
+      "forms": [
+        "plen-",
+        "plet-",
+        "llen-"
+      ]
+    },
+    "plic-": {
+      "meaning": "fold",
+      "forms": [
+        "plic-",
+        "plex-",
+        "pli-",
+        "ple-"
+      ]
+    },
+    "pneum-": {
+      "meaning": "lung, air",
+      "forms": [
+        "pneum-",
+        "neum-"
+      ]
+    },
+    "pol-": {
+      "meaning": "city, state",
+      "forms": [
+        "pol-",
+        "polit-",
+        "polis-"
+      ]
+    },
+    "pon-": {
+      "meaning": "put, place",
+      "forms": [
+        "pon-",
+        "pos-",
+        "posit-",
+        "pus-"
+      ]
+    },
+    "popul-": {
+      "meaning": "people",
+      "forms": [
+        "popul-",
+        "publ-",
+        "pueb-",
+        "pobl-"
+      ]
+    },
+    "port-": {
+      "meaning": "carry",
+      "forms": [
+        "port-"
+      ]
+    },
+    "pot-": {
+      "meaning": "be able, power",
+      "forms": [
+        "pot-",
+        "pos-",
+        "pod-"
+      ]
+    },
+    "prehend-": {
+      "meaning": "seize, grasp",
+      "forms": [
+        "prehend-",
+        "pris-",
+        "pren-",
+        "pres-"
+      ]
+    },
+    "press-": {
+      "meaning": "press",
+      "forms": [
+        "press-",
+        "pres-",
+        "prim-"
+      ]
+    },
+    "prim-": {
+      "meaning": "first",
+      "forms": [
+        "prim-",
+        "princ-"
+      ]
+    },
+    "priv-": {
+      "meaning": "own; deprived",
+      "forms": [
+        "priv-"
+      ]
+    },
+    "prob-": {
+      "meaning": "test; good",
+      "forms": [
+        "prob-",
+        "prueb-"
+      ]
+    },
+    "psic-": {
+      "meaning": "mind, soul",
+      "forms": [
+        "psic-",
+        "psiqu-"
+      ]
+    },
+    "punct-": {
+      "meaning": "point, prick",
+      "forms": [
+        "punct-",
+        "punt-",
+        "pung-"
+      ]
+    },
+    "put-": {
+      "meaning": "think, reckon",
+      "forms": [
+        "put-"
+      ]
+    },
+    "quer-": {
+      "meaning": "seek, ask",
+      "forms": [
+        "quer-",
+        "quis-",
+        "quir-"
+      ]
+    },
+    "radi-": {
+      "meaning": "ray",
+      "forms": [
+        "radi-"
+      ]
+    },
+    "radic-": {
+      "meaning": "root",
+      "forms": [
+        "radic-",
+        "raíz-"
+      ]
+    },
+    "rap-": {
+      "meaning": "seize",
+      "forms": [
+        "rap-",
+        "rapt-"
+      ]
+    },
+    "rect-": {
+      "meaning": "straight; rule",
+      "forms": [
+        "rect-",
+        "reg-",
+        "rig-"
+      ]
+    },
+    "rid-": {
+      "meaning": "laugh",
+      "forms": [
+        "rid-",
+        "ris-"
+      ]
+    },
+    "rog-": {
+      "meaning": "ask",
+      "forms": [
+        "rog-"
+      ]
+    },
+    "rot-": {
+      "meaning": "wheel",
+      "forms": [
+        "rot-",
+        "rued-"
+      ]
+    },
+    "rupt-": {
+      "meaning": "break",
+      "forms": [
+        "rupt-",
+        "romp-",
+        "rup-"
+      ]
+    },
+    "sacr-": {
+      "meaning": "holy",
+      "forms": [
+        "sacr-",
+        "sagr-",
+        "sant-"
+      ]
+    },
+    "sal1-": {
+      "meaning": "salt",
+      "forms": [
+        "sal-"
+      ]
+    },
+    "sal2-": {
+      "meaning": "jump",
+      "forms": [
+        "sal-",
+        "sult-",
+        "sil-"
+      ]
+    },
+    "salv-": {
+      "meaning": "safe, healthy",
+      "forms": [
+        "salv-",
+        "salu-"
+      ]
+    },
+    "san-": {
+      "meaning": "healthy",
+      "forms": [
+        "san-"
+      ]
+    },
+    "sat-": {
+      "meaning": "enough",
+      "forms": [
+        "sat-",
+        "satis-",
+        "sac-"
+      ]
+    },
+    "scend-": {
+      "meaning": "climb",
+      "forms": [
+        "scend-",
+        "cend-"
+      ]
+    },
+    "sci-": {
+      "meaning": "know",
+      "forms": [
+        "sci-",
+        "cien-"
+      ]
+    },
+    "scop-": {
+      "meaning": "look, examine",
+      "forms": [
+        "scop-"
+      ]
+    },
+    "scrib-": {
+      "meaning": "write",
+      "forms": [
+        "scrib-",
+        "script-",
+        "escrib-",
+        "escrit-"
+      ]
+    },
+    "sec-": {
+      "meaning": "cut",
+      "forms": [
+        "sec-",
+        "sect-",
+        "seg-"
+      ]
+    },
+    "sed-": {
+      "meaning": "sit",
+      "forms": [
+        "sed-",
+        "sid-",
+        "ses-"
+      ]
+    },
+    "sem-": {
+      "meaning": "sign, meaning",
+      "forms": [
+        "sem-"
+      ]
+    },
+    "sen-": {
+      "meaning": "old",
+      "forms": [
+        "sen-"
+      ]
+    },
+    "sens-": {
+      "meaning": "feel, perceive",
+      "forms": [
+        "sens-",
+        "sent-"
+      ]
+    },
+    "sequ-": {
+      "meaning": "follow",
+      "forms": [
+        "sequ-",
+        "secu-",
+        "sigu-"
+      ]
+    },
+    "serv-": {
+      "meaning": "keep; serve",
+      "forms": [
+        "serv-"
+      ]
+    },
+    "sign-": {
+      "meaning": "mark, sign",
+      "forms": [
+        "sign-",
+        "señ-"
+      ]
+    },
+    "simil-": {
+      "meaning": "like, same",
+      "forms": [
+        "simil-",
+        "simul-",
+        "sem-"
+      ]
+    },
+    "soci-": {
+      "meaning": "companion",
+      "forms": [
+        "soci-"
+      ]
+    },
+    "sof-": {
+      "meaning": "wise",
+      "forms": [
+        "sof-"
+      ]
+    },
+    "sol1-": {
+      "meaning": "alone",
+      "forms": [
+        "sol-"
+      ]
+    },
+    "sol2-": {
+      "meaning": "sun",
+      "forms": [
+        "sol-"
+      ]
+    },
+    "solv-": {
+      "meaning": "loosen, release",
+      "forms": [
+        "solv-",
+        "solu-"
+      ]
+    },
+    "son-": {
+      "meaning": "sound",
+      "forms": [
+        "son-"
+      ]
+    },
+    "spec-": {
+      "meaning": "look, see",
+      "forms": [
+        "spec-",
+        "spect-",
+        "spic-",
+        "pec-"
+      ]
+    },
+    "spir-": {
+      "meaning": "breathe",
+      "forms": [
+        "spir-"
+      ]
+    },
+    "sta-": {
+      "meaning": "stand",
+      "forms": [
+        "sta-",
+        "stat-",
+        "sist-",
+        "st-"
+      ]
+    },
+    "stell-": {
+      "meaning": "star",
+      "forms": [
+        "stell-",
+        "estel-"
+      ]
+    },
+    "string-": {
+      "meaning": "bind, tighten",
+      "forms": [
+        "string-",
+        "strict-"
+      ]
+    },
+    "struct-": {
+      "meaning": "build",
+      "forms": [
+        "struct-",
+        "stru-"
+      ]
+    },
+    "sum-": {
+      "meaning": "take",
+      "forms": [
+        "sum-",
+        "sumpt-"
+      ]
+    },
+    "surg-": {
+      "meaning": "rise",
+      "forms": [
+        "surg-"
+      ]
+    },
+    "tac-": {
+      "meaning": "silent",
+      "forms": [
+        "tac-"
+      ]
+    },
+    "tang-": {
+      "meaning": "touch",
+      "forms": [
+        "tang-",
+        "tact-"
+      ]
+    },
+    "tax-": {
+      "meaning": "arrangement, order",
+      "forms": [
+        "tax-",
+        "tact-"
+      ]
+    },
+    "tecn-": {
+      "meaning": "art, skill",
+      "forms": [
+        "tecn-"
+      ]
+    },
+    "teg-": {
+      "meaning": "cover",
+      "forms": [
+        "teg-",
+        "tect-",
+        "tech-"
+      ]
+    },
+    "temp-": {
+      "meaning": "time",
+      "forms": [
+        "temp-",
+        "tempor-"
+      ]
+    },
+    "ten-": {
+      "meaning": "hold",
+      "forms": [
+        "ten-",
+        "tin-",
+        "tent-",
+        "tien-"
+      ]
+    },
+    "tend-": {
+      "meaning": "stretch, strive",
+      "forms": [
+        "tend-",
+        "tens-",
+        "tent-"
+      ]
+    },
+    "tent-": {
+      "meaning": "try",
+      "forms": [
+        "tent-"
+      ]
+    },
+    "teo-": {
+      "meaning": "god",
+      "forms": [
+        "teo-",
+        "te-"
+      ]
+    },
+    "term-": {
+      "meaning": "heat",
+      "forms": [
+        "term-"
+      ]
+    },
+    "termin-": {
+      "meaning": "end, boundary",
+      "forms": [
+        "termin-"
+      ]
+    },
+    "terr-": {
+      "meaning": "earth, land",
+      "forms": [
+        "terr-",
+        "tierr-"
+      ]
+    },
+    "tes-": {
+      "meaning": "place, put",
+      "forms": [
+        "tes-",
+        "tet-"
+      ]
+    },
+    "test-": {
+      "meaning": "witness",
+      "forms": [
+        "test-"
+      ]
+    },
+    "text-": {
+      "meaning": "weave",
+      "forms": [
+        "text-",
+        "tej-"
+      ]
+    },
+    "tim-": {
+      "meaning": "fear",
+      "forms": [
+        "tim-",
+        "tem-"
+      ]
+    },
+    "tip-": {
+      "meaning": "type, stamp",
+      "forms": [
+        "tip-"
+      ]
+    },
+    "tol-": {
+      "meaning": "bear, endure",
+      "forms": [
+        "tol-"
+      ]
+    },
+    "top-": {
+      "meaning": "place",
+      "forms": [
+        "top-"
+      ]
+    },
+    "torn-": {
+      "meaning": "turn",
+      "forms": [
+        "torn-"
+      ]
+    },
+    "tort-": {
+      "meaning": "twist",
+      "forms": [
+        "tort-",
+        "tors-",
+        "torc-"
+      ]
+    },
+    "tox-": {
+      "meaning": "poison",
+      "forms": [
+        "tox-"
+      ]
+    },
+    "tract-": {
+      "meaning": "pull, draw",
+      "forms": [
+        "tract-",
+        "tra-",
+        "trah-"
+      ]
+    },
+    "trib-": {
+      "meaning": "give, assign",
+      "forms": [
+        "trib-"
+      ]
+    },
+    "turb-": {
+      "meaning": "disturb, stir",
+      "forms": [
+        "turb-"
+      ]
+    },
+    "umbr-": {
+      "meaning": "shadow",
+      "forms": [
+        "umbr-"
+      ]
+    },
+    "un-": {
+      "meaning": "one",
+      "forms": [
+        "un-"
+      ]
+    },
+    "und-": {
+      "meaning": "wave",
+      "forms": [
+        "und-",
+        "ond-"
+      ]
+    },
+    "urb-": {
+      "meaning": "city",
+      "forms": [
+        "urb-"
+      ]
+    },
+    "us-": {
+      "meaning": "use",
+      "forms": [
+        "us-",
+        "ut-"
+      ]
+    },
+    "vac-": {
+      "meaning": "empty",
+      "forms": [
+        "vac-",
+        "vací-"
+      ]
+    },
+    "vad-": {
+      "meaning": "go",
+      "forms": [
+        "vad-",
+        "vas-"
+      ]
+    },
+    "vag-": {
+      "meaning": "wander",
+      "forms": [
+        "vag-"
+      ]
+    },
+    "val-": {
+      "meaning": "strong, worth",
+      "forms": [
+        "val-"
+      ]
+    },
+    "vari-": {
+      "meaning": "different, varied",
+      "forms": [
+        "vari-"
+      ]
+    },
+    "ven-": {
+      "meaning": "come",
+      "forms": [
+        "ven-",
+        "vent-",
+        "vien-"
+      ]
+    },
+    "vent-": {
+      "meaning": "wind",
+      "forms": [
+        "vent-",
+        "vien-"
+      ]
+    },
+    "ver-": {
+      "meaning": "true",
+      "forms": [
+        "ver-"
+      ]
+    },
+    "verb-": {
+      "meaning": "word",
+      "forms": [
+        "verb-"
+      ]
+    },
+    "vers-": {
+      "meaning": "turn",
+      "forms": [
+        "vers-",
+        "vert-"
+      ]
+    },
+    "vest-": {
+      "meaning": "clothe",
+      "forms": [
+        "vest-"
+      ]
+    },
+    "vet-": {
+      "meaning": "old",
+      "forms": [
+        "vet-"
+      ]
+    },
+    "vi-": {
+      "meaning": "way, road",
+      "forms": [
+        "vi-",
+        "via-"
+      ]
+    },
+    "vid-": {
+      "meaning": "see",
+      "forms": [
+        "vid-",
+        "vis-",
+        "ve-",
+        "vist-"
+      ]
+    },
+    "vig-": {
+      "meaning": "lively, watchful",
+      "forms": [
+        "vig-"
+      ]
+    },
+    "vinc-": {
+      "meaning": "conquer",
+      "forms": [
+        "vinc-",
+        "vict-",
+        "venc-"
+      ]
+    },
+    "vir-": {
+      "meaning": "poison",
+      "forms": [
+        "vir-"
+      ]
+    },
+    "viv-": {
+      "meaning": "live, life",
+      "forms": [
+        "viv-",
+        "vit-",
+        "vid-"
+      ]
+    },
+    "voc-": {
+      "meaning": "call, voice",
+      "forms": [
+        "voc-",
+        "voz-"
+      ]
+    },
+    "vol-": {
+      "meaning": "wish, will",
+      "forms": [
+        "vol-"
+      ]
+    },
+    "volv-": {
+      "meaning": "roll, turn",
+      "forms": [
+        "volv-",
+        "volu-",
+        "volut-"
+      ]
+    },
+    "vor-": {
+      "meaning": "devour",
+      "forms": [
+        "vor-"
+      ]
+    },
+    "vot-": {
+      "meaning": "vow",
+      "forms": [
+        "vot-"
+      ]
+    },
+    "vulg-": {
+      "meaning": "common people",
+      "forms": [
+        "vulg-"
+      ]
+    },
+    "vuln-": {
+      "meaning": "wound",
+      "forms": [
+        "vuln-"
+      ]
+    },
+    "xen-": {
+      "meaning": "foreign, stranger",
+      "forms": [
+        "xen-"
+      ]
+    },
+    "zo-": {
+      "meaning": "animal, life",
+      "forms": [
+        "zo-"
+      ]
+    }
   }
 }
