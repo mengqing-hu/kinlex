@@ -52,6 +52,7 @@ from utils.roots import (
     load_etymological_forms,
     load_etymological_roots,
     load_numbered_roots,
+    load_root_meanings,
     load_root_overrides,
 )
 from utils.runtime import (
@@ -277,12 +278,13 @@ def apply_source_metadata(
 
 
 def lexicon_meanings(language: str) -> AffixMeanings:
-    """The curated meanings: affixes, plus the Latin and Greek roots and the numbered modern roots
-    where a language lists them."""
+    """The curated meanings: affixes, plus the Latin and Greek roots, the numbered modern roots
+    and the hand-checked meanings of other modern roots where a language lists them."""
     return (
         load_affix_meanings(language)
         | load_etymological_roots(language)
         | load_numbered_roots(language)
+        | load_root_meanings(language)
     )
 
 

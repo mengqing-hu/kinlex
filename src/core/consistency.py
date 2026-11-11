@@ -49,9 +49,14 @@ class ConsistencyResult:
     unresolved: list[UnresolvedRoot]
 
 
+# The parts the pipeline puts before a German stem. A Spanish phrase can also start with an untyped
+# word and a space (the "en " of en casa), but that is part of the entry, not a lead.
+_LEADS = frozenset({"der ", "die ", "das ", "sich "})
+
+
 def split_lead(segments: list[Segment]) -> tuple[list[Segment], list[Segment]]:
     """Separate the stored article or "sich " part, which is untyped and ends in a space."""
-    if segments and segments[0].morpheme_type is None and segments[0].word_part.endswith(" "):
+    if segments and segments[0].morpheme_type is None and segments[0].word_part in _LEADS:
         return segments[:1], segments[1:]
     return [], segments
 

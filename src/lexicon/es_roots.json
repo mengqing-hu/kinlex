@@ -6,7 +6,183 @@
     "par3-": "stop",
     "cap2-": "cape, layer",
     "her2-": "wound",
-    "mis3-": "Mass (church service)"
+    "mis3-": "Mass (church service)",
+    "acer1-": "sidewalk, pavement",
+    "acer2-": "steel, sharp metal",
+    "achac1-": "blame, attribute",
+    "achac2-": "ailment, illness",
+    "alg1-": "pain",
+    "alg2-": "seaweed",
+    "allan1-": "smooth, make level",
+    "allan2-": "break in, force entry",
+    "am2-": "mistress, lady",
+    "arc2-": "bow, arch",
+    "astr2-": "disaster",
+    "bals1-": "pond",
+    "bals2-": "raft",
+    "band1-": "band, group",
+    "band2-": "edict, proclamation",
+    "barr1-": "sweep",
+    "barr2-": "mud",
+    "bat1-": "beat, whisk",
+    "bat2-": "dressing gown, robe",
+    "bell2-": "beautiful",
+    "bot1-": "boot",
+    "bot2-": "boat (Germanic)",
+    "cal1-": "which, what",
+    "cal2-": "cove, inlet",
+    "call1-": "to be quiet, silence",
+    "call2-": "callus, hard skin",
+    "cab1-": "end",
+    "cab2-": "to fit",
+    "car1-": "face",
+    "car2-": "dear, love",
+    "casc1-": "helmet",
+    "casc2-": "shell, husk",
+    "caz1-": "saucepan",
+    "caz2-": "hunt",
+    "cel1-": "jealousy, zeal",
+    "cel2-": "sky",
+    "cerr1-": "close, shut",
+    "cerr2-": "hill",
+    "chorr1-": "jet, stream, splash",
+    "chorr2-": "nonsense, rubbish",
+    "cobr1-": "charge, collect, earn",
+    "cobr2-": "copper",
+    "coc1-": "coconut",
+    "coc2-": "cook, boil",
+    "col2-": "tail, rear; queue",
+    "col3-": "strain, filter",
+    "comet1-": "commit, undertake",
+    "comet2-": "long-haired",
+    "consist1-": "consist",
+    "consist2-": "assembly, council",
+    "consol1-": "comfort, console",
+    "consol2-": "seat, bench",
+    "cor2-": "choir, chorus",
+    "cor3-": "hide, leather",
+    "cort1-": "cut",
+    "cort2-": "court",
+    "cost1-": "cost, price",
+    "cost2-": "rib, side, coast",
+    "cost3-": "seam, sewing",
+    "cri2-": "to raise, to bring up",
+    "cub1-": "bucket",
+    "cub2-": "cube",
+    "cuerd1-": "rope, string",
+    "cuerd2-": "heart",
+    "divis1-": "foreign currency",
+    "divis2-": "see",
+    "dol2-": "deceit, trick",
+    "embaraz1-": "pregnancy",
+    "embaraz2-": "obstacle, hindrance",
+    "entrañ1-": "endear, make dear",
+    "entrañ2-": "guts, insides",
+    "espos1-": "spouse",
+    "espos2-": "handcuffs, fetters",
+    "estanc1-": "to block, dam up",
+    "estanc2-": "store, keep (goods)",
+    "foc2-": "seal (marine mammal)",
+    "fuer1-": "jurisdiction, privilege",
+    "fuer2-": "outside",
+    "gan1-": "win",
+    "gan2-": "desire, wish",
+    "hil1-": "thread",
+    "hil2-": "cheerful",
+    "hombr1-": "shoulder",
+    "hombr2-": "man",
+    "ir1-": "go",
+    "ir2-": "turn back",
+    "jug1-": "play",
+    "jug2-": "juice",
+    "lat2-": "can, tin",
+    "lat3-": "beat, throb",
+    "lav2-": "molten rock",
+    "leg3-": "to bequeath, leave by will",
+    "lent1-": "slow",
+    "lent2-": "lentil; lens of the eye",
+    "lis2-": "smooth",
+    "list1-": "ready, clever",
+    "list2-": "list (written record)",
+    "llam1-": "call",
+    "llam2-": "flame; llama (animal)",
+    "loc2-": "crazy, mad",
+    "mang1-": "mango",
+    "mang2-": "sleeve",
+    "mang3-": "handle",
+    "med2-": "measure",
+    "mejill1-": "cheek",
+    "mejill2-": "mussel",
+    "ment2-": "mint (plant)",
+    "met1-": "goal, turning post",
+    "met2-": "to put",
+    "min2-": "mine, excavation; pencil lead",
+    "mor2-": "blackberry, mulberry",
+    "mor3-": "dwell, reside",
+    "ord2-": "beginning, origin",
+    "pac2-": "patience, endurance",
+    "pal1-": "shovel, spade",
+    "pal2-": "stick",
+    "pap1-": "soak",
+    "pap2-": "pope",
+    "past1-": "dough, paste",
+    "past2-": "to feed, graze",
+    "pat2-": "foot",
+    "pat3-": "duck",
+    "pel2-": "hair",
+    "pet2-": "chest",
+    "piñ1-": "pineapple",
+    "piñ2-": "pine (tree), pine cone",
+    "pis1-": "floor, flat",
+    "pis2-": "to step, tread",
+    "pist1-": "track, trail",
+    "pist2-": "to crush, grind",
+    "plac2-": "plate, flat piece",
+    "plast2-": "flat, broad",
+    "plat1-": "plate, dish",
+    "plat2-": "silver",
+    "plaz1-": "square, plaza",
+    "plaz2-": "term, deadline",
+    "pol2-": "to polish, smooth",
+    "pol3-": "ball",
+    "prend1-": "garment, piece of clothing",
+    "prend2-": "seize, grasp",
+    "prim2-": "cousin",
+    "prud1-": "prudent, careful",
+    "prud2-": "law",
+    "puert1-": "door",
+    "puert2-": "port, harbour",
+    "rasg1-": "feature, trait",
+    "rasg2-": "tear, rip",
+    "re1-": "laugh",
+    "re2-": "defendant, accused",
+    "romer1-": "pilgrim",
+    "romer2-": "sea dew",
+    "sec2-": "dry",
+    "sed2-": "bristle, silk",
+    "sed3-": "go",
+    "sequ2-": "dry",
+    "seri1-": "serious",
+    "seri2-": "row, chain",
+    "sol3-": "to be accustomed, usually",
+    "sum2-": "highest, top",
+    "tall1-": "size",
+    "tall2-": "stem, shoot",
+    "tax2-": "taxi, cab",
+    "vac2-": "cow",
+    "vej1-": "old",
+    "vej2-": "to vex, trouble",
+    "ven2-": "vein",
+    "vend1-": "sell",
+    "vend2-": "bandage",
+    "vet2-": "forbid",
+    "vig2-": "beam",
+    "viol1-": "force, violence",
+    "viol2-": "stringed instrument (viola)",
+    "arañ1-": "spider",
+    "arañ2-": "scratch",
+    "afin1-": "related, akin",
+    "afin2-": "tune"
   },
   "etymological_roots": {
     "aer-": {
@@ -36,7 +212,7 @@
         "alt-"
       ]
     },
-    "am-": {
+    "am1-": {
       "meaning": "love",
       "forms": [
         "am-",
@@ -92,7 +268,7 @@
         "árbol-"
       ]
     },
-    "arc-": {
+    "arc1-": {
       "meaning": "rule; ancient",
       "forms": [
         "arc-",
@@ -105,7 +281,7 @@
         "art-"
       ]
     },
-    "astr-": {
+    "astr1-": {
       "meaning": "star",
       "forms": [
         "astr-",
@@ -128,7 +304,7 @@
         "aum-"
       ]
     },
-    "bell-": {
+    "bell1-": {
       "meaning": "war",
       "forms": [
         "bell-",
@@ -324,14 +500,14 @@
         "conoc-"
       ]
     },
-    "col-": {
+    "col1-": {
       "meaning": "till, cultivate; worship",
       "forms": [
         "col-",
         "cult-"
       ]
     },
-    "cor-": {
+    "cor1-": {
       "meaning": "heart",
       "forms": [
         "cor-",
@@ -372,7 +548,7 @@
         "crec-"
       ]
     },
-    "cri-": {
+    "cri1-": {
       "meaning": "judge, separate",
       "forms": [
         "cri-",
@@ -480,7 +656,7 @@
         "dox-"
       ]
     },
-    "dol-": {
+    "dol1-": {
       "meaning": "pain, grief",
       "forms": [
         "dol-",
@@ -653,7 +829,7 @@
         "flu-"
       ]
     },
-    "foc-": {
+    "foc1-": {
       "meaning": "hearth; focus",
       "forms": [
         "foc-",
@@ -952,14 +1128,14 @@
         "lech-"
       ]
     },
-    "lat-": {
+    "lat1-": {
       "meaning": "side",
       "forms": [
         "lat-",
         "lad-"
       ]
     },
-    "lav-": {
+    "lav1-": {
       "meaning": "wash",
       "forms": [
         "lav-"
@@ -1006,7 +1182,7 @@
         "leng-"
       ]
     },
-    "lis-": {
+    "lis1-": {
       "meaning": "loosening, dissolving",
       "forms": [
         "lis-"
@@ -1025,7 +1201,7 @@
         "letr-"
       ]
     },
-    "loc-": {
+    "loc1-": {
       "meaning": "place",
       "forms": [
         "loc-"
@@ -1106,7 +1282,7 @@
         "mecan-"
       ]
     },
-    "med-": {
+    "med1-": {
       "meaning": "middle",
       "forms": [
         "med-",
@@ -1131,7 +1307,7 @@
         "mens-"
       ]
     },
-    "ment-": {
+    "ment1-": {
       "meaning": "mind",
       "forms": [
         "ment-"
@@ -1169,7 +1345,7 @@
         "mim-"
       ]
     },
-    "min-": {
+    "min1-": {
       "meaning": "small, less",
       "forms": [
         "min-",
@@ -1214,7 +1390,7 @@
         "mostr-"
       ]
     },
-    "mor-": {
+    "mor1-": {
       "meaning": "die, death",
       "forms": [
         "mor-",
@@ -1385,7 +1561,7 @@
         "orat-"
       ]
     },
-    "ord-": {
+    "ord1-": {
       "meaning": "order",
       "forms": [
         "ord-",
@@ -1405,7 +1581,7 @@
         "osteo-"
       ]
     },
-    "pac-": {
+    "pac1-": {
       "meaning": "peace",
       "forms": [
         "pac-",
@@ -1443,7 +1619,7 @@
         "pas-"
       ]
     },
-    "pat-": {
+    "pat1-": {
       "meaning": "feeling; suffering, disease",
       "forms": [
         "pat-"
@@ -1470,7 +1646,7 @@
         "pe-"
       ]
     },
-    "pel-": {
+    "pel1-": {
       "meaning": "drive, push",
       "forms": [
         "pel-",
@@ -1484,7 +1660,7 @@
         "pens-"
       ]
     },
-    "pet-": {
+    "pet1-": {
       "meaning": "seek, ask",
       "forms": [
         "pet-",
@@ -1498,13 +1674,13 @@
         "pint-"
       ]
     },
-    "plac-": {
+    "plac1-": {
       "meaning": "please",
       "forms": [
         "plac-"
       ]
     },
-    "plast-": {
+    "plast1-": {
       "meaning": "mould, form",
       "forms": [
         "plast-"
@@ -1541,7 +1717,7 @@
         "neum-"
       ]
     },
-    "pol-": {
+    "pol1-": {
       "meaning": "city, state",
       "forms": [
         "pol-",
@@ -1598,7 +1774,7 @@
         "prim-"
       ]
     },
-    "prim-": {
+    "prim1-": {
       "meaning": "first",
       "forms": [
         "prim-",
@@ -1775,7 +1951,7 @@
         "escrit-"
       ]
     },
-    "sec-": {
+    "sec1-": {
       "meaning": "cut",
       "forms": [
         "sec-",
@@ -1783,7 +1959,7 @@
         "seg-"
       ]
     },
-    "sed-": {
+    "sed1-": {
       "meaning": "sit",
       "forms": [
         "sed-",
@@ -1810,7 +1986,7 @@
         "sent-"
       ]
     },
-    "sequ-": {
+    "sequ1-": {
       "meaning": "follow",
       "forms": [
         "sequ-",
@@ -1921,7 +2097,7 @@
         "stru-"
       ]
     },
-    "sum-": {
+    "sum1-": {
       "meaning": "take",
       "forms": [
         "sum-",
@@ -1947,7 +2123,7 @@
         "tact-"
       ]
     },
-    "tax-": {
+    "tax1-": {
       "meaning": "arrangement, order",
       "forms": [
         "tax-",
@@ -2141,7 +2317,7 @@
         "ut-"
       ]
     },
-    "vac-": {
+    "vac1-": {
       "meaning": "empty",
       "forms": [
         "vac-",
@@ -2173,7 +2349,7 @@
         "vari-"
       ]
     },
-    "ven-": {
+    "ven1-": {
       "meaning": "come",
       "forms": [
         "ven-",
@@ -2213,7 +2389,7 @@
         "vest-"
       ]
     },
-    "vet-": {
+    "vet1-": {
       "meaning": "old",
       "forms": [
         "vet-"
@@ -2235,7 +2411,7 @@
         "vist-"
       ]
     },
-    "vig-": {
+    "vig1-": {
       "meaning": "lively, watchful",
       "forms": [
         "vig-"
@@ -2320,5 +2496,5281 @@
         "zo-"
       ]
     }
+  },
+  "overrides": {
+    "airoso": [
+      {
+        "word_part": "air",
+        "morpheme_type": "root",
+        "morpheme": "aire",
+        "morpheme_meaning": "air"
+      },
+      {
+        "word_part": "oso",
+        "morpheme_type": "suffix",
+        "morpheme": "-oso",
+        "morpheme_meaning": "full of, having"
+      }
+    ],
+    "avenirse": [
+      {
+        "word_part": "aven",
+        "morpheme_type": "root",
+        "morpheme": "ven-",
+        "morpheme_meaning": "come"
+      },
+      {
+        "word_part": "ir"
+      },
+      {
+        "word_part": "se"
+      }
+    ],
+    "desavenirse": [
+      {
+        "word_part": "des",
+        "morpheme_type": "prefix",
+        "morpheme": "des-",
+        "morpheme_meaning": "negation, reversal, apart"
+      },
+      {
+        "word_part": "aven",
+        "morpheme_type": "root",
+        "morpheme": "ven-",
+        "morpheme_meaning": "come"
+      },
+      {
+        "word_part": "ir"
+      },
+      {
+        "word_part": "se"
+      }
+    ],
+    "indicador": [
+      {
+        "word_part": "in",
+        "morpheme_type": "prefix",
+        "morpheme": "in1-",
+        "morpheme_meaning": "in, into"
+      },
+      {
+        "word_part": "dic",
+        "morpheme_type": "root",
+        "morpheme": "indic-",
+        "morpheme_meaning": "indicate, show"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "dor",
+        "morpheme_type": "suffix",
+        "morpheme": "-dor",
+        "morpheme_meaning": "agent; machine"
+      }
+    ],
+    "doce": [
+      {
+        "word_part": "doc",
+        "morpheme_type": "root",
+        "morpheme": "docen-",
+        "morpheme_meaning": "dozen"
+      },
+      {
+        "word_part": "e"
+      }
+    ],
+    "evasión fiscal": [
+      {
+        "word_part": "evas",
+        "morpheme_type": "root",
+        "morpheme": "evad-",
+        "morpheme_meaning": "evade, go out"
+      },
+      {
+        "word_part": "ión",
+        "morpheme_type": "suffix",
+        "morpheme": "-ción",
+        "morpheme_meaning": "action, result of an action"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "fiscal",
+        "morpheme_type": "root",
+        "morpheme": "fisc-",
+        "morpheme_meaning": "fisc, treasury"
+      }
+    ],
+    "paraíso fiscal": [
+      {
+        "word_part": "paraís",
+        "morpheme_type": "root",
+        "morpheme": "paraís-",
+        "morpheme_meaning": "paradise"
+      },
+      {
+        "word_part": "o"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "fiscal",
+        "morpheme_type": "root",
+        "morpheme": "fisc-",
+        "morpheme_meaning": "fisc, treasury"
+      }
+    ],
+    "ganadería intensiva": [
+      {
+        "word_part": "gan",
+        "morpheme_type": "root",
+        "morpheme": "ganad-",
+        "morpheme_meaning": "livestock, cattle"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "d",
+        "morpheme_type": "suffix",
+        "morpheme": "-do",
+        "morpheme_meaning": "past participle; having been"
+      },
+      {
+        "word_part": "ería",
+        "morpheme_type": "suffix",
+        "morpheme": "-ería",
+        "morpheme_meaning": "shop; quality, act"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "intens",
+        "morpheme_type": "root",
+        "morpheme": "intens-",
+        "morpheme_meaning": "intense"
+      },
+      {
+        "word_part": "iva",
+        "morpheme_type": "suffix",
+        "morpheme": "-ivo",
+        "morpheme_meaning": "tending to, having the function of"
+      }
+    ],
+    "ganado": [
+      {
+        "word_part": "gan",
+        "morpheme_type": "root",
+        "morpheme": "ganad-",
+        "morpheme_meaning": "livestock, cattle"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "do",
+        "morpheme_type": "suffix",
+        "morpheme": "-do",
+        "morpheme_meaning": "past participle; having been"
+      }
+    ],
+    "imperioso": [
+      {
+        "word_part": "imperi",
+        "morpheme_type": "root",
+        "morpheme": "imper-",
+        "morpheme_meaning": "command, rule, prevail"
+      },
+      {
+        "word_part": "oso",
+        "morpheme_type": "suffix",
+        "morpheme": "-oso",
+        "morpheme_meaning": "full of, having"
+      }
+    ],
+    "marea": [
+      {
+        "word_part": "mare",
+        "morpheme_type": "root",
+        "morpheme": "mar-",
+        "morpheme_meaning": "sea"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "contra viento y marea": [
+      {
+        "word_part": "contra "
+      },
+      {
+        "word_part": "vient",
+        "morpheme_type": "root",
+        "morpheme": "vient-",
+        "morpheme_meaning": "wind"
+      },
+      {
+        "word_part": "o"
+      },
+      {
+        "word_part": " y "
+      },
+      {
+        "word_part": "mare",
+        "morpheme_type": "root",
+        "morpheme": "mar-",
+        "morpheme_meaning": "sea"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "mandamás": [
+      {
+        "word_part": "mand",
+        "morpheme_type": "root",
+        "morpheme": "mand-",
+        "morpheme_meaning": "order, entrust"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "más",
+        "morpheme_type": "root",
+        "morpheme": "mand-",
+        "morpheme_meaning": "order, entrust"
+      }
+    ],
+    "irse a pique": [
+      {
+        "word_part": "ir",
+        "morpheme_type": "root",
+        "morpheme": "ir",
+        "morpheme_meaning": "to go"
+      },
+      {
+        "word_part": "se"
+      },
+      {
+        "word_part": " a "
+      },
+      {
+        "word_part": "pique",
+        "morpheme_type": "root",
+        "morpheme": "pic-",
+        "morpheme_meaning": "sting, bite, itch"
+      }
+    ],
+    "racionalismo": [
+      {
+        "word_part": "racion",
+        "morpheme_type": "root",
+        "morpheme": "razon-",
+        "morpheme_meaning": "reason"
+      },
+      {
+        "word_part": "al",
+        "morpheme_type": "suffix",
+        "morpheme": "-al1",
+        "morpheme_meaning": "relating to (adjective)"
+      },
+      {
+        "word_part": "ismo",
+        "morpheme_type": "suffix",
+        "morpheme": "-ismo",
+        "morpheme_meaning": "doctrine, system, practice"
+      }
+    ],
+    "consumo responsable": [
+      {
+        "word_part": "consum",
+        "morpheme_type": "root",
+        "morpheme": "consum-",
+        "morpheme_meaning": "consume"
+      },
+      {
+        "word_part": "o"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "respons",
+        "morpheme_type": "root",
+        "morpheme": "respons-",
+        "morpheme_meaning": "answerable, responsible"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "ble",
+        "morpheme_type": "suffix",
+        "morpheme": "-ble",
+        "morpheme_meaning": "able to be, -able"
+      }
+    ],
+    "asentarse": [
+      {
+        "word_part": "a",
+        "morpheme_type": "prefix",
+        "morpheme": "a1-",
+        "morpheme_meaning": "to, toward (verb-forming)",
+        "is_separable": false
+      },
+      {
+        "word_part": "sent",
+        "morpheme_type": "root",
+        "morpheme": "sed-",
+        "morpheme_meaning": "sit"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": "se"
+      }
+    ],
+    "dar por sentado": [
+      {
+        "word_part": "dar",
+        "morpheme_type": "root",
+        "morpheme": "dar",
+        "morpheme_meaning": "to give"
+      },
+      {
+        "word_part": " por "
+      },
+      {
+        "word_part": "sent",
+        "morpheme_type": "root",
+        "morpheme": "sed-",
+        "morpheme_meaning": "sit"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "do",
+        "morpheme_type": "suffix",
+        "morpheme": "-do",
+        "morpheme_meaning": "past participle; having been"
+      }
+    ],
+    "sentar bien": [
+      {
+        "word_part": "sent",
+        "morpheme_type": "root",
+        "morpheme": "sed-",
+        "morpheme_meaning": "sit"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "bien",
+        "morpheme_type": "root",
+        "morpheme": "bien",
+        "morpheme_meaning": "well"
+      }
+    ],
+    "sentar cabeza": [
+      {
+        "word_part": "sent",
+        "morpheme_type": "root",
+        "morpheme": "sed-",
+        "morpheme_meaning": "sit"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "cabez",
+        "morpheme_type": "root",
+        "morpheme": "cabez-",
+        "morpheme_meaning": "head"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "sentar mal": [
+      {
+        "word_part": "sent",
+        "morpheme_type": "root",
+        "morpheme": "sed-",
+        "morpheme_meaning": "sit"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "mal",
+        "morpheme_type": "root",
+        "morpheme": "mal",
+        "morpheme_meaning": "badly"
+      }
+    ],
+    "sentarse": [
+      {
+        "word_part": "sent",
+        "morpheme_type": "root",
+        "morpheme": "sed-",
+        "morpheme_meaning": "sit"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": "se"
+      }
+    ],
+    "tejado": [
+      {
+        "word_part": "tej",
+        "morpheme_type": "root",
+        "morpheme": "teg-",
+        "morpheme_meaning": "cover"
+      },
+      {
+        "word_part": "ado",
+        "morpheme_type": "suffix",
+        "morpheme": "-ado",
+        "morpheme_meaning": "office, rank, group; territory"
+      }
+    ],
+    "comunidad autónoma": [
+      {
+        "word_part": "com",
+        "morpheme_type": "prefix",
+        "morpheme": "con-",
+        "morpheme_meaning": "with, together"
+      },
+      {
+        "word_part": "un",
+        "morpheme_type": "root",
+        "morpheme": "comun-",
+        "morpheme_meaning": "common"
+      },
+      {
+        "word_part": "i"
+      },
+      {
+        "word_part": "dad",
+        "morpheme_type": "suffix",
+        "morpheme": "-dad",
+        "morpheme_meaning": "quality, state"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "autónom",
+        "morpheme_type": "root",
+        "morpheme": "autónom-",
+        "morpheme_meaning": "autonomous, self-governing"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "comunidad de vecinos": [
+      {
+        "word_part": "com",
+        "morpheme_type": "prefix",
+        "morpheme": "con-",
+        "morpheme_meaning": "with, together"
+      },
+      {
+        "word_part": "un",
+        "morpheme_type": "root",
+        "morpheme": "comun-",
+        "morpheme_meaning": "common"
+      },
+      {
+        "word_part": "i"
+      },
+      {
+        "word_part": "dad",
+        "morpheme_type": "suffix",
+        "morpheme": "-dad",
+        "morpheme_meaning": "quality, state"
+      },
+      {
+        "word_part": " de "
+      },
+      {
+        "word_part": "vecin",
+        "morpheme_type": "root",
+        "morpheme": "vecin-",
+        "morpheme_meaning": "neighbour"
+      },
+      {
+        "word_part": "o"
+      },
+      {
+        "word_part": "s"
+      }
+    ],
+    "descomunal": [
+      {
+        "word_part": "des",
+        "morpheme_type": "prefix",
+        "morpheme": "des-",
+        "morpheme_meaning": "negation, reversal, apart"
+      },
+      {
+        "word_part": "com",
+        "morpheme_type": "prefix",
+        "morpheme": "con-",
+        "morpheme_meaning": "with, together"
+      },
+      {
+        "word_part": "un",
+        "morpheme_type": "root",
+        "morpheme": "comun-",
+        "morpheme_meaning": "common"
+      },
+      {
+        "word_part": "al",
+        "morpheme_type": "suffix",
+        "morpheme": "-al1",
+        "morpheme_meaning": "relating to (adjective)"
+      }
+    ],
+    "acero": [
+      {
+        "word_part": "acer",
+        "morpheme_type": "root",
+        "morpheme": "acer2-",
+        "morpheme_meaning": "steel, sharp metal"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "achacoso": [
+      {
+        "word_part": "achac",
+        "morpheme_type": "root",
+        "morpheme": "achac2-",
+        "morpheme_meaning": "ailment, illness"
+      },
+      {
+        "word_part": "oso",
+        "morpheme_type": "suffix",
+        "morpheme": "-oso",
+        "morpheme_meaning": "full of, having"
+      }
+    ],
+    "agriar": [
+      {
+        "word_part": "agri",
+        "morpheme_type": "root",
+        "morpheme": "agri-",
+        "morpheme_meaning": "sour, bitter"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "agridulce": [
+      {
+        "word_part": "agri",
+        "morpheme_type": "root",
+        "morpheme": "agri-",
+        "morpheme_meaning": "sour, bitter"
+      },
+      {
+        "word_part": "dulc",
+        "morpheme_type": "root",
+        "morpheme": "dulc-",
+        "morpheme_meaning": "sweet"
+      },
+      {
+        "word_part": "e"
+      }
+    ],
+    "alga": [
+      {
+        "word_part": "alg",
+        "morpheme_type": "root",
+        "morpheme": "alg2-",
+        "morpheme_meaning": "seaweed"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "allanamiento": [
+      {
+        "word_part": "allan",
+        "morpheme_type": "root",
+        "morpheme": "allan2-",
+        "morpheme_meaning": "break in, force entry"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "miento",
+        "morpheme_type": "suffix",
+        "morpheme": "-miento",
+        "morpheme_meaning": "action, result"
+      }
+    ],
+    "ama de casa": [
+      {
+        "word_part": "am",
+        "morpheme_type": "root",
+        "morpheme": "am-",
+        "morpheme_meaning": "love"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": " de "
+      },
+      {
+        "word_part": "cas",
+        "morpheme_type": "root",
+        "morpheme": "cas-",
+        "morpheme_meaning": "house"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "ama de llaves": [
+      {
+        "word_part": "am",
+        "morpheme_type": "root",
+        "morpheme": "am2-",
+        "morpheme_meaning": "mistress, lady"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": " de "
+      },
+      {
+        "word_part": "llav",
+        "morpheme_type": "root",
+        "morpheme": "llav-",
+        "morpheme_meaning": "key"
+      },
+      {
+        "word_part": "e"
+      },
+      {
+        "word_part": "s"
+      }
+    ],
+    "aprensión": [
+      {
+        "word_part": "apren",
+        "morpheme_type": "root",
+        "morpheme": "apren-",
+        "morpheme_meaning": "grasp, seize, apprehend"
+      },
+      {
+        "word_part": "sión",
+        "morpheme_type": "suffix",
+        "morpheme": "-ción",
+        "morpheme_meaning": "action, result of an action"
+      }
+    ],
+    "arco": [
+      {
+        "word_part": "arc",
+        "morpheme_type": "root",
+        "morpheme": "arc2-",
+        "morpheme_meaning": "bow, arch"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "arcoíris": [
+      {
+        "word_part": "arc",
+        "morpheme_type": "root",
+        "morpheme": "arc2-",
+        "morpheme_meaning": "bow, arch"
+      },
+      {
+        "word_part": "o"
+      },
+      {
+        "word_part": "íris",
+        "morpheme_type": "root",
+        "morpheme": "íris",
+        "morpheme_meaning": "iris"
+      }
+    ],
+    "desastrado": [
+      {
+        "word_part": "des",
+        "morpheme_type": "prefix",
+        "morpheme": "des-",
+        "morpheme_meaning": "negation, reversal, apart"
+      },
+      {
+        "word_part": "astr",
+        "morpheme_type": "root",
+        "morpheme": "astr2-",
+        "morpheme_meaning": "disaster"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "do",
+        "morpheme_type": "suffix",
+        "morpheme": "-do",
+        "morpheme_meaning": "past participle; having been"
+      }
+    ],
+    "balsa": [
+      {
+        "word_part": "bals",
+        "morpheme_type": "root",
+        "morpheme": "bals2-",
+        "morpheme_meaning": "raft"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "contrabando": [
+      {
+        "word_part": "contra",
+        "morpheme_type": "prefix",
+        "morpheme": "contra-",
+        "morpheme_meaning": "against, opposite"
+      },
+      {
+        "word_part": "band",
+        "morpheme_type": "root",
+        "morpheme": "band2-",
+        "morpheme_meaning": "edict, proclamation"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "barro": [
+      {
+        "word_part": "barr",
+        "morpheme_type": "root",
+        "morpheme": "barr2-",
+        "morpheme_meaning": "mud"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "barrizal": [
+      {
+        "word_part": "barr",
+        "morpheme_type": "root",
+        "morpheme": "barr2-",
+        "morpheme_meaning": "mud"
+      },
+      {
+        "word_part": "izal",
+        "morpheme_type": "suffix",
+        "morpheme": "-al2",
+        "morpheme_meaning": "place where a plant grows; grove"
+      }
+    ],
+    "bata": [
+      {
+        "word_part": "bat",
+        "morpheme_type": "root",
+        "morpheme": "bat2-",
+        "morpheme_meaning": "dressing gown, robe"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "bello": [
+      {
+        "word_part": "bell",
+        "morpheme_type": "root",
+        "morpheme": "bell2-",
+        "morpheme_meaning": "beautiful"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "embellecer": [
+      {
+        "word_part": "em",
+        "morpheme_type": "prefix",
+        "morpheme": "en-",
+        "morpheme_meaning": "in, into; to make (verb-forming)",
+        "is_separable": false
+      },
+      {
+        "word_part": "bell",
+        "morpheme_type": "root",
+        "morpheme": "bell2-",
+        "morpheme_meaning": "beautiful"
+      },
+      {
+        "word_part": "ecer",
+        "morpheme_type": "suffix",
+        "morpheme": "-ecer",
+        "morpheme_meaning": "to become (verb-forming)"
+      }
+    ],
+    "bote": [
+      {
+        "word_part": "bot",
+        "morpheme_type": "root",
+        "morpheme": "bot2-",
+        "morpheme_meaning": "boat (Germanic)"
+      },
+      {
+        "word_part": "e"
+      }
+    ],
+    "casa": [
+      {
+        "word_part": "cas",
+        "morpheme_type": "root",
+        "morpheme": "cas-",
+        "morpheme_meaning": "house"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "casa de cambio": [
+      {
+        "word_part": "cas",
+        "morpheme_type": "root",
+        "morpheme": "cas-",
+        "morpheme_meaning": "house"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": " de "
+      },
+      {
+        "word_part": "cambi",
+        "morpheme_type": "root",
+        "morpheme": "cambi-",
+        "morpheme_meaning": "change"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "casado": [
+      {
+        "word_part": "cas",
+        "morpheme_type": "root",
+        "morpheme": "cas-",
+        "morpheme_meaning": "house"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "do",
+        "morpheme_type": "suffix",
+        "morpheme": "-do",
+        "morpheme_meaning": "past participle; having been"
+      }
+    ],
+    "casarse": [
+      {
+        "word_part": "cas",
+        "morpheme_type": "root",
+        "morpheme": "cas-",
+        "morpheme_meaning": "house"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": "se"
+      }
+    ],
+    "empezar la casa por el tejado": [
+      {
+        "word_part": "empez",
+        "morpheme_type": "root",
+        "morpheme": "empez-",
+        "morpheme_meaning": "begin, start"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": " la "
+      },
+      {
+        "word_part": "cas",
+        "morpheme_type": "root",
+        "morpheme": "cas-",
+        "morpheme_meaning": "house"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": " por "
+      },
+      {
+        "word_part": "el "
+      },
+      {
+        "word_part": "tejad",
+        "morpheme_type": "root",
+        "morpheme": "tejad-",
+        "morpheme_meaning": "roof"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "en casa": [
+      {
+        "word_part": "en "
+      },
+      {
+        "word_part": "cas",
+        "morpheme_type": "root",
+        "morpheme": "cas-",
+        "morpheme_meaning": "house"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "sacar de sus casillas": [
+      {
+        "word_part": "sac",
+        "morpheme_type": "root",
+        "morpheme": "sac-",
+        "morpheme_meaning": "take out"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": " de "
+      },
+      {
+        "word_part": "sus "
+      },
+      {
+        "word_part": "cas",
+        "morpheme_type": "root",
+        "morpheme": "cad-",
+        "morpheme_meaning": "fall"
+      },
+      {
+        "word_part": "illa",
+        "morpheme_type": "suffix",
+        "morpheme": "-illo",
+        "morpheme_meaning": "diminutive"
+      },
+      {
+        "word_part": "s"
+      }
+    ],
+    "tirar la casa por la ventana": [
+      {
+        "word_part": "tir",
+        "morpheme_type": "root",
+        "morpheme": "tir-",
+        "morpheme_meaning": "throw"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": " la "
+      },
+      {
+        "word_part": "cas",
+        "morpheme_type": "root",
+        "morpheme": "cas-",
+        "morpheme_meaning": "house"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": " por "
+      },
+      {
+        "word_part": "la "
+      },
+      {
+        "word_part": "ventan",
+        "morpheme_type": "root",
+        "morpheme": "ventan-",
+        "morpheme_meaning": "window"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "cala": [
+      {
+        "word_part": "cal",
+        "morpheme_type": "root",
+        "morpheme": "cal2-",
+        "morpheme_meaning": "cove, inlet"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "calar": [
+      {
+        "word_part": "cal",
+        "morpheme_type": "root",
+        "morpheme": "cal2-",
+        "morpheme_meaning": "cove, inlet"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "recalar": [
+      {
+        "word_part": "re",
+        "morpheme_type": "prefix",
+        "morpheme": "re-",
+        "morpheme_meaning": "again, back; intensive"
+      },
+      {
+        "word_part": "cal",
+        "morpheme_type": "root",
+        "morpheme": "cal2-",
+        "morpheme_meaning": "cove, inlet"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "callo": [
+      {
+        "word_part": "call",
+        "morpheme_type": "root",
+        "morpheme": "call2-",
+        "morpheme_meaning": "callus, hard skin"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "dar el callo": [
+      {
+        "word_part": "dar",
+        "morpheme_type": "root",
+        "morpheme": "dar",
+        "morpheme_meaning": "to give"
+      },
+      {
+        "word_part": " el "
+      },
+      {
+        "word_part": "call",
+        "morpheme_type": "root",
+        "morpheme": "call2-",
+        "morpheme_meaning": "callus, hard skin"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "a cal y canto": [
+      {
+        "word_part": "a "
+      },
+      {
+        "word_part": "cal",
+        "morpheme_type": "root",
+        "morpheme": "cal",
+        "morpheme_meaning": "lime"
+      },
+      {
+        "word_part": " y "
+      },
+      {
+        "word_part": "cant",
+        "morpheme_type": "root",
+        "morpheme": "cant-",
+        "morpheme_meaning": "stone, pebble"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "cepa": [
+      {
+        "word_part": "cep",
+        "morpheme_type": "root",
+        "morpheme": "cep-",
+        "morpheme_meaning": "stake, post; vine stock"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "al fin y al cabo": [
+      {
+        "word_part": "al "
+      },
+      {
+        "word_part": "fin",
+        "morpheme_type": "root",
+        "morpheme": "fin",
+        "morpheme_meaning": "end"
+      },
+      {
+        "word_part": " y"
+      },
+      {
+        "word_part": " al "
+      },
+      {
+        "word_part": "cab",
+        "morpheme_type": "root",
+        "morpheme": "cab1-",
+        "morpheme_meaning": "end"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "atar cabos": [
+      {
+        "word_part": "at",
+        "morpheme_type": "root",
+        "morpheme": "at-",
+        "morpheme_meaning": "tie"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "cab",
+        "morpheme_type": "root",
+        "morpheme": "cab1-",
+        "morpheme_meaning": "end"
+      },
+      {
+        "word_part": "o"
+      },
+      {
+        "word_part": "s"
+      }
+    ],
+    "de cabo a rabo": [
+      {
+        "word_part": "de "
+      },
+      {
+        "word_part": "cab",
+        "morpheme_type": "root",
+        "morpheme": "cab1-",
+        "morpheme_meaning": "end"
+      },
+      {
+        "word_part": "o"
+      },
+      {
+        "word_part": " a "
+      },
+      {
+        "word_part": "rab",
+        "morpheme_type": "root",
+        "morpheme": "rab-",
+        "morpheme_meaning": "tail"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "llevar a cabo": [
+      {
+        "word_part": "llev",
+        "morpheme_type": "root",
+        "morpheme": "llev-",
+        "morpheme_meaning": "carry, wear"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": " a "
+      },
+      {
+        "word_part": "cab",
+        "morpheme_type": "root",
+        "morpheme": "cab1-",
+        "morpheme_meaning": "end"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "caber": [
+      {
+        "word_part": "cab",
+        "morpheme_type": "root",
+        "morpheme": "cab2-",
+        "morpheme_meaning": "to fit"
+      },
+      {
+        "word_part": "er"
+      }
+    ],
+    "cabida": [
+      {
+        "word_part": "cab",
+        "morpheme_type": "root",
+        "morpheme": "cab2-",
+        "morpheme_meaning": "to fit"
+      },
+      {
+        "word_part": "ida",
+        "morpheme_type": "suffix",
+        "morpheme": "-ida",
+        "morpheme_meaning": "past participle; having been"
+      }
+    ],
+    "caridad": [
+      {
+        "word_part": "car",
+        "morpheme_type": "root",
+        "morpheme": "car2-",
+        "morpheme_meaning": "dear, love"
+      },
+      {
+        "word_part": "i"
+      },
+      {
+        "word_part": "dad",
+        "morpheme_type": "suffix",
+        "morpheme": "-dad",
+        "morpheme_meaning": "quality, state"
+      }
+    ],
+    "caro": [
+      {
+        "word_part": "car",
+        "morpheme_type": "root",
+        "morpheme": "car2-",
+        "morpheme_meaning": "dear, love"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "encarecer": [
+      {
+        "word_part": "en",
+        "morpheme_type": "prefix",
+        "morpheme": "en-",
+        "morpheme_meaning": "in, into; to make (verb-forming)",
+        "is_separable": false
+      },
+      {
+        "word_part": "car",
+        "morpheme_type": "root",
+        "morpheme": "car2-",
+        "morpheme_meaning": "dear, love"
+      },
+      {
+        "word_part": "ecer",
+        "morpheme_type": "suffix",
+        "morpheme": "-ecer",
+        "morpheme_meaning": "to become (verb-forming)"
+      }
+    ],
+    "cascar": [
+      {
+        "word_part": "casc",
+        "morpheme_type": "root",
+        "morpheme": "casc2-",
+        "morpheme_meaning": "shell, husk"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "cascarrabias": [
+      {
+        "word_part": "casc",
+        "morpheme_type": "root",
+        "morpheme": "casc2-",
+        "morpheme_meaning": "shell, husk"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": "rabi",
+        "morpheme_type": "root",
+        "morpheme": "rabi-",
+        "morpheme_meaning": "rage, anger"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "s"
+      }
+    ],
+    "caza": [
+      {
+        "word_part": "caz",
+        "morpheme_type": "root",
+        "morpheme": "caz2-",
+        "morpheme_meaning": "hunt"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "caza furtiva": [
+      {
+        "word_part": "caz",
+        "morpheme_type": "root",
+        "morpheme": "caz2-",
+        "morpheme_meaning": "hunt"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "furtiv",
+        "morpheme_type": "root",
+        "morpheme": "furtiv-",
+        "morpheme_meaning": "furtive, stealthy"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "cazadora": [
+      {
+        "word_part": "caz",
+        "morpheme_type": "root",
+        "morpheme": "caz2-",
+        "morpheme_meaning": "hunt"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "dor",
+        "morpheme_type": "suffix",
+        "morpheme": "-dor",
+        "morpheme_meaning": "agent; machine"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "cazar": [
+      {
+        "word_part": "caz",
+        "morpheme_type": "root",
+        "morpheme": "caz2-",
+        "morpheme_meaning": "hunt"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "celaje": [
+      {
+        "word_part": "cel",
+        "morpheme_type": "root",
+        "morpheme": "cel2-",
+        "morpheme_meaning": "sky"
+      },
+      {
+        "word_part": "aje",
+        "morpheme_type": "suffix",
+        "morpheme": "-aje",
+        "morpheme_meaning": "collection; action; fee"
+      }
+    ],
+    "cerro": [
+      {
+        "word_part": "cerr",
+        "morpheme_type": "root",
+        "morpheme": "cerr2-",
+        "morpheme_meaning": "hill"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "chorrada": [
+      {
+        "word_part": "chorr",
+        "morpheme_type": "root",
+        "morpheme": "chorr2-",
+        "morpheme_meaning": "nonsense, rubbish"
+      },
+      {
+        "word_part": "ada",
+        "morpheme_type": "suffix",
+        "morpheme": "-ada",
+        "morpheme_meaning": "blow, amount, content, group"
+      }
+    ],
+    "cobrizo": [
+      {
+        "word_part": "cobr",
+        "morpheme_type": "root",
+        "morpheme": "cobr2-",
+        "morpheme_meaning": "copper"
+      },
+      {
+        "word_part": "izo",
+        "morpheme_type": "suffix",
+        "morpheme": "-izo",
+        "morpheme_meaning": "tending to; somewhat"
+      }
+    ],
+    "cocción": [
+      {
+        "word_part": "coc",
+        "morpheme_type": "root",
+        "morpheme": "coc2-",
+        "morpheme_meaning": "cook, boil"
+      },
+      {
+        "word_part": "ción",
+        "morpheme_type": "suffix",
+        "morpheme": "-ción",
+        "morpheme_meaning": "action, result of an action"
+      }
+    ],
+    "cocer": [
+      {
+        "word_part": "coc",
+        "morpheme_type": "root",
+        "morpheme": "coc2-",
+        "morpheme_meaning": "cook, boil"
+      },
+      {
+        "word_part": "er"
+      }
+    ],
+    "cocido": [
+      {
+        "word_part": "coc",
+        "morpheme_type": "root",
+        "morpheme": "coc2-",
+        "morpheme_meaning": "cook, boil"
+      },
+      {
+        "word_part": "i"
+      },
+      {
+        "word_part": "do",
+        "morpheme_type": "suffix",
+        "morpheme": "-do",
+        "morpheme_meaning": "past participle; having been"
+      }
+    ],
+    "cola": [
+      {
+        "word_part": "col",
+        "morpheme_type": "root",
+        "morpheme": "col2-",
+        "morpheme_meaning": "tail, rear; queue"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "hacer cola": [
+      {
+        "word_part": "hac",
+        "morpheme_type": "root",
+        "morpheme": "fac-",
+        "morpheme_meaning": "make, do"
+      },
+      {
+        "word_part": "er"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "col",
+        "morpheme_type": "root",
+        "morpheme": "col2-",
+        "morpheme_meaning": "tail, rear; queue"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "traer cola": [
+      {
+        "word_part": "tra",
+        "morpheme_type": "prefix",
+        "morpheme": "trans-",
+        "morpheme_meaning": "across, beyond",
+        "is_separable": false
+      },
+      {
+        "word_part": "er"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "col",
+        "morpheme_type": "root",
+        "morpheme": "col2-",
+        "morpheme_meaning": "tail, rear; queue"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "colador": [
+      {
+        "word_part": "col",
+        "morpheme_type": "root",
+        "morpheme": "col3-",
+        "morpheme_meaning": "strain, filter"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "dor",
+        "morpheme_type": "suffix",
+        "morpheme": "-dor",
+        "morpheme_meaning": "agent; machine"
+      }
+    ],
+    "colarse": [
+      {
+        "word_part": "col",
+        "morpheme_type": "root",
+        "morpheme": "col3-",
+        "morpheme_meaning": "strain, filter"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": "se"
+      }
+    ],
+    "cometa": [
+      {
+        "word_part": "comet",
+        "morpheme_type": "root",
+        "morpheme": "comet2-",
+        "morpheme_meaning": "long-haired"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "consistorio": [
+      {
+        "word_part": "consist",
+        "morpheme_type": "root",
+        "morpheme": "consist2-",
+        "morpheme_meaning": "assembly, council"
+      },
+      {
+        "word_part": "orio",
+        "morpheme_type": "suffix",
+        "morpheme": "-orio",
+        "morpheme_meaning": "place for; relating to"
+      }
+    ],
+    "consola": [
+      {
+        "word_part": "consol",
+        "morpheme_type": "root",
+        "morpheme": "consol2-",
+        "morpheme_meaning": "seat, bench"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "coro": [
+      {
+        "word_part": "cor",
+        "morpheme_type": "root",
+        "morpheme": "cor2-",
+        "morpheme_meaning": "choir, chorus"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "coraza": [
+      {
+        "word_part": "coraz",
+        "morpheme_type": "root",
+        "morpheme": "cor3-",
+        "morpheme_meaning": "hide, leather"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "cortés": [
+      {
+        "word_part": "cort",
+        "morpheme_type": "root",
+        "morpheme": "cort2-",
+        "morpheme_meaning": "court"
+      },
+      {
+        "word_part": "és",
+        "morpheme_type": "suffix",
+        "morpheme": "-és",
+        "morpheme_meaning": "native of, nationality"
+      }
+    ],
+    "cortesía": [
+      {
+        "word_part": "cort",
+        "morpheme_type": "root",
+        "morpheme": "cort2-",
+        "morpheme_meaning": "court"
+      },
+      {
+        "word_part": "es"
+      },
+      {
+        "word_part": "ía",
+        "morpheme_type": "suffix",
+        "morpheme": "-ía",
+        "morpheme_meaning": "quality; science; office"
+      }
+    ],
+    "costa": [
+      {
+        "word_part": "cost",
+        "morpheme_type": "root",
+        "morpheme": "cost2-",
+        "morpheme_meaning": "rib, side, coast"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "costilla": [
+      {
+        "word_part": "cost",
+        "morpheme_type": "root",
+        "morpheme": "cost2-",
+        "morpheme_meaning": "rib, side, coast"
+      },
+      {
+        "word_part": "illa",
+        "morpheme_type": "suffix",
+        "morpheme": "-illo",
+        "morpheme_meaning": "diminutive"
+      }
+    ],
+    "costura": [
+      {
+        "word_part": "cost",
+        "morpheme_type": "root",
+        "morpheme": "cost3-",
+        "morpheme_meaning": "seam, sewing"
+      },
+      {
+        "word_part": "ura",
+        "morpheme_type": "suffix",
+        "morpheme": "-ura",
+        "morpheme_meaning": "quality; result"
+      }
+    ],
+    "crear": [
+      {
+        "word_part": "cre",
+        "morpheme_type": "root",
+        "morpheme": "cre-",
+        "morpheme_meaning": "to create"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "creativo": [
+      {
+        "word_part": "creativ",
+        "morpheme_type": "root",
+        "morpheme": "cre-",
+        "morpheme_meaning": "to create"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "recrear": [
+      {
+        "word_part": "re",
+        "morpheme_type": "prefix",
+        "morpheme": "re-",
+        "morpheme_meaning": "again, back; intensive"
+      },
+      {
+        "word_part": "cre",
+        "morpheme_type": "root",
+        "morpheme": "cre-",
+        "morpheme_meaning": "to create"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "criar": [
+      {
+        "word_part": "cri",
+        "morpheme_type": "root",
+        "morpheme": "cri2-",
+        "morpheme_meaning": "to raise, to bring up"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "malcriar": [
+      {
+        "word_part": "mal",
+        "morpheme_type": "prefix",
+        "morpheme": "mal-",
+        "morpheme_meaning": "badly, wrong"
+      },
+      {
+        "word_part": "cri",
+        "morpheme_type": "root",
+        "morpheme": "cri2-",
+        "morpheme_meaning": "to raise, to bring up"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "cubismo": [
+      {
+        "word_part": "cub",
+        "morpheme_type": "root",
+        "morpheme": "cub2-",
+        "morpheme_meaning": "cube"
+      },
+      {
+        "word_part": "ismo",
+        "morpheme_type": "suffix",
+        "morpheme": "-ismo",
+        "morpheme_meaning": "doctrine, system, practice"
+      }
+    ],
+    "cuerdo": [
+      {
+        "word_part": "cuerd",
+        "morpheme_type": "root",
+        "morpheme": "cuerd2-",
+        "morpheme_meaning": "heart"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "divisar": [
+      {
+        "word_part": "divis",
+        "morpheme_type": "root",
+        "morpheme": "divis2-",
+        "morpheme_meaning": "see"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "paradoja": [
+      {
+        "word_part": "para",
+        "morpheme_type": "prefix",
+        "morpheme": "para1-",
+        "morpheme_meaning": "beside; against, contrary"
+      },
+      {
+        "word_part": "doj",
+        "morpheme_type": "root",
+        "morpheme": "doj-",
+        "morpheme_meaning": "opinion"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "dolo": [
+      {
+        "word_part": "dol",
+        "morpheme_type": "root",
+        "morpheme": "dol2-",
+        "morpheme_meaning": "deceit, trick"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "desembarazarse": [
+      {
+        "word_part": "des",
+        "morpheme_type": "prefix",
+        "morpheme": "des-",
+        "morpheme_meaning": "negation, reversal, apart"
+      },
+      {
+        "word_part": "embaraz",
+        "morpheme_type": "root",
+        "morpheme": "embaraz2-",
+        "morpheme_meaning": "obstacle, hindrance"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": "se"
+      }
+    ],
+    "embarazoso": [
+      {
+        "word_part": "embaraz",
+        "morpheme_type": "root",
+        "morpheme": "embaraz2-",
+        "morpheme_meaning": "obstacle, hindrance"
+      },
+      {
+        "word_part": "oso",
+        "morpheme_type": "suffix",
+        "morpheme": "-oso",
+        "morpheme_meaning": "full of, having"
+      }
+    ],
+    "desentrañar": [
+      {
+        "word_part": "des",
+        "morpheme_type": "prefix",
+        "morpheme": "des-",
+        "morpheme_meaning": "negation, reversal, apart"
+      },
+      {
+        "word_part": "entrañ",
+        "morpheme_type": "root",
+        "morpheme": "entrañ2-",
+        "morpheme_meaning": "guts, insides"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "esposas": [
+      {
+        "word_part": "espos",
+        "morpheme_type": "root",
+        "morpheme": "espos2-",
+        "morpheme_meaning": "handcuffs, fetters"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "s"
+      }
+    ],
+    "estanco": [
+      {
+        "word_part": "estanc",
+        "morpheme_type": "root",
+        "morpheme": "estanc2-",
+        "morpheme_meaning": "store, keep (goods)"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "epifanía": [
+      {
+        "word_part": "epi",
+        "morpheme_type": "prefix",
+        "morpheme": "epi-",
+        "morpheme_meaning": "on, upon, over"
+      },
+      {
+        "word_part": "fan",
+        "morpheme_type": "root",
+        "morpheme": "fan-",
+        "morpheme_meaning": "appear, show"
+      },
+      {
+        "word_part": "ía",
+        "morpheme_type": "suffix",
+        "morpheme": "-ía",
+        "morpheme_meaning": "quality; science; office"
+      }
+    ],
+    "afear": [
+      {
+        "word_part": "a",
+        "morpheme_type": "prefix",
+        "morpheme": "a1-",
+        "morpheme_meaning": "to, toward (verb-forming)",
+        "is_separable": false
+      },
+      {
+        "word_part": "fe",
+        "morpheme_type": "root",
+        "morpheme": "fe-",
+        "morpheme_meaning": "ugly, foul"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "feo": [
+      {
+        "word_part": "fe",
+        "morpheme_type": "root",
+        "morpheme": "fe-",
+        "morpheme_meaning": "ugly, foul"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "foca": [
+      {
+        "word_part": "foc",
+        "morpheme_type": "root",
+        "morpheme": "foc2-",
+        "morpheme_meaning": "seal (marine mammal)"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "desafuero": [
+      {
+        "word_part": "des",
+        "morpheme_type": "prefix",
+        "morpheme": "des-",
+        "morpheme_meaning": "negation, reversal, apart"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "fuer",
+        "morpheme_type": "root",
+        "morpheme": "fuer1-",
+        "morpheme_meaning": "jurisdiction, privilege"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "fuero": [
+      {
+        "word_part": "fuer",
+        "morpheme_type": "root",
+        "morpheme": "fuer1-",
+        "morpheme_meaning": "jurisdiction, privilege"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "echar balones fuera": [
+      {
+        "word_part": "ech",
+        "morpheme_type": "root",
+        "morpheme": "ech-",
+        "morpheme_meaning": "throw, put"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "bal",
+        "morpheme_type": "root",
+        "morpheme": "bal-",
+        "morpheme_meaning": "ball"
+      },
+      {
+        "word_part": "on",
+        "morpheme_type": "suffix",
+        "morpheme": "-ón",
+        "morpheme_meaning": "augmentative; tending to"
+      },
+      {
+        "word_part": "es"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "fuer",
+        "morpheme_type": "root",
+        "morpheme": "fuer2-",
+        "morpheme_meaning": "outside"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "franqueza": [
+      {
+        "word_part": "franqu",
+        "morpheme_type": "root",
+        "morpheme": "franqu-",
+        "morpheme_meaning": "frank, open"
+      },
+      {
+        "word_part": "eza",
+        "morpheme_type": "suffix",
+        "morpheme": "-ez",
+        "morpheme_meaning": "quality, state"
+      }
+    ],
+    "de mala gana": [
+      {
+        "word_part": "de "
+      },
+      {
+        "word_part": "mal",
+        "morpheme_type": "root",
+        "morpheme": "mal-",
+        "morpheme_meaning": "bad"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "gan",
+        "morpheme_type": "root",
+        "morpheme": "gan2-",
+        "morpheme_meaning": "desire, wish"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "desgana": [
+      {
+        "word_part": "des",
+        "morpheme_type": "prefix",
+        "morpheme": "des-",
+        "morpheme_meaning": "negation, reversal, apart"
+      },
+      {
+        "word_part": "gan",
+        "morpheme_type": "root",
+        "morpheme": "gan2-",
+        "morpheme_meaning": "desire, wish"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "desganado": [
+      {
+        "word_part": "des",
+        "morpheme_type": "prefix",
+        "morpheme": "des-",
+        "morpheme_meaning": "negation, reversal, apart"
+      },
+      {
+        "word_part": "gan",
+        "morpheme_type": "root",
+        "morpheme": "gan2-",
+        "morpheme_meaning": "desire, wish"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "do",
+        "morpheme_type": "suffix",
+        "morpheme": "-do",
+        "morpheme_meaning": "past participle; having been"
+      }
+    ],
+    "ganas": [
+      {
+        "word_part": "gan",
+        "morpheme_type": "root",
+        "morpheme": "gan2-",
+        "morpheme_meaning": "desire, wish"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "s"
+      }
+    ],
+    "tener ganas de": [
+      {
+        "word_part": "ten",
+        "morpheme_type": "root",
+        "morpheme": "ten-",
+        "morpheme_meaning": "hold"
+      },
+      {
+        "word_part": "er"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "gan",
+        "morpheme_type": "root",
+        "morpheme": "gan2-",
+        "morpheme_meaning": "desire, wish"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "s"
+      },
+      {
+        "word_part": " de"
+      }
+    ],
+    "hilarante": [
+      {
+        "word_part": "hil",
+        "morpheme_type": "root",
+        "morpheme": "hil2-",
+        "morpheme_meaning": "cheerful"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": "ante",
+        "morpheme_type": "suffix",
+        "morpheme": "-ante",
+        "morpheme_meaning": "one who does; doing (agent, adj.)"
+      }
+    ],
+    "hombría": [
+      {
+        "word_part": "hombr",
+        "morpheme_type": "root",
+        "morpheme": "hombr2-",
+        "morpheme_meaning": "man"
+      },
+      {
+        "word_part": "ía",
+        "morpheme_type": "suffix",
+        "morpheme": "-ía",
+        "morpheme_meaning": "quality; science; office"
+      }
+    ],
+    "irreversible": [
+      {
+        "word_part": "ir",
+        "morpheme_type": "root",
+        "morpheme": "ir2-",
+        "morpheme_meaning": "turn back"
+      },
+      {
+        "word_part": "re",
+        "morpheme_type": "prefix",
+        "morpheme": "re-",
+        "morpheme_meaning": "again, back; intensive"
+      },
+      {
+        "word_part": "vers",
+        "morpheme_type": "root",
+        "morpheme": "vers-",
+        "morpheme_meaning": "turn"
+      },
+      {
+        "word_part": "i"
+      },
+      {
+        "word_part": "ble",
+        "morpheme_type": "suffix",
+        "morpheme": "-ble",
+        "morpheme_meaning": "able to be, -able"
+      }
+    ],
+    "jugo": [
+      {
+        "word_part": "jug",
+        "morpheme_type": "root",
+        "morpheme": "jug2-",
+        "morpheme_meaning": "juice"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "dar la lata": [
+      {
+        "word_part": "dar",
+        "morpheme_type": "root",
+        "morpheme": "dar",
+        "morpheme_meaning": "to give"
+      },
+      {
+        "word_part": " la "
+      },
+      {
+        "word_part": "lat",
+        "morpheme_type": "root",
+        "morpheme": "lat2-",
+        "morpheme_meaning": "can, tin"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "lata": [
+      {
+        "word_part": "lat",
+        "morpheme_type": "root",
+        "morpheme": "lat2-",
+        "morpheme_meaning": "can, tin"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "latido": [
+      {
+        "word_part": "lat",
+        "morpheme_type": "root",
+        "morpheme": "lat3-",
+        "morpheme_meaning": "beat, throb"
+      },
+      {
+        "word_part": "i"
+      },
+      {
+        "word_part": "do",
+        "morpheme_type": "suffix",
+        "morpheme": "-do",
+        "morpheme_meaning": "past participle; having been"
+      }
+    ],
+    "lava": [
+      {
+        "word_part": "lav",
+        "morpheme_type": "root",
+        "morpheme": "lav2-",
+        "morpheme_meaning": "molten rock"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "legar": [
+      {
+        "word_part": "leg",
+        "morpheme_type": "root",
+        "morpheme": "leg3-",
+        "morpheme_meaning": "to bequeath, leave by will"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "lentes": [
+      {
+        "word_part": "lent",
+        "morpheme_type": "root",
+        "morpheme": "lent2-",
+        "morpheme_meaning": "lentil; lens of the eye"
+      },
+      {
+        "word_part": "e"
+      },
+      {
+        "word_part": "s"
+      }
+    ],
+    "lentillas": [
+      {
+        "word_part": "lent",
+        "morpheme_type": "root",
+        "morpheme": "lent2-",
+        "morpheme_meaning": "lentil; lens of the eye"
+      },
+      {
+        "word_part": "illa",
+        "morpheme_type": "suffix",
+        "morpheme": "-illo",
+        "morpheme_meaning": "diminutive"
+      },
+      {
+        "word_part": "s"
+      }
+    ],
+    "liso": [
+      {
+        "word_part": "lis",
+        "morpheme_type": "root",
+        "morpheme": "lis2-",
+        "morpheme_meaning": "smooth"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "lista": [
+      {
+        "word_part": "list",
+        "morpheme_type": "root",
+        "morpheme": "list2-",
+        "morpheme_meaning": "list (written record)"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "lista de espera": [
+      {
+        "word_part": "list",
+        "morpheme_type": "root",
+        "morpheme": "list2-",
+        "morpheme_meaning": "list (written record)"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": " de "
+      },
+      {
+        "word_part": "esper",
+        "morpheme_type": "root",
+        "morpheme": "esper-",
+        "morpheme_meaning": "wait, hope"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "llama": [
+      {
+        "word_part": "llam",
+        "morpheme_type": "root",
+        "morpheme": "llam2-",
+        "morpheme_meaning": "flame; llama (animal)"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "a lo loco": [
+      {
+        "word_part": "a "
+      },
+      {
+        "word_part": "lo "
+      },
+      {
+        "word_part": "loc",
+        "morpheme_type": "root",
+        "morpheme": "loc2-",
+        "morpheme_meaning": "crazy, mad"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "a tontas y a locas": [
+      {
+        "word_part": "a "
+      },
+      {
+        "word_part": "tont",
+        "morpheme_type": "root",
+        "morpheme": "tont-",
+        "morpheme_meaning": "silly, stupid"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "s"
+      },
+      {
+        "word_part": " y "
+      },
+      {
+        "word_part": "a "
+      },
+      {
+        "word_part": "loc",
+        "morpheme_type": "root",
+        "morpheme": "loc2-",
+        "morpheme_meaning": "crazy, mad"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "s"
+      }
+    ],
+    "loco": [
+      {
+        "word_part": "loc",
+        "morpheme_type": "root",
+        "morpheme": "loc2-",
+        "morpheme_meaning": "crazy, mad"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "ni loco": [
+      {
+        "word_part": "ni "
+      },
+      {
+        "word_part": "loc",
+        "morpheme_type": "root",
+        "morpheme": "loc2-",
+        "morpheme_meaning": "crazy, mad"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "volverse loco": [
+      {
+        "word_part": "volv",
+        "morpheme_type": "root",
+        "morpheme": "volv-",
+        "morpheme_meaning": "roll, turn"
+      },
+      {
+        "word_part": "er"
+      },
+      {
+        "word_part": "se"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "loc",
+        "morpheme_type": "root",
+        "morpheme": "loc2-",
+        "morpheme_meaning": "crazy, mad"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "enloquecer": [
+      {
+        "word_part": "en",
+        "morpheme_type": "prefix",
+        "morpheme": "en-",
+        "morpheme_meaning": "in, into; to make (verb-forming)",
+        "is_separable": false
+      },
+      {
+        "word_part": "loqu",
+        "morpheme_type": "root",
+        "morpheme": "loc2-",
+        "morpheme_meaning": "crazy, mad"
+      },
+      {
+        "word_part": "ecer",
+        "morpheme_type": "suffix",
+        "morpheme": "-ecer",
+        "morpheme_meaning": "to become (verb-forming)"
+      }
+    ],
+    "mayo": [
+      {
+        "word_part": "may",
+        "morpheme_type": "root",
+        "morpheme": "may-",
+        "morpheme_meaning": "May"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "enmienda": [
+      {
+        "word_part": "en",
+        "morpheme_type": "prefix",
+        "morpheme": "en-",
+        "morpheme_meaning": "in, into; to make (verb-forming)",
+        "is_separable": false
+      },
+      {
+        "word_part": "miend",
+        "morpheme_type": "root",
+        "morpheme": "miend-",
+        "morpheme_meaning": "to correct, amend"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "manga": [
+      {
+        "word_part": "mang",
+        "morpheme_type": "root",
+        "morpheme": "mang2-",
+        "morpheme_meaning": "sleeve"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "mangante": [
+      {
+        "word_part": "mang",
+        "morpheme_type": "root",
+        "morpheme": "mang3-",
+        "morpheme_meaning": "handle"
+      },
+      {
+        "word_part": "ante",
+        "morpheme_type": "suffix",
+        "morpheme": "-ante",
+        "morpheme_meaning": "one who does; doing (agent, adj.)"
+      }
+    ],
+    "mangar": [
+      {
+        "word_part": "mang",
+        "morpheme_type": "root",
+        "morpheme": "mang3-",
+        "morpheme_meaning": "handle"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "tener la sartén por el mango": [
+      {
+        "word_part": "ten",
+        "morpheme_type": "root",
+        "morpheme": "ten-",
+        "morpheme_meaning": "hold"
+      },
+      {
+        "word_part": "er"
+      },
+      {
+        "word_part": " la "
+      },
+      {
+        "word_part": "sartén",
+        "morpheme_type": "root",
+        "morpheme": "sartén",
+        "morpheme_meaning": "frying pan"
+      },
+      {
+        "word_part": " por "
+      },
+      {
+        "word_part": "el "
+      },
+      {
+        "word_part": "mang",
+        "morpheme_type": "root",
+        "morpheme": "mang3-",
+        "morpheme_meaning": "handle"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "desmedido": [
+      {
+        "word_part": "des",
+        "morpheme_type": "prefix",
+        "morpheme": "des-",
+        "morpheme_meaning": "negation, reversal, apart"
+      },
+      {
+        "word_part": "med",
+        "morpheme_type": "root",
+        "morpheme": "med2-",
+        "morpheme_meaning": "measure"
+      },
+      {
+        "word_part": "i"
+      },
+      {
+        "word_part": "do",
+        "morpheme_type": "suffix",
+        "morpheme": "-do",
+        "morpheme_meaning": "past participle; having been"
+      }
+    ],
+    "medir": [
+      {
+        "word_part": "med",
+        "morpheme_type": "root",
+        "morpheme": "med2-",
+        "morpheme_meaning": "measure"
+      },
+      {
+        "word_part": "ir"
+      }
+    ],
+    "en la medida en que": [
+      {
+        "word_part": "en"
+      },
+      {
+        "word_part": " la "
+      },
+      {
+        "word_part": "medid",
+        "morpheme_type": "root",
+        "morpheme": "med2-",
+        "morpheme_meaning": "measure"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": " en "
+      },
+      {
+        "word_part": "que"
+      }
+    ],
+    "mejillones": [
+      {
+        "word_part": "mejill",
+        "morpheme_type": "root",
+        "morpheme": "mejill2-",
+        "morpheme_meaning": "mussel"
+      },
+      {
+        "word_part": "on",
+        "morpheme_type": "suffix",
+        "morpheme": "-ón",
+        "morpheme_meaning": "augmentative; tending to"
+      },
+      {
+        "word_part": "es"
+      }
+    ],
+    "menta": [
+      {
+        "word_part": "ment",
+        "morpheme_type": "root",
+        "morpheme": "ment2-",
+        "morpheme_meaning": "mint (plant)"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "meta": [
+      {
+        "word_part": "met",
+        "morpheme_type": "root",
+        "morpheme": "met1-",
+        "morpheme_meaning": "goal, turning post"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "metepatas": [
+      {
+        "word_part": "mete",
+        "morpheme_type": "root",
+        "morpheme": "metr-",
+        "morpheme_meaning": "measure"
+      },
+      {
+        "word_part": "pat",
+        "morpheme_type": "root",
+        "morpheme": "pat2-",
+        "morpheme_meaning": "foot"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "s"
+      }
+    ],
+    "meter": [
+      {
+        "word_part": "met",
+        "morpheme_type": "root",
+        "morpheme": "met2-",
+        "morpheme_meaning": "to put"
+      },
+      {
+        "word_part": "er"
+      }
+    ],
+    "meterse": [
+      {
+        "word_part": "met",
+        "morpheme_type": "root",
+        "morpheme": "met2-",
+        "morpheme_meaning": "to put"
+      },
+      {
+        "word_part": "er"
+      },
+      {
+        "word_part": "se"
+      }
+    ],
+    "prometedor": [
+      {
+        "word_part": "pro",
+        "morpheme_type": "prefix",
+        "morpheme": "pro-",
+        "morpheme_meaning": "forward; in favour of; in place of",
+        "is_separable": false
+      },
+      {
+        "word_part": "met",
+        "morpheme_type": "root",
+        "morpheme": "met2-",
+        "morpheme_meaning": "to put"
+      },
+      {
+        "word_part": "e"
+      },
+      {
+        "word_part": "dor",
+        "morpheme_type": "suffix",
+        "morpheme": "-dor",
+        "morpheme_meaning": "agent; machine"
+      }
+    ],
+    "someter": [
+      {
+        "word_part": "so",
+        "morpheme_type": "prefix",
+        "morpheme": "sub-",
+        "morpheme_meaning": "under, below"
+      },
+      {
+        "word_part": "met",
+        "morpheme_type": "root",
+        "morpheme": "met2-",
+        "morpheme_meaning": "to put"
+      },
+      {
+        "word_part": "er"
+      }
+    ],
+    "mina": [
+      {
+        "word_part": "min",
+        "morpheme_type": "root",
+        "morpheme": "min2-",
+        "morpheme_meaning": "mine, excavation; pencil lead"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "minar": [
+      {
+        "word_part": "min",
+        "morpheme_type": "root",
+        "morpheme": "min2-",
+        "morpheme_meaning": "mine, excavation; pencil lead"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "mora": [
+      {
+        "word_part": "mor",
+        "morpheme_type": "root",
+        "morpheme": "mor2-",
+        "morpheme_meaning": "blackberry, mulberry"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "morada": [
+      {
+        "word_part": "mor",
+        "morpheme_type": "root",
+        "morpheme": "mor3-",
+        "morpheme_meaning": "dwell, reside"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "da",
+        "morpheme_type": "suffix",
+        "morpheme": "-do",
+        "morpheme_meaning": "past participle; having been"
+      }
+    ],
+    "inmobiliaria": [
+      {
+        "word_part": "in",
+        "morpheme_type": "prefix",
+        "morpheme": "in2-",
+        "morpheme_meaning": "not"
+      },
+      {
+        "word_part": "mobili",
+        "morpheme_type": "root",
+        "morpheme": "mobili-",
+        "morpheme_meaning": "movable"
+      },
+      {
+        "word_part": "aria",
+        "morpheme_type": "suffix",
+        "morpheme": "-aria",
+        "morpheme_meaning": "place"
+      }
+    ],
+    "primordial": [
+      {
+        "word_part": "prim",
+        "morpheme_type": "root",
+        "morpheme": "prim-",
+        "morpheme_meaning": "first"
+      },
+      {
+        "word_part": "ord",
+        "morpheme_type": "root",
+        "morpheme": "ord2-",
+        "morpheme_meaning": "beginning, origin"
+      },
+      {
+        "word_part": "i"
+      },
+      {
+        "word_part": "al",
+        "morpheme_type": "suffix",
+        "morpheme": "-al1",
+        "morpheme_meaning": "relating to (adjective)"
+      }
+    ],
+    "impaciencia": [
+      {
+        "word_part": "im",
+        "morpheme_type": "prefix",
+        "morpheme": "in2-",
+        "morpheme_meaning": "not"
+      },
+      {
+        "word_part": "pac",
+        "morpheme_type": "root",
+        "morpheme": "pac2-",
+        "morpheme_meaning": "patience, endurance"
+      },
+      {
+        "word_part": "i"
+      },
+      {
+        "word_part": "encia",
+        "morpheme_type": "suffix",
+        "morpheme": "-ancia",
+        "morpheme_meaning": "state, quality, action"
+      }
+    ],
+    "paciencia": [
+      {
+        "word_part": "pac",
+        "morpheme_type": "root",
+        "morpheme": "pac2-",
+        "morpheme_meaning": "patience, endurance"
+      },
+      {
+        "word_part": "i"
+      },
+      {
+        "word_part": "encia",
+        "morpheme_type": "suffix",
+        "morpheme": "-ancia",
+        "morpheme_meaning": "state, quality, action"
+      }
+    ],
+    "dar palos de ciego": [
+      {
+        "word_part": "dar",
+        "morpheme_type": "root",
+        "morpheme": "dar",
+        "morpheme_meaning": "to give"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "pal",
+        "morpheme_type": "root",
+        "morpheme": "pal2-",
+        "morpheme_meaning": "stick"
+      },
+      {
+        "word_part": "o"
+      },
+      {
+        "word_part": "s"
+      },
+      {
+        "word_part": " de "
+      },
+      {
+        "word_part": "cieg",
+        "morpheme_type": "root",
+        "morpheme": "cieg-",
+        "morpheme_meaning": "blind"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "no dar un palo al agua": [
+      {
+        "word_part": "no "
+      },
+      {
+        "word_part": "dar",
+        "morpheme_type": "root",
+        "morpheme": "dar",
+        "morpheme_meaning": "to give"
+      },
+      {
+        "word_part": " un "
+      },
+      {
+        "word_part": "pal",
+        "morpheme_type": "root",
+        "morpheme": "pal2-",
+        "morpheme_meaning": "stick"
+      },
+      {
+        "word_part": "o"
+      },
+      {
+        "word_part": " al "
+      },
+      {
+        "word_part": "agu",
+        "morpheme_type": "root",
+        "morpheme": "aqu-",
+        "morpheme_meaning": "water"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "papa": [
+      {
+        "word_part": "pap",
+        "morpheme_type": "root",
+        "morpheme": "pap2-",
+        "morpheme_meaning": "pope"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "antepasado": [
+      {
+        "word_part": "ante",
+        "morpheme_type": "prefix",
+        "morpheme": "ante-",
+        "morpheme_meaning": "before, in front of"
+      },
+      {
+        "word_part": "pas",
+        "morpheme_type": "root",
+        "morpheme": "pas-",
+        "morpheme_meaning": "to pass; step"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "do",
+        "morpheme_type": "suffix",
+        "morpheme": "-do",
+        "morpheme_meaning": "past participle; having been"
+      }
+    ],
+    "dicho sea de paso": [
+      {
+        "word_part": "dich",
+        "morpheme_type": "root",
+        "morpheme": "dic-",
+        "morpheme_meaning": "say, tell"
+      },
+      {
+        "word_part": "o "
+      },
+      {
+        "word_part": "se",
+        "morpheme_type": "root",
+        "morpheme": "ser",
+        "morpheme_meaning": "to be"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": " de "
+      },
+      {
+        "word_part": "pas",
+        "morpheme_type": "root",
+        "morpheme": "pas-",
+        "morpheme_meaning": "to pass; step"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "marcapasos": [
+      {
+        "word_part": "marc",
+        "morpheme_type": "root",
+        "morpheme": "marc-",
+        "morpheme_meaning": "mark"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "pas",
+        "morpheme_type": "root",
+        "morpheme": "pas-",
+        "morpheme_meaning": "to pass; step"
+      },
+      {
+        "word_part": "o"
+      },
+      {
+        "word_part": "s"
+      }
+    ],
+    "no pasa nada": [
+      {
+        "word_part": "no "
+      },
+      {
+        "word_part": "pas",
+        "morpheme_type": "root",
+        "morpheme": "pas-",
+        "morpheme_meaning": "to pass; step"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": " nada"
+      }
+    ],
+    "pasado": [
+      {
+        "word_part": "pas",
+        "morpheme_type": "root",
+        "morpheme": "pas-",
+        "morpheme_meaning": "to pass; step"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "do",
+        "morpheme_type": "suffix",
+        "morpheme": "-do",
+        "morpheme_meaning": "past participle; having been"
+      }
+    ],
+    "pasar": [
+      {
+        "word_part": "pas",
+        "morpheme_type": "root",
+        "morpheme": "pas-",
+        "morpheme_meaning": "to pass; step"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "pasar la aspiradora": [
+      {
+        "word_part": "pas",
+        "morpheme_type": "root",
+        "morpheme": "pas-",
+        "morpheme_meaning": "to pass; step"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": " la "
+      },
+      {
+        "word_part": "aspir",
+        "morpheme_type": "root",
+        "morpheme": "aspir-",
+        "morpheme_meaning": "aspirate"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "dora",
+        "morpheme_type": "suffix",
+        "morpheme": "-dor",
+        "morpheme_meaning": "agent; machine"
+      }
+    ],
+    "pasar la pelota": [
+      {
+        "word_part": "pas",
+        "morpheme_type": "root",
+        "morpheme": "pas-",
+        "morpheme_meaning": "to pass; step"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": " la "
+      },
+      {
+        "word_part": "pelot",
+        "morpheme_type": "root",
+        "morpheme": "pelot-",
+        "morpheme_meaning": "ball"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "pasarlas canutas": [
+      {
+        "word_part": "pas",
+        "morpheme_type": "root",
+        "morpheme": "pas-",
+        "morpheme_meaning": "to pass; step"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": "las"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "canut",
+        "morpheme_type": "root",
+        "morpheme": "canut-",
+        "morpheme_meaning": "canuto/canuta"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "s"
+      }
+    ],
+    "pasarlo bien": [
+      {
+        "word_part": "pas",
+        "morpheme_type": "root",
+        "morpheme": "pas-",
+        "morpheme_meaning": "to pass; step"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": "lo"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "bien",
+        "morpheme_type": "root",
+        "morpheme": "bien",
+        "morpheme_meaning": "well"
+      }
+    ],
+    "pasarlo bomba": [
+      {
+        "word_part": "pas",
+        "morpheme_type": "root",
+        "morpheme": "pas-",
+        "morpheme_meaning": "to pass; step"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": "lo"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "bomb",
+        "morpheme_type": "root",
+        "morpheme": "bomb-",
+        "morpheme_meaning": "pump"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "pasarse de la raya": [
+      {
+        "word_part": "pas",
+        "morpheme_type": "root",
+        "morpheme": "pas-",
+        "morpheme_meaning": "to pass; step"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": "se"
+      },
+      {
+        "word_part": " de "
+      },
+      {
+        "word_part": "la "
+      },
+      {
+        "word_part": "ray",
+        "morpheme_type": "root",
+        "morpheme": "ray-",
+        "morpheme_meaning": "line"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "pasillo": [
+      {
+        "word_part": "pas",
+        "morpheme_type": "root",
+        "morpheme": "pas-",
+        "morpheme_meaning": "to pass; step"
+      },
+      {
+        "word_part": "illo",
+        "morpheme_type": "suffix",
+        "morpheme": "-illo",
+        "morpheme_meaning": "diminutive"
+      }
+    ],
+    "paso": [
+      {
+        "word_part": "pas",
+        "morpheme_type": "root",
+        "morpheme": "pas-",
+        "morpheme_meaning": "to pass; step"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "paso de cebra": [
+      {
+        "word_part": "pas",
+        "morpheme_type": "root",
+        "morpheme": "pas-",
+        "morpheme_meaning": "to pass; step"
+      },
+      {
+        "word_part": "o"
+      },
+      {
+        "word_part": " de "
+      },
+      {
+        "word_part": "cebr",
+        "morpheme_type": "root",
+        "morpheme": "cebr-",
+        "morpheme_meaning": "zebra"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "que lo pases bien": [
+      {
+        "word_part": "que "
+      },
+      {
+        "word_part": "lo "
+      },
+      {
+        "word_part": "pas",
+        "morpheme_type": "root",
+        "morpheme": "pas-",
+        "morpheme_meaning": "to pass; step"
+      },
+      {
+        "word_part": "es"
+      },
+      {
+        "word_part": " bien",
+        "morpheme_type": "root",
+        "morpheme": "bien",
+        "morpheme_meaning": "well"
+      }
+    ],
+    "repasar": [
+      {
+        "word_part": "re",
+        "morpheme_type": "prefix",
+        "morpheme": "re-",
+        "morpheme_meaning": "again, back; intensive"
+      },
+      {
+        "word_part": "pas",
+        "morpheme_type": "root",
+        "morpheme": "pas-",
+        "morpheme_meaning": "to pass; step"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "salir del paso": [
+      {
+        "word_part": "sal",
+        "morpheme_type": "root",
+        "morpheme": "sal3-",
+        "morpheme_meaning": "go out, leave"
+      },
+      {
+        "word_part": "ir"
+      },
+      {
+        "word_part": " del "
+      },
+      {
+        "word_part": "pas",
+        "morpheme_type": "root",
+        "morpheme": "pas-",
+        "morpheme_meaning": "to pass; step"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "sobrepasar": [
+      {
+        "word_part": "sobre",
+        "morpheme_type": "prefix",
+        "morpheme": "sobre-",
+        "morpheme_meaning": "over, above, excessive",
+        "is_separable": false
+      },
+      {
+        "word_part": "pas",
+        "morpheme_type": "root",
+        "morpheme": "pas-",
+        "morpheme_meaning": "to pass; step"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "pastor": [
+      {
+        "word_part": "past",
+        "morpheme_type": "root",
+        "morpheme": "past2-",
+        "morpheme_meaning": "to feed, graze"
+      },
+      {
+        "word_part": "or",
+        "morpheme_type": "suffix",
+        "morpheme": "-or",
+        "morpheme_meaning": "state, quality; agent"
+      }
+    ],
+    "meter la pata": [
+      {
+        "word_part": "met",
+        "morpheme_type": "prefix",
+        "morpheme": "meta-",
+        "morpheme_meaning": "beyond; change"
+      },
+      {
+        "word_part": "er"
+      },
+      {
+        "word_part": " la "
+      },
+      {
+        "word_part": "pat",
+        "morpheme_type": "root",
+        "morpheme": "pat2-",
+        "morpheme_meaning": "foot"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "patoso": [
+      {
+        "word_part": "pat",
+        "morpheme_type": "root",
+        "morpheme": "pat2-",
+        "morpheme_meaning": "foot"
+      },
+      {
+        "word_part": "oso",
+        "morpheme_type": "suffix",
+        "morpheme": "-oso",
+        "morpheme_meaning": "full of, having"
+      }
+    ],
+    "pagar el pato": [
+      {
+        "word_part": "pag",
+        "morpheme_type": "root",
+        "morpheme": "pag-",
+        "morpheme_meaning": "pay"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": " el "
+      },
+      {
+        "word_part": "pat",
+        "morpheme_type": "root",
+        "morpheme": "pat3-",
+        "morpheme_meaning": "duck"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "pato": [
+      {
+        "word_part": "pat",
+        "morpheme_type": "root",
+        "morpheme": "pat3-",
+        "morpheme_meaning": "duck"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "piedad": [
+      {
+        "word_part": "pie",
+        "morpheme_type": "root",
+        "morpheme": "pie-",
+        "morpheme_meaning": "pity, piety"
+      },
+      {
+        "word_part": "dad",
+        "morpheme_type": "suffix",
+        "morpheme": "-dad",
+        "morpheme_meaning": "quality, state"
+      }
+    ],
+    "ir al pelo": [
+      {
+        "word_part": "ir",
+        "morpheme_type": "root",
+        "morpheme": "ir",
+        "morpheme_meaning": "to go"
+      },
+      {
+        "word_part": " al "
+      },
+      {
+        "word_part": "pel",
+        "morpheme_type": "root",
+        "morpheme": "pel2-",
+        "morpheme_meaning": "hair"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "no tener pelos en la lengua": [
+      {
+        "word_part": "no "
+      },
+      {
+        "word_part": "ten",
+        "morpheme_type": "root",
+        "morpheme": "ten-",
+        "morpheme_meaning": "hold"
+      },
+      {
+        "word_part": "er"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "pel",
+        "morpheme_type": "root",
+        "morpheme": "pel2-",
+        "morpheme_meaning": "hair"
+      },
+      {
+        "word_part": "o"
+      },
+      {
+        "word_part": "s"
+      },
+      {
+        "word_part": " en"
+      },
+      {
+        "word_part": " la "
+      },
+      {
+        "word_part": "lengu",
+        "morpheme_type": "root",
+        "morpheme": "lengu-",
+        "morpheme_meaning": "tongue, language"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "no tener un pelo de tonto": [
+      {
+        "word_part": "no "
+      },
+      {
+        "word_part": "ten",
+        "morpheme_type": "root",
+        "morpheme": "ten-",
+        "morpheme_meaning": "hold"
+      },
+      {
+        "word_part": "er"
+      },
+      {
+        "word_part": " un "
+      },
+      {
+        "word_part": "pel",
+        "morpheme_type": "root",
+        "morpheme": "pel2-",
+        "morpheme_meaning": "hair"
+      },
+      {
+        "word_part": "o"
+      },
+      {
+        "word_part": " de "
+      },
+      {
+        "word_part": "tont",
+        "morpheme_type": "root",
+        "morpheme": "tont-",
+        "morpheme_meaning": "silly, stupid"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "pelar": [
+      {
+        "word_part": "pel",
+        "morpheme_type": "root",
+        "morpheme": "pel2-",
+        "morpheme_meaning": "hair"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "pelo": [
+      {
+        "word_part": "pel",
+        "morpheme_type": "root",
+        "morpheme": "pel2-",
+        "morpheme_meaning": "hair"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "por los pelos": [
+      {
+        "word_part": "por"
+      },
+      {
+        "word_part": " los "
+      },
+      {
+        "word_part": "pel",
+        "morpheme_type": "root",
+        "morpheme": "pel2-",
+        "morpheme_meaning": "hair"
+      },
+      {
+        "word_part": "o"
+      },
+      {
+        "word_part": "s"
+      }
+    ],
+    "tomar el pelo": [
+      {
+        "word_part": "tom",
+        "morpheme_type": "root",
+        "morpheme": "tom-",
+        "morpheme_meaning": "take"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": " el "
+      },
+      {
+        "word_part": "pel",
+        "morpheme_type": "root",
+        "morpheme": "pel2-",
+        "morpheme_meaning": "hair"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "despedir": [
+      {
+        "word_part": "des",
+        "morpheme_type": "prefix",
+        "morpheme": "des-",
+        "morpheme_meaning": "negation, reversal, apart"
+      },
+      {
+        "word_part": "ped",
+        "morpheme_type": "root",
+        "morpheme": "ped2-",
+        "morpheme_meaning": "foot"
+      },
+      {
+        "word_part": "ir"
+      }
+    ],
+    "despedirse": [
+      {
+        "word_part": "des",
+        "morpheme_type": "prefix",
+        "morpheme": "des-",
+        "morpheme_meaning": "negation, reversal, apart"
+      },
+      {
+        "word_part": "ped",
+        "morpheme_type": "root",
+        "morpheme": "ped2-",
+        "morpheme_meaning": "foot"
+      },
+      {
+        "word_part": "ir"
+      },
+      {
+        "word_part": "se"
+      }
+    ],
+    "peto": [
+      {
+        "word_part": "pet",
+        "morpheme_type": "root",
+        "morpheme": "pet2-",
+        "morpheme_meaning": "chest"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "piñón": [
+      {
+        "word_part": "piñ",
+        "morpheme_type": "root",
+        "morpheme": "piñ2-",
+        "morpheme_meaning": "pine (tree), pine cone"
+      },
+      {
+        "word_part": "ón",
+        "morpheme_type": "suffix",
+        "morpheme": "-ón",
+        "morpheme_meaning": "augmentative; tending to"
+      }
+    ],
+    "cortapisa": [
+      {
+        "word_part": "cort",
+        "morpheme_type": "root",
+        "morpheme": "cort-",
+        "morpheme_meaning": "cut"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "pis",
+        "morpheme_type": "root",
+        "morpheme": "pis2-",
+        "morpheme_meaning": "to step, tread"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "pisto": [
+      {
+        "word_part": "pist",
+        "morpheme_type": "root",
+        "morpheme": "pist2-",
+        "morpheme_meaning": "to crush, grind"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "placa solar": [
+      {
+        "word_part": "plac",
+        "morpheme_type": "root",
+        "morpheme": "plac2-",
+        "morpheme_meaning": "plate, flat piece"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "sol",
+        "morpheme_type": "root",
+        "morpheme": "sol2-",
+        "morpheme_meaning": "sun"
+      },
+      {
+        "word_part": "ar",
+        "morpheme_type": "suffix",
+        "morpheme": "-al1",
+        "morpheme_meaning": "relating to (adjective)"
+      }
+    ],
+    "aplastante": [
+      {
+        "word_part": "a",
+        "morpheme_type": "prefix",
+        "morpheme": "a1-",
+        "morpheme_meaning": "to, toward (verb-forming)",
+        "is_separable": false
+      },
+      {
+        "word_part": "plast",
+        "morpheme_type": "root",
+        "morpheme": "plast2-",
+        "morpheme_meaning": "flat, broad"
+      },
+      {
+        "word_part": "ante",
+        "morpheme_type": "suffix",
+        "morpheme": "-ante",
+        "morpheme_meaning": "one who does; doing (agent, adj.)"
+      }
+    ],
+    "plata": [
+      {
+        "word_part": "plat",
+        "morpheme_type": "root",
+        "morpheme": "plat2-",
+        "morpheme_meaning": "silver"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "a corto plazo": [
+      {
+        "word_part": "a "
+      },
+      {
+        "word_part": "cort",
+        "morpheme_type": "root",
+        "morpheme": "cort-",
+        "morpheme_meaning": "cut"
+      },
+      {
+        "word_part": "o "
+      },
+      {
+        "word_part": "plaz",
+        "morpheme_type": "root",
+        "morpheme": "plaz2-",
+        "morpheme_meaning": "term, deadline"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "a largo plazo": [
+      {
+        "word_part": "a "
+      },
+      {
+        "word_part": "larg",
+        "morpheme_type": "root",
+        "morpheme": "larg-",
+        "morpheme_meaning": "long"
+      },
+      {
+        "word_part": "o"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "plaz",
+        "morpheme_type": "root",
+        "morpheme": "plaz2-",
+        "morpheme_meaning": "term, deadline"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "plazo": [
+      {
+        "word_part": "plaz",
+        "morpheme_type": "root",
+        "morpheme": "plaz2-",
+        "morpheme_meaning": "term, deadline"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "plazo de entrega": [
+      {
+        "word_part": "plaz",
+        "morpheme_type": "root",
+        "morpheme": "plaz2-",
+        "morpheme_meaning": "term, deadline"
+      },
+      {
+        "word_part": "o"
+      },
+      {
+        "word_part": " de "
+      },
+      {
+        "word_part": "entreg",
+        "morpheme_type": "root",
+        "morpheme": "entreg-",
+        "morpheme_meaning": "hand over, deliver"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "extrapolar": [
+      {
+        "word_part": "extra",
+        "morpheme_type": "prefix",
+        "morpheme": "extra-",
+        "morpheme_meaning": "outside, beyond"
+      },
+      {
+        "word_part": "pol",
+        "morpheme_type": "root",
+        "morpheme": "pol2-",
+        "morpheme_meaning": "to polish, smooth"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "polo": [
+      {
+        "word_part": "pol",
+        "morpheme_type": "root",
+        "morpheme": "pol3-",
+        "morpheme_meaning": "ball"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "desprender": [
+      {
+        "word_part": "des",
+        "morpheme_type": "prefix",
+        "morpheme": "des-",
+        "morpheme_meaning": "negation, reversal, apart"
+      },
+      {
+        "word_part": "prend",
+        "morpheme_type": "root",
+        "morpheme": "prend2-",
+        "morpheme_meaning": "seize, grasp"
+      },
+      {
+        "word_part": "er"
+      }
+    ],
+    "desprendimiento": [
+      {
+        "word_part": "des",
+        "morpheme_type": "prefix",
+        "morpheme": "des-",
+        "morpheme_meaning": "negation, reversal, apart"
+      },
+      {
+        "word_part": "prend",
+        "morpheme_type": "root",
+        "morpheme": "prend2-",
+        "morpheme_meaning": "seize, grasp"
+      },
+      {
+        "word_part": "i"
+      },
+      {
+        "word_part": "miento",
+        "morpheme_type": "suffix",
+        "morpheme": "-miento",
+        "morpheme_meaning": "action, result"
+      }
+    ],
+    "emprendedor": [
+      {
+        "word_part": "em",
+        "morpheme_type": "prefix",
+        "morpheme": "en-",
+        "morpheme_meaning": "in, into; to make (verb-forming)",
+        "is_separable": false
+      },
+      {
+        "word_part": "prend",
+        "morpheme_type": "root",
+        "morpheme": "prend2-",
+        "morpheme_meaning": "seize, grasp"
+      },
+      {
+        "word_part": "e"
+      },
+      {
+        "word_part": "dor",
+        "morpheme_type": "suffix",
+        "morpheme": "-dor",
+        "morpheme_meaning": "agent; machine"
+      }
+    ],
+    "emprendimiento": [
+      {
+        "word_part": "em",
+        "morpheme_type": "prefix",
+        "morpheme": "en-",
+        "morpheme_meaning": "in, into; to make (verb-forming)",
+        "is_separable": false
+      },
+      {
+        "word_part": "prend",
+        "morpheme_type": "root",
+        "morpheme": "prend2-",
+        "morpheme_meaning": "seize, grasp"
+      },
+      {
+        "word_part": "i"
+      },
+      {
+        "word_part": "miento",
+        "morpheme_type": "suffix",
+        "morpheme": "-miento",
+        "morpheme_meaning": "action, result"
+      }
+    ],
+    "prendar": [
+      {
+        "word_part": "prend",
+        "morpheme_type": "root",
+        "morpheme": "prend2-",
+        "morpheme_meaning": "seize, grasp"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "prima": [
+      {
+        "word_part": "prim",
+        "morpheme_type": "root",
+        "morpheme": "prim2-",
+        "morpheme_meaning": "cousin"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "primo": [
+      {
+        "word_part": "prim",
+        "morpheme_type": "root",
+        "morpheme": "prim2-",
+        "morpheme_meaning": "cousin"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "jurisprudencia": [
+      {
+        "word_part": "juris",
+        "morpheme_type": "root",
+        "morpheme": "jur-",
+        "morpheme_meaning": "law, right; swear"
+      },
+      {
+        "word_part": "prud",
+        "morpheme_type": "root",
+        "morpheme": "prud2-",
+        "morpheme_meaning": "law"
+      },
+      {
+        "word_part": "encia",
+        "morpheme_type": "suffix",
+        "morpheme": "-ancia",
+        "morpheme_meaning": "state, quality, action"
+      }
+    ],
+    "aeropuerto": [
+      {
+        "word_part": "aer",
+        "morpheme_type": "root",
+        "morpheme": "aer-",
+        "morpheme_meaning": "air"
+      },
+      {
+        "word_part": "o"
+      },
+      {
+        "word_part": "puert",
+        "morpheme_type": "root",
+        "morpheme": "puert2-",
+        "morpheme_meaning": "port, harbour"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "puerto": [
+      {
+        "word_part": "puert",
+        "morpheme_type": "root",
+        "morpheme": "puert2-",
+        "morpheme_meaning": "port, harbour"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "de rompe y rasga": [
+      {
+        "word_part": "de "
+      },
+      {
+        "word_part": "romp",
+        "morpheme_type": "root",
+        "morpheme": "rupt-",
+        "morpheme_meaning": "break"
+      },
+      {
+        "word_part": "e"
+      },
+      {
+        "word_part": " y "
+      },
+      {
+        "word_part": "rasg",
+        "morpheme_type": "root",
+        "morpheme": "rasg2-",
+        "morpheme_meaning": "tear, rip"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "rasgar": [
+      {
+        "word_part": "rasg",
+        "morpheme_type": "root",
+        "morpheme": "rasg2-",
+        "morpheme_meaning": "tear, rip"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "rasgarse las vestiduras": [
+      {
+        "word_part": "rasg",
+        "morpheme_type": "root",
+        "morpheme": "rasg2-",
+        "morpheme_meaning": "tear, rip"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": "se"
+      },
+      {
+        "word_part": " las "
+      },
+      {
+        "word_part": "vestidur",
+        "morpheme_type": "root",
+        "morpheme": "vestidur-",
+        "morpheme_meaning": "garment"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "s"
+      }
+    ],
+    "rastrero": [
+      {
+        "word_part": "rastrer",
+        "morpheme_type": "root",
+        "morpheme": "rastrer-",
+        "morpheme_meaning": "drag, crawl"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "reo": [
+      {
+        "word_part": "re",
+        "morpheme_type": "root",
+        "morpheme": "re2-",
+        "morpheme_meaning": "defendant, accused"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "regadera": [
+      {
+        "word_part": "reg",
+        "morpheme_type": "root",
+        "morpheme": "reg-",
+        "morpheme_meaning": "water, irrigate"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "dera",
+        "morpheme_type": "suffix",
+        "morpheme": "-dero",
+        "morpheme_meaning": "place or instrument for an action"
+      }
+    ],
+    "regar": [
+      {
+        "word_part": "reg",
+        "morpheme_type": "root",
+        "morpheme": "reg-",
+        "morpheme_meaning": "water, irrigate"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "riego": [
+      {
+        "word_part": "rieg",
+        "morpheme_type": "root",
+        "morpheme": "reg-",
+        "morpheme_meaning": "water, irrigate"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "romero": [
+      {
+        "word_part": "romer",
+        "morpheme_type": "root",
+        "morpheme": "romer2-",
+        "morpheme_meaning": "sea dew"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "entresacar": [
+      {
+        "word_part": "entre",
+        "morpheme_type": "prefix",
+        "morpheme": "entre-",
+        "morpheme_meaning": "between, partly"
+      },
+      {
+        "word_part": "sac",
+        "morpheme_type": "root",
+        "morpheme": "sac-",
+        "morpheme_meaning": "take out"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "sacar": [
+      {
+        "word_part": "sac",
+        "morpheme_type": "root",
+        "morpheme": "sac-",
+        "morpheme_meaning": "take out"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "sacar a la luz": [
+      {
+        "word_part": "sac",
+        "morpheme_type": "root",
+        "morpheme": "sac-",
+        "morpheme_meaning": "take out"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": " a "
+      },
+      {
+        "word_part": "la "
+      },
+      {
+        "word_part": "luz",
+        "morpheme_type": "root",
+        "morpheme": "luc-",
+        "morpheme_meaning": "light"
+      }
+    ],
+    "sacar a relucir": [
+      {
+        "word_part": "sac",
+        "morpheme_type": "root",
+        "morpheme": "sac-",
+        "morpheme_meaning": "take out"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": " a "
+      },
+      {
+        "word_part": "reluc",
+        "morpheme_type": "root",
+        "morpheme": "reluc-",
+        "morpheme_meaning": "shine"
+      },
+      {
+        "word_part": "ir"
+      }
+    ],
+    "sacar de quicio": [
+      {
+        "word_part": "sac",
+        "morpheme_type": "root",
+        "morpheme": "sac-",
+        "morpheme_meaning": "take out"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": " de "
+      },
+      {
+        "word_part": "quici",
+        "morpheme_type": "root",
+        "morpheme": "quici-",
+        "morpheme_meaning": "hinge, pivot"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "sacar fotos": [
+      {
+        "word_part": "sac",
+        "morpheme_type": "root",
+        "morpheme": "sac-",
+        "morpheme_meaning": "take out"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "fot",
+        "morpheme_type": "root",
+        "morpheme": "fot-",
+        "morpheme_meaning": "light"
+      },
+      {
+        "word_part": "o"
+      },
+      {
+        "word_part": "s"
+      }
+    ],
+    "sacar la basura": [
+      {
+        "word_part": "sac",
+        "morpheme_type": "root",
+        "morpheme": "sac-",
+        "morpheme_meaning": "take out"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": " la "
+      },
+      {
+        "word_part": "basur",
+        "morpheme_type": "root",
+        "morpheme": "basur-",
+        "morpheme_meaning": "rubbish, trash"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "sacar las castañas del fuego": [
+      {
+        "word_part": "sac",
+        "morpheme_type": "root",
+        "morpheme": "sac-",
+        "morpheme_meaning": "take out"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": " las "
+      },
+      {
+        "word_part": "castañ",
+        "morpheme_type": "root",
+        "morpheme": "castañ-",
+        "morpheme_meaning": "chestnut"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "s"
+      },
+      {
+        "word_part": " del "
+      },
+      {
+        "word_part": "fueg",
+        "morpheme_type": "root",
+        "morpheme": "foc-",
+        "morpheme_meaning": "hearth; focus"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "sacar los colores": [
+      {
+        "word_part": "sac",
+        "morpheme_type": "root",
+        "morpheme": "sac-",
+        "morpheme_meaning": "take out"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": " los "
+      },
+      {
+        "word_part": "color",
+        "morpheme_type": "root",
+        "morpheme": "color",
+        "morpheme_meaning": "colour"
+      },
+      {
+        "word_part": "es"
+      }
+    ],
+    "sacar partido": [
+      {
+        "word_part": "sac",
+        "morpheme_type": "root",
+        "morpheme": "sac-",
+        "morpheme_meaning": "take out"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "part",
+        "morpheme_type": "root",
+        "morpheme": "part-",
+        "morpheme_meaning": "part, share"
+      },
+      {
+        "word_part": "i"
+      },
+      {
+        "word_part": "do",
+        "morpheme_type": "suffix",
+        "morpheme": "-do",
+        "morpheme_meaning": "past participle; having been"
+      }
+    ],
+    "saco": [
+      {
+        "word_part": "sac",
+        "morpheme_type": "root",
+        "morpheme": "sac-",
+        "morpheme_meaning": "take out"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "cieno": [
+      {
+        "word_part": "cien",
+        "morpheme_type": "root",
+        "morpheme": "cien-",
+        "morpheme_meaning": "mud, filth"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "secador": [
+      {
+        "word_part": "sec",
+        "morpheme_type": "root",
+        "morpheme": "sec2-",
+        "morpheme_meaning": "dry"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "dor",
+        "morpheme_type": "suffix",
+        "morpheme": "-dor",
+        "morpheme_meaning": "agent; machine"
+      }
+    ],
+    "secar": [
+      {
+        "word_part": "sec",
+        "morpheme_type": "root",
+        "morpheme": "sec2-",
+        "morpheme_meaning": "dry"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "seco": [
+      {
+        "word_part": "sec",
+        "morpheme_type": "root",
+        "morpheme": "sec2-",
+        "morpheme_meaning": "dry"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "seda": [
+      {
+        "word_part": "sed",
+        "morpheme_type": "root",
+        "morpheme": "sed2-",
+        "morpheme_meaning": "bristle, silk"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "sedoso": [
+      {
+        "word_part": "sed",
+        "morpheme_type": "root",
+        "morpheme": "sed2-",
+        "morpheme_meaning": "bristle, silk"
+      },
+      {
+        "word_part": "oso",
+        "morpheme_type": "suffix",
+        "morpheme": "-oso",
+        "morpheme_meaning": "full of, having"
+      }
+    ],
+    "sedición": [
+      {
+        "word_part": "sed",
+        "morpheme_type": "root",
+        "morpheme": "sed3-",
+        "morpheme_meaning": "go"
+      },
+      {
+        "word_part": "i"
+      },
+      {
+        "word_part": "ción",
+        "morpheme_type": "suffix",
+        "morpheme": "-ción",
+        "morpheme_meaning": "action, result of an action"
+      }
+    ],
+    "sequía": [
+      {
+        "word_part": "sequ",
+        "morpheme_type": "root",
+        "morpheme": "sequ2-",
+        "morpheme_meaning": "dry"
+      },
+      {
+        "word_part": "ía",
+        "morpheme_type": "suffix",
+        "morpheme": "-ía",
+        "morpheme_meaning": "quality; science; office"
+      }
+    ],
+    "serie": [
+      {
+        "word_part": "seri",
+        "morpheme_type": "root",
+        "morpheme": "seri2-",
+        "morpheme_meaning": "row, chain"
+      },
+      {
+        "word_part": "e"
+      }
+    ],
+    "soler": [
+      {
+        "word_part": "sol",
+        "morpheme_type": "root",
+        "morpheme": "sol3-",
+        "morpheme_meaning": "to be accustomed, usually"
+      },
+      {
+        "word_part": "er"
+      }
+    ],
+    "estar como pez en el agua": [
+      {
+        "word_part": "est",
+        "morpheme_type": "root",
+        "morpheme": "est-",
+        "morpheme_meaning": "be"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": " como "
+      },
+      {
+        "word_part": "pez",
+        "morpheme_type": "root",
+        "morpheme": "pez",
+        "morpheme_meaning": "fish"
+      },
+      {
+        "word_part": " en "
+      },
+      {
+        "word_part": "el "
+      },
+      {
+        "word_part": "agu",
+        "morpheme_type": "root",
+        "morpheme": "aqu-",
+        "morpheme_meaning": "water"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "pez": [
+      {
+        "word_part": "pez",
+        "morpheme_type": "root",
+        "morpheme": "pez",
+        "morpheme_meaning": "fish"
+      }
+    ],
+    "pez gordo": [
+      {
+        "word_part": "pez",
+        "morpheme_type": "root",
+        "morpheme": "pez",
+        "morpheme_meaning": "fish"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "gord",
+        "morpheme_type": "root",
+        "morpheme": "gord-",
+        "morpheme_meaning": "fat"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "impecable": [
+      {
+        "word_part": "im",
+        "morpheme_type": "prefix",
+        "morpheme": "in2-",
+        "morpheme_meaning": "not"
+      },
+      {
+        "word_part": "pec",
+        "morpheme_type": "root",
+        "morpheme": "pec-",
+        "morpheme_meaning": "sin, fault"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "ble",
+        "morpheme_type": "suffix",
+        "morpheme": "-ble",
+        "morpheme_meaning": "able to be, -able"
+      }
+    ],
+    "peca": [
+      {
+        "word_part": "pec",
+        "morpheme_type": "root",
+        "morpheme": "pec-",
+        "morpheme_meaning": "sin, fault"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "pecado": [
+      {
+        "word_part": "pec",
+        "morpheme_type": "root",
+        "morpheme": "pec-",
+        "morpheme_meaning": "sin, fault"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "do",
+        "morpheme_type": "suffix",
+        "morpheme": "-do",
+        "morpheme_meaning": "past participle; having been"
+      }
+    ],
+    "sumamente": [
+      {
+        "word_part": "sum",
+        "morpheme_type": "root",
+        "morpheme": "sum2-",
+        "morpheme_meaning": "highest, top"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "mente",
+        "morpheme_type": "suffix",
+        "morpheme": "-mente",
+        "morpheme_meaning": "-ly (adverb-forming)"
+      }
+    ],
+    "sumar": [
+      {
+        "word_part": "sum",
+        "morpheme_type": "root",
+        "morpheme": "sum2-",
+        "morpheme_meaning": "highest, top"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "tallo": [
+      {
+        "word_part": "tall",
+        "morpheme_type": "root",
+        "morpheme": "tall2-",
+        "morpheme_meaning": "stem, shoot"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "taxista": [
+      {
+        "word_part": "tax",
+        "morpheme_type": "root",
+        "morpheme": "tax2-",
+        "morpheme_meaning": "taxi, cab"
+      },
+      {
+        "word_part": "ista",
+        "morpheme_type": "suffix",
+        "morpheme": "-ista",
+        "morpheme_meaning": "person who practises, follower"
+      }
+    ],
+    "arquitecto": [
+      {
+        "word_part": "arqui",
+        "morpheme_type": "prefix",
+        "morpheme": "archi-",
+        "morpheme_meaning": "chief, highest"
+      },
+      {
+        "word_part": "tect",
+        "morpheme_type": "root",
+        "morpheme": "tect-",
+        "morpheme_meaning": "build, construct"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "tema": [
+      {
+        "word_part": "tem",
+        "morpheme_type": "root",
+        "morpheme": "tem-",
+        "morpheme_meaning": "subject, topic"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "vaca": [
+      {
+        "word_part": "vac",
+        "morpheme_type": "root",
+        "morpheme": "vac2-",
+        "morpheme_meaning": "cow"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "ahogarse en un vaso de agua": [
+      {
+        "word_part": "ahog",
+        "morpheme_type": "root",
+        "morpheme": "ahog-",
+        "morpheme_meaning": "drown, suffocate"
+      },
+      {
+        "word_part": "ar"
+      },
+      {
+        "word_part": "se"
+      },
+      {
+        "word_part": " en"
+      },
+      {
+        "word_part": " un "
+      },
+      {
+        "word_part": "vas",
+        "morpheme_type": "root",
+        "morpheme": "vas-",
+        "morpheme_meaning": "vessel, container"
+      },
+      {
+        "word_part": "o"
+      },
+      {
+        "word_part": " de "
+      },
+      {
+        "word_part": "agu",
+        "morpheme_type": "root",
+        "morpheme": "aqu-",
+        "morpheme_meaning": "water"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "envase": [
+      {
+        "word_part": "en",
+        "morpheme_type": "prefix",
+        "morpheme": "en-",
+        "morpheme_meaning": "in, into; to make (verb-forming)",
+        "is_separable": false
+      },
+      {
+        "word_part": "vas",
+        "morpheme_type": "root",
+        "morpheme": "vas-",
+        "morpheme_meaning": "vessel, container"
+      },
+      {
+        "word_part": "e"
+      }
+    ],
+    "posavasos": [
+      {
+        "word_part": "pos",
+        "morpheme_type": "root",
+        "morpheme": "pon-",
+        "morpheme_meaning": "put, place"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "vas",
+        "morpheme_type": "root",
+        "morpheme": "vas-",
+        "morpheme_meaning": "vessel, container"
+      },
+      {
+        "word_part": "o"
+      },
+      {
+        "word_part": "s"
+      }
+    ],
+    "ser la gota que colma el vaso": [
+      {
+        "word_part": "ser",
+        "morpheme_type": "root",
+        "morpheme": "ser",
+        "morpheme_meaning": "to be"
+      },
+      {
+        "word_part": " la "
+      },
+      {
+        "word_part": "got",
+        "morpheme_type": "root",
+        "morpheme": "got-",
+        "morpheme_meaning": "drop"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": " que "
+      },
+      {
+        "word_part": "colm",
+        "morpheme_type": "root",
+        "morpheme": "colm-",
+        "morpheme_meaning": "to fill"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": " el "
+      },
+      {
+        "word_part": "vas",
+        "morpheme_type": "root",
+        "morpheme": "vas-",
+        "morpheme_meaning": "vessel, container"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "vaso": [
+      {
+        "word_part": "vas",
+        "morpheme_type": "root",
+        "morpheme": "vas-",
+        "morpheme_meaning": "vessel, container"
+      },
+      {
+        "word_part": "o"
+      }
+    ],
+    "vejación": [
+      {
+        "word_part": "vej",
+        "morpheme_type": "root",
+        "morpheme": "vej2-",
+        "morpheme_meaning": "to vex, trouble"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "ción",
+        "morpheme_type": "suffix",
+        "morpheme": "-ción",
+        "morpheme_meaning": "action, result of an action"
+      }
+    ],
+    "vena": [
+      {
+        "word_part": "ven",
+        "morpheme_type": "root",
+        "morpheme": "ven2-",
+        "morpheme_meaning": "vein"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "venda": [
+      {
+        "word_part": "vend",
+        "morpheme_type": "root",
+        "morpheme": "vend2-",
+        "morpheme_meaning": "bandage"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "vendar": [
+      {
+        "word_part": "vend",
+        "morpheme_type": "root",
+        "morpheme": "vend2-",
+        "morpheme_meaning": "bandage"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "vetado": [
+      {
+        "word_part": "vet",
+        "morpheme_type": "root",
+        "morpheme": "vet2-",
+        "morpheme_meaning": "forbid"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "do",
+        "morpheme_type": "suffix",
+        "morpheme": "-do",
+        "morpheme_meaning": "past participle; having been"
+      }
+    ],
+    "vetar": [
+      {
+        "word_part": "vet",
+        "morpheme_type": "root",
+        "morpheme": "vet2-",
+        "morpheme_meaning": "forbid"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "viga": [
+      {
+        "word_part": "vig",
+        "morpheme_type": "root",
+        "morpheme": "vig2-",
+        "morpheme_meaning": "beam"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "viola": [
+      {
+        "word_part": "viol",
+        "morpheme_type": "root",
+        "morpheme": "viol2-",
+        "morpheme_meaning": "stringed instrument (viola)"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "a vuelapluma": [
+      {
+        "word_part": "a "
+      },
+      {
+        "word_part": "vuel",
+        "morpheme_type": "root",
+        "morpheme": "vuel-",
+        "morpheme_meaning": "fly"
+      },
+      {
+        "word_part": "a"
+      },
+      {
+        "word_part": "plum",
+        "morpheme_type": "root",
+        "morpheme": "plum-",
+        "morpheme_meaning": "feather"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "volar": [
+      {
+        "word_part": "vol",
+        "morpheme_type": "root",
+        "morpheme": "vuel-",
+        "morpheme_meaning": "fly"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "arañar": [
+      {
+        "word_part": "arañ",
+        "morpheme_type": "root",
+        "morpheme": "arañ2-",
+        "morpheme_meaning": "scratch"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "desafinar": [
+      {
+        "word_part": "des",
+        "morpheme_type": "prefix",
+        "morpheme": "des-",
+        "morpheme_meaning": "negation, reversal, apart"
+      },
+      {
+        "word_part": "afin",
+        "morpheme_type": "root",
+        "morpheme": "afin2-",
+        "morpheme_meaning": "tune"
+      },
+      {
+        "word_part": "ar"
+      }
+    ],
+    "habitual": [
+      {
+        "word_part": "habit",
+        "morpheme_type": "root",
+        "morpheme": "habitu-",
+        "morpheme_meaning": "habit, usual"
+      },
+      {
+        "word_part": "u"
+      },
+      {
+        "word_part": "al",
+        "morpheme_type": "suffix",
+        "morpheme": "-al1",
+        "morpheme_meaning": "relating to (adjective)"
+      }
+    ],
+    "prisa": [
+      {
+        "word_part": "pris",
+        "morpheme_type": "root",
+        "morpheme": "pris-",
+        "morpheme_meaning": "hurry"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "tener prisa": [
+      {
+        "word_part": "ten",
+        "morpheme_type": "root",
+        "morpheme": "ten-",
+        "morpheme_meaning": "hold"
+      },
+      {
+        "word_part": "er"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "pris",
+        "morpheme_type": "root",
+        "morpheme": "pris-",
+        "morpheme_meaning": "hurry"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "darse prisa": [
+      {
+        "word_part": "dar",
+        "morpheme_type": "root",
+        "morpheme": "dar",
+        "morpheme_meaning": "to give"
+      },
+      {
+        "word_part": "se"
+      },
+      {
+        "word_part": " "
+      },
+      {
+        "word_part": "pris",
+        "morpheme_type": "root",
+        "morpheme": "pris-",
+        "morpheme_meaning": "hurry"
+      },
+      {
+        "word_part": "a"
+      }
+    ],
+    "deprisa": [
+      {
+        "word_part": "de",
+        "morpheme_type": "prefix",
+        "morpheme": "de-",
+        "morpheme_meaning": "down, from; reversal"
+      },
+      {
+        "word_part": "pris",
+        "morpheme_type": "root",
+        "morpheme": "pris-",
+        "morpheme_meaning": "hurry"
+      },
+      {
+        "word_part": "a"
+      }
+    ]
+  },
+  "root_meanings": {
+    "deber": "owe; duty",
+    "exhaust-": "exhaust, drain",
+    "factur-": "invoice; check in (luggage)",
+    "ilustr-": "illustrate; enlighten",
+    "parsimoni-": "slowness, calm",
+    "preci-": "price, value",
+    "tir-": "throw, pull",
+    "propin-": "give (a drink / a blow)",
+    "eco": "echo, sound"
   }
 }

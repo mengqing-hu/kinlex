@@ -16,7 +16,9 @@ from config import database_host, get_settings, is_production
 from core.models import (
     AudioResult,
     AudioTarget,
+    FamilyWord,
     ReviewMetadata,
+    RootFamily,
     Segment,
     VocabularyItem,
     Word,
@@ -576,6 +578,37 @@ def update_morpheme_spellings(
         (ids, ["|".join(spellings[morpheme_id]) for morpheme_id in ids]),
     ).fetchall()
     return len(rows)
+
+
+def root_families(connection: psycopg.Connection[Any], *, language: str) -> list[RootFamily]:
+    """Every root that two or more words use, with those words and their first English meaning."""
+    rows = connection.execute(
+        """
+        select m.id, m.morpheme, m.morpheme_meaning, w.word, wm.word_part,
+               coalesce((
+                 select s.word_meaning from public.senses s
+                 where s.word_id = w.id and s.meaning_language = 'en'
+                 order by s.sort_order limit 1
+               ), '')
+        from public.morphemes m
+        join public.word_morphemes wm on wm.morpheme_id = m.id
+        join public.words w on w.id = wm.word_id
+        where m.language = %s and m.morpheme_type = 'root'
+        order by m.morpheme, w.word
+        """,
+        (language,),
+    ).fetchall()
+    families: dict[int, tuple[str, str, dict[str, FamilyWord]]] = {}
+    for morpheme_id, root, meaning, word, word_part, word_meaning in rows:
+        family = families.setdefault(int(morpheme_id), (root, meaning, {}))
+        family[2].setdefault(word, FamilyWord(word=word, word_part=word_part, meaning=word_meaning))
+    return [
+        RootFamily(
+            id=morpheme_id, root=root, meaning=meaning, listed=False, words=list(words.values())
+        )
+        for morpheme_id, (root, meaning, words) in families.items()
+        if len(words) >= 2
+    ]
 
 
 def sync_affix_meanings(

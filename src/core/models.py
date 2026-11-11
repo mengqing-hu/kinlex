@@ -190,3 +190,39 @@ class MorphemeToTranslate(Record):
     meaning: str
     # A few words that use it, which show the sense the meaning describes.
     words: list[str]
+
+
+class FamilyWord(Record):
+    word: str
+    word_part: str
+    meaning: str
+
+
+class RootFamily(Record):
+    """A root with the words that use it, for the review of word families."""
+
+    id: int
+    root: str
+    meaning: str
+    # A Latin or Greek root from the curated list, whose meaning is fixed.
+    listed: bool
+    words: list[FamilyWord]
+
+
+class RootOutlier(Record):
+    word: str
+    reason: str
+    # The stem the word should have instead, with its meaning, when the model can name one.
+    root: str | None = None
+    root_meaning: str | None = None
+
+
+class RootVerdict(Record):
+    id: int
+    outliers: list[RootOutlier] = []
+    # A better meaning for the root, when the current one does not fit the words that stay.
+    meaning: str | None = None
+
+
+class RootReviewReply(Record):
+    roots: list[RootVerdict]

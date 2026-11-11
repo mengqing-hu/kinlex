@@ -1,7 +1,7 @@
 """Hand-checked root decisions that the model gets wrong.
 
-src/lexicon/{language}_roots.json holds these lists (and, for Spanish, `etymological_roots` and
-`numbered_roots`):
+src/lexicon/{language}_roots.json holds these lists (and, for Spanish, `etymological_roots`,
+`numbered_roots` and `root_meanings`):
 
 - `overrides`: the full segmentation of an entry's stem (without its article or "sich"), keyed
   by the entry as written in the vocabulary CSV. It replaces the model's segmentation on every
@@ -64,6 +64,16 @@ def load_numbered_roots(language: str) -> AffixMeanings:
     return {
         ("root", root): meaning
         for root, meaning in _load(language).get("numbered_roots", {}).items()
+    }
+
+
+@cache
+def load_root_meanings(language: str) -> AffixMeanings:
+    """Hand-checked meanings of modern stems, which otherwise keep the meaning the first word
+    gave them: ("root", "deber") is "owe; duty"."""
+    return {
+        ("root", root): meaning
+        for root, meaning in _load(language).get("root_meanings", {}).items()
     }
 
 
