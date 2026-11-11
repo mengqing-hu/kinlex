@@ -1,4 +1,5 @@
 import { MorphemeCard, type MorphemeCardLabels } from '@/components/word/MorphemeCard'
+import { unmarkedPartClass } from '@/lib/utils/wordParts'
 import type { WordDetailSegment, WordSegment } from '@/types/domain'
 
 interface MorphemeTextProps {
@@ -22,27 +23,41 @@ export function MorphemeText({ segments, fallback, typeLabels, card }: MorphemeT
     return <span>{fallback}</span>
   }
 
+  const parts = segments.map((segment) => {
+    const morpheme = 'morpheme' in segment ? segment.morpheme : null
+    return {
+      surface: segment.surface,
+      morpheme,
+      morphemeId: morpheme?.id ?? ('morphemeId' in segment ? segment.morphemeId : null),
+      morphemeType: morpheme?.type ?? ('type' in segment ? segment.type : null),
+    }
+  })
+  const marked = parts.some(({ morphemeId, morphemeType }) => morphemeId !== null && morphemeType)
+
   return (
     <span>
-      {segments.map((segment, index) => {
-        const morpheme = 'morpheme' in segment ? segment.morpheme : null
-        const morphemeId = morpheme?.id ?? ('morphemeId' in segment ? segment.morphemeId : null)
-        const morphemeType = morpheme?.type ?? ('type' in segment ? segment.type : null)
-
+      {parts.map(({ surface, morpheme, morphemeId, morphemeType }, index) => {
         if (morphemeId === null || !morphemeType) {
-          return <span key={`${index}-${segment.surface}`}>{segment.surface}</span>
+          return (
+            <span className={marked ? unmarkedPartClass : undefined} key={`${index}-${surface}`}>
+              {surface}
+            </span>
+          )
         }
 
         const decoratedSegment = (
           <span
             className={`underline decoration-dotted decoration-2 underline-offset-4 transition-[text-decoration-style] hover:decoration-solid ${typeClasses[morphemeType] ?? 'decoration-[var(--info)]'}`}
+            // The hover card already names the part; a tooltip would sit on top of it.
             title={
-              morpheme
-                ? `${typeLabels[morphemeType] ?? morphemeType}: ${morpheme.meaning}`
-                : (typeLabels[morphemeType] ?? morphemeType)
+              card
+                ? undefined
+                : morpheme
+                  ? `${typeLabels[morphemeType] ?? morphemeType}: ${morpheme.meaning}`
+                  : (typeLabels[morphemeType] ?? morphemeType)
             }
           >
-            {segment.surface}
+            {surface}
           </span>
         )
 
@@ -51,12 +66,12 @@ export function MorphemeText({ segments, fallback, typeLabels, card }: MorphemeT
             language={card.language}
             morphemeId={morphemeId}
             labels={card.labels}
-            key={`${index}-${segment.surface}`}
+            key={`${index}-${surface}`}
           >
             {decoratedSegment}
           </MorphemeCard>
         ) : (
-          <span key={`${index}-${segment.surface}`}>{decoratedSegment}</span>
+          <span key={`${index}-${surface}`}>{decoratedSegment}</span>
         )
       })}
     </span>

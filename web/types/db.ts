@@ -714,6 +714,7 @@ export type Database = {
       }
       words: {
         Row: {
+          article: string | null
           created_at: string
           freq_rank: number | null
           gender: string | null
@@ -732,6 +733,7 @@ export type Database = {
           word_class_detail: string | null
         }
         Insert: {
+          article?: string | null
           created_at?: string
           freq_rank?: number | null
           gender?: string | null
@@ -750,6 +752,7 @@ export type Database = {
           word_class_detail?: string | null
         }
         Update: {
+          article?: string | null
           created_at?: string
           freq_rank?: number | null
           gender?: string | null

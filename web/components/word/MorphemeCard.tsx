@@ -8,6 +8,8 @@ import { MorphemeLabel } from '@/components/word/MorphemeLabel'
 import { Link } from '@/i18n/navigation'
 import { fetchApiData } from '@/lib/client/apiClient'
 import { openWordPanelOnClick } from '@/lib/client/searchParams'
+import { formatPartOfSpeech } from '@/lib/utils/partOfSpeech'
+import { unmarkedPartClass } from '@/lib/utils/wordParts'
 import { getWordPanelPath } from '@/lib/wordPanel'
 import type { MorphemeWordCollection } from '@/types/domain'
 
@@ -128,7 +130,7 @@ export function MorphemeCard({ children, language, morphemeId, labels }: Morphem
             </p>
             {state.data.words.length > 0 ? (
               <ul className="mt-2 space-y-1">
-                {state.data.words.map((word) => (
+                {state.data.words.map((word, _index, words) => (
                   <li key={word.id}>
                     <Link
                       className="flex items-baseline justify-between gap-3 rounded-md px-2 py-1 text-sm hover:bg-[var(--bg)] focus-visible:outline-2 focus-visible:outline-[var(--info)]"
@@ -147,10 +149,26 @@ export function MorphemeCard({ children, language, morphemeId, labels }: Morphem
                                   {segment.surface}
                                 </span>
                               ) : (
-                                <span key={`${index}-${segment.surface}`}>{segment.surface}</span>
+                                <span
+                                  className={
+                                    segment.morphemeId === null ? unmarkedPartClass : undefined
+                                  }
+                                  key={`${index}-${segment.surface}`}
+                                >
+                                  {segment.surface}
+                                </span>
                               ),
                             )
                           : word.lemma}
+                        {/* Two entries spelled alike, such as familiar the noun and the
+                            adjective, are told apart by their word class. */}
+                        {words.some(
+                          (other) => other.id !== word.id && other.lemma === word.lemma,
+                        ) ? (
+                          <span className="ml-1.5 text-[11px] font-normal text-[var(--mute)]">
+                            {formatPartOfSpeech(labels.partsOfSpeech, word.pos, null)}
+                          </span>
+                        ) : null}
                       </span>
                       <span className="text-right text-xs text-[var(--mute)]">
                         {word.glosses.join(', ')}

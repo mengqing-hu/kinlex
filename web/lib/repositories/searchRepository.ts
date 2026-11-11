@@ -1,6 +1,7 @@
 import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js'
 
 import { RepositoryError } from '@/lib/errors'
+import { withArticle } from '@/lib/repositories/article'
 import { pickGlosses } from '@/lib/repositories/meaningLanguage'
 import type { Database } from '@/types/db'
 import type { SearchResult } from '@/types/domain'
@@ -29,7 +30,7 @@ export async function findSearchResults(
   const { data: words, error: wordsError } = await db
     .from('words')
     .select(
-      'id, slug, lemma:word, pos:word_class, posDetail:word_class_detail, gender, level, senses(gloss:word_meaning, gloss_language:meaning_language, sort_order)',
+      'id, slug, lemma:word, article, pos:word_class, posDetail:word_class_detail, gender, level, senses(gloss:word_meaning, gloss_language:meaning_language, sort_order)',
     )
     .in('id', wordIds)
   assertQuerySucceeded(wordsError, 'load search results')
@@ -41,6 +42,14 @@ export async function findSearchResults(
 
     const gloss = pickGlosses(word.senses, explainLanguage)[0]
 
-    return [{ ...word, senses: undefined, gloss: gloss ?? null }]
+    const { article, ...fields } = word
+    return [
+      {
+        ...fields,
+        lemma: withArticle(word.lemma, article),
+        senses: undefined,
+        gloss: gloss ?? null,
+      },
+    ]
   })
 }

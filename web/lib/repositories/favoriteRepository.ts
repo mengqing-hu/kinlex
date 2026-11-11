@@ -1,6 +1,7 @@
 import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js'
 
 import { RepositoryError } from '@/lib/errors'
+import { withArticle } from '@/lib/repositories/article'
 import type { Database } from '@/types/db'
 import type { FavoriteWord } from '@/types/domain'
 
@@ -15,7 +16,7 @@ export async function findFavorites(
   const { data, error } = await db
     .from('user_word_state')
     .select(
-      'words!inner(id, slug, lemma:word, pos:word_class, posDetail:word_class_detail, gender, level, freq_rank)',
+      'words!inner(id, slug, lemma:word, article, pos:word_class, posDetail:word_class_detail, gender, level, freq_rank)',
     )
     .eq('user_id', userId)
     .eq('favorited', true)
@@ -32,7 +33,7 @@ export async function findFavorites(
     .map((word) => ({
       id: word.id,
       slug: word.slug,
-      lemma: word.lemma,
+      lemma: withArticle(word.lemma, word.article),
       pos: word.pos,
       posDetail: word.posDetail,
       gender: word.gender,

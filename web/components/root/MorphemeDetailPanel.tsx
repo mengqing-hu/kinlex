@@ -10,6 +10,7 @@ import { fetchApiData } from '@/lib/client/apiClient'
 import { openWordPanelOnClick } from '@/lib/client/searchParams'
 import { morphemeLabelText } from '@/lib/utils/homograph'
 import { formatPartOfSpeech } from '@/lib/utils/partOfSpeech'
+import { unmarkedPartClass } from '@/lib/utils/wordParts'
 import { getWordPanelPath } from '@/lib/wordPanel'
 import type { MorphemeDirectoryItem, MorphemeWord, MorphemeWordCollection } from '@/types/domain'
 
@@ -140,7 +141,9 @@ export function MorphemeDetailPanel({
                                   className={
                                     segment.morphemeId === morpheme.id
                                       ? (morphemeColors[morpheme.type] ?? '')
-                                      : ''
+                                      : segment.morphemeId === null
+                                        ? unmarkedPartClass
+                                        : ''
                                   }
                                   key={`${index}-${segment.surface}`}
                                 >

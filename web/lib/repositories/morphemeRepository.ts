@@ -1,6 +1,7 @@
 import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js'
 
 import { RepositoryError } from '@/lib/errors'
+import { withArticle, withArticlePart } from '@/lib/repositories/article'
 import { pickGlosses, pickMorphemeMeaning } from '@/lib/repositories/meaningLanguage'
 import type { Database } from '@/types/db'
 import type { MorphemeDirectoryItem, MorphemeWordCollection } from '@/types/domain'
@@ -54,7 +55,7 @@ export async function findMorphemeWords(
   const { data: words, error: wordsError } = await db
     .from('words')
     .select(
-      'id, slug, lemma:word, pos:word_class, posDetail:word_class_detail, gender, level, word_morphemes(position, surface:word_part, morpheme_id, morphemes(type:morpheme_type)), senses(gloss:word_meaning, gloss_language:meaning_language, sort_order)',
+      'id, slug, lemma:word, article, pos:word_class, posDetail:word_class_detail, gender, level, word_morphemes(position, surface:word_part, morpheme_id, morphemes(type:morpheme_type)), senses(gloss:word_meaning, gloss_language:meaning_language, sort_order)',
     )
     .eq('language', language)
     .in('id', wordIds)
@@ -65,15 +66,20 @@ export async function findMorphemeWords(
   assertQuerySucceeded(wordsError, 'load morpheme words')
   return {
     morpheme,
-    words: (words ?? []).map(({ senses, word_morphemes, ...word }) => ({
+    words: (words ?? []).map(({ senses, word_morphemes, article, ...word }) => ({
       ...word,
-      segments: word_morphemes
-        .toSorted((left, right) => left.position - right.position)
-        .map((segment) => ({
-          surface: segment.surface,
-          morphemeId: segment.morpheme_id,
-          type: segment.morphemes?.type ?? null,
-        })),
+      lemma: withArticle(word.lemma, article),
+      segments: withArticlePart(
+        word_morphemes
+          .toSorted((left, right) => left.position - right.position)
+          .map((segment) => ({
+            surface: segment.surface,
+            morphemeId: segment.morpheme_id,
+            type: segment.morphemes?.type ?? null,
+          })),
+        article,
+        (surface) => ({ surface, morphemeId: null, type: null }),
+      ),
       glosses: pickGlosses(senses, explainLanguage),
     })),
   }

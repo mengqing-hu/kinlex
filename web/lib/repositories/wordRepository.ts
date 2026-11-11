@@ -1,6 +1,7 @@
 import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js'
 
 import { RepositoryError } from '@/lib/errors'
+import { withArticle, withArticlePart } from '@/lib/repositories/article'
 import {
   getMeaningLanguages,
   pickGlosses,
@@ -19,6 +20,7 @@ import type {
   RelatedWord,
   WordDetail,
   WordDetailExample,
+  WordDetailSegment,
   WordExample,
   WordFilterCounts,
   WordFilterOptions,
@@ -305,7 +307,7 @@ function queryWordRows(
   let query = db
     .from('words')
     .select(
-      'id, slug, lemma:word, pos:word_class, posDetail:word_class_detail, gender, level, freq_rank, word_morphemes(position, surface:word_part, morpheme_id, morphemes(type:morpheme_type)), senses(gloss:word_meaning, gloss_language:meaning_language, sort_order)',
+      'id, slug, lemma:word, article, pos:word_class, posDetail:word_class_detail, gender, level, freq_rank, word_morphemes(position, surface:word_part, morpheme_id, morphemes(type:morpheme_type)), senses(gloss:word_meaning, gloss_language:meaning_language, sort_order)',
     )
     .eq('language', params.lang)
     .order('freq_rank', { ascending: true, nullsFirst: false })
@@ -355,19 +357,23 @@ async function toWordListItems(
   ])
 
   return rows.map<WordListItem>((word) => {
-    const segments: WordSegment[] = word.word_morphemes
-      .toSorted((left, right) => left.position - right.position)
-      .map((segment) => ({
-        surface: segment.surface,
-        morphemeId: segment.morpheme_id,
-        type: segment.morphemes?.type ?? null,
-      }))
+    const segments: WordSegment[] = withArticlePart(
+      word.word_morphemes
+        .toSorted((left, right) => left.position - right.position)
+        .map((segment) => ({
+          surface: segment.surface,
+          morphemeId: segment.morpheme_id,
+          type: segment.morphemes?.type ?? null,
+        })),
+      word.article,
+      (surface) => ({ surface, morphemeId: null, type: null }),
+    )
     const glosses = pickGlosses(word.senses, explainLanguage)
 
     return {
       id: word.id,
       slug: word.slug,
-      lemma: word.lemma,
+      lemma: withArticle(word.lemma, word.article),
       pos: word.pos,
       posDetail: word.posDetail,
       gender: word.gender,
@@ -724,7 +730,7 @@ async function findRelatedWords(
   const { data: words, error: wordsError } = await db
     .from('words')
     .select(
-      'id, slug, lemma:word, pos:word_class, posDetail:word_class_detail, gender, level, senses(gloss:word_meaning, gloss_language:meaning_language, sort_order)',
+      'id, slug, lemma:word, article, pos:word_class, posDetail:word_class_detail, gender, level, senses(gloss:word_meaning, gloss_language:meaning_language, sort_order)',
     )
     .eq('language', language)
     .in('id', relatedWordIds)
@@ -746,7 +752,7 @@ async function findRelatedWords(
   return (words ?? []).map((word) => ({
     id: word.id,
     slug: word.slug,
-    lemma: word.lemma,
+    lemma: withArticle(word.lemma, word.article),
     pos: word.pos,
     posDetail: word.posDetail,
     gender: word.gender,
@@ -767,7 +773,7 @@ export async function findWordBySlug(
   const { data: word, error } = await db
     .from('words')
     .select(
-      'id, slug, lemma:word, pos:word_class, posDetail:word_class_detail, gender, plural, level, word_morphemes(position, surface:word_part, morpheme_id, morphemes(id, slug, text:morpheme, spellings, type:morpheme_type, meaning:morpheme_meaning, separable:is_separable, morpheme_meanings(meaning))), senses(gloss:word_meaning, gloss_language:meaning_language, sort_order)',
+      'id, slug, lemma:word, article, pos:word_class, posDetail:word_class_detail, gender, plural, level, word_morphemes(position, surface:word_part, morpheme_id, morphemes(id, slug, text:morpheme, spellings, type:morpheme_type, meaning:morpheme_meaning, separable:is_separable, morpheme_meanings(meaning))), senses(gloss:word_meaning, gloss_language:meaning_language, sort_order)',
     )
     .eq('language', language)
     .eq('slug', slug)
@@ -796,32 +802,36 @@ export async function findWordBySlug(
     word: {
       id: word.id,
       slug: word.slug,
-      lemma: word.lemma,
+      lemma: withArticle(word.lemma, word.article),
       pos: word.pos,
       posDetail: word.posDetail,
       gender: word.gender,
       plural: word.plural,
       level: word.level,
       glosses: pickGlosses(word.senses, explainLanguage),
-      segments: word.word_morphemes
-        .toSorted((left, right) => left.position - right.position)
-        .map((segment) => ({
-          surface: segment.surface,
-          morpheme: segment.morphemes
-            ? {
-                id: segment.morphemes.id,
-                slug: segment.morphemes.slug,
-                text: segment.morphemes.text,
-                spellings: segment.morphemes.spellings ?? [],
-                type: segment.morphemes.type,
-                meaning: pickMorphemeMeaning(
-                  segment.morphemes.meaning,
-                  segment.morphemes.morpheme_meanings,
-                ),
-                separable: segment.morphemes.separable,
-              }
-            : null,
-        })),
+      segments: withArticlePart<WordDetailSegment>(
+        word.word_morphemes
+          .toSorted((left, right) => left.position - right.position)
+          .map((segment) => ({
+            surface: segment.surface,
+            morpheme: segment.morphemes
+              ? {
+                  id: segment.morphemes.id,
+                  slug: segment.morphemes.slug,
+                  text: segment.morphemes.text,
+                  spellings: segment.morphemes.spellings ?? [],
+                  type: segment.morphemes.type,
+                  meaning: pickMorphemeMeaning(
+                    segment.morphemes.meaning,
+                    segment.morphemes.morpheme_meanings,
+                  ),
+                  separable: segment.morphemes.separable,
+                }
+              : null,
+          })),
+        word.article,
+        (surface) => ({ surface, morpheme: null }),
+      ),
       examples,
       relatedWords,
       audioUrl: getAudioUrl(audioByWordId.get(word.id)),
