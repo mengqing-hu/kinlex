@@ -434,6 +434,19 @@ async function findSortedWordIds(
   return data ?? []
 }
 
+// The slug of each published word among the ids; ids of other words are left out.
+export async function findWordSlugs(
+  db: SupabaseClient<Database>,
+  wordIds: number[],
+): Promise<Map<number, string>> {
+  if (wordIds.length === 0) {
+    return new Map()
+  }
+  const { data, error } = await db.from('words').select('id, slug').in('id', wordIds)
+  assertQuerySucceeded(error, 'load word slugs')
+  return new Map((data ?? []).map((word) => [word.id, word.slug]))
+}
+
 // Every word the list's filters match, in no particular order.
 export async function findAllWordIds(
   db: SupabaseClient<Database>,

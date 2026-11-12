@@ -6,13 +6,19 @@
     "roots": "Word parts",
     "flashcards": "Flashcards",
     "favorites": "Favorites",
+    "videos": "Video study",
+    "videoLibrary": "Video library",
     "signIn": "Sign in",
     "account": "Account",
     "mainNavigation": "Main navigation",
     "collapseSidebar": "Collapse sidebar",
     "expandSidebar": "Expand sidebar",
     "openMenu": "Open menu",
-    "closeMenu": "Close menu"
+    "closeMenu": "Close menu",
+    "videoOptions": "Video options",
+    "renameVideo": "Rename",
+    "deleteVideo": "Delete",
+    "deleteVideoConfirm": "Delete “{title}”? The video and its captions are removed from this computer."
   },
   "footer": {
     "description": "Learn words through their connections.",
@@ -290,5 +296,40 @@
   "notFound": {
     "title": "Page not found",
     "description": "The page you requested does not exist."
+  },
+  "videoPage": {
+    "addTitle": "Add a video",
+    "addIntro": "Paste a YouTube link. Kinlex downloads the video, takes its captions or transcribes its speech, translates every sentence, and links each word to its meaning. Processing runs on this computer.",
+    "link": "YouTube link",
+    "linkPlaceholder": "https://www.youtube.com/watch?v=…",
+    "invalidLink": "This is not a link to a YouTube video.",
+    "videoLanguage": "Language spoken",
+    "meaningLanguage": "Explain in",
+    "start": "Start processing",
+    "captions": "Captions",
+    "original": "Original",
+    "translation": "Translation",
+    "inThisVideo": "In this video",
+    "playSentence": "Play sentence",
+    "dictionaryForm": "Dictionary form",
+    "notInVocabulary": "This word is not in the Kinlex vocabulary yet.",
+    "searchWords": "Search words",
+    "noMatches": "No words match.",
+    "searchHint": "Search the vocabulary, or click a word in the captions.",
+    "inVocabulary": "In the vocabulary",
+    "similarSpelling": "Spelled alike",
+    "processing": "Processing",
+    "stages": {
+      "metadata": "Reading the video",
+      "download": "Downloading the video",
+      "text": "Reading captions or transcribing speech",
+      "translation": "Translating sentences",
+      "meanings": "Explaining words",
+      "timing": "Timing words"
+    },
+    "failed": "Processing failed",
+    "stopped": "Processing stopped before it finished.",
+    "retry": "Try again",
+    "startFailed": "The website could not start processing. The server log says why."
   }
 }

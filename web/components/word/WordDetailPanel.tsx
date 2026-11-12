@@ -46,11 +46,13 @@ const morphemeColors: Record<string, string> = {
 // headings and dividers, and inline lists instead of cards, so the narrow column reads at a glance.
 function PanelWord({
   actions,
+  context,
   language,
   labels,
   word,
 }: {
   actions: ReactNode
+  context: ReactNode
   language: string
   labels: WordPanelLabels
   word: WordDetail
@@ -92,6 +94,8 @@ function PanelWord({
         </div>
         <p className="mt-0.5 text-xs text-[var(--mute)]">{meta.join(' · ')}</p>
       </header>
+
+      {context}
 
       <section>
         <h3 className={panelSectionLabelClass}>{labels.meaning}</h3>
@@ -199,6 +203,13 @@ interface WordDetailPanelProps {
   slug: string
   labels: WordPanelLabels
   onClose: () => void
+  // Shown under the word's header, such as the sentence the word was picked from.
+  context?: ReactNode
+  // Defaults to the interface language.
+  explainLanguage?: string
+  // Shown above the word and kept in view, such as a search box.
+  header?: ReactNode
+  persistent?: boolean
 }
 
 interface PanelState {
@@ -207,8 +218,18 @@ interface PanelState {
   error: boolean
 }
 
-export function WordDetailPanel({ language, slug, labels, onClose }: WordDetailPanelProps) {
-  const explainLanguage = useLocale()
+export function WordDetailPanel({
+  language,
+  slug,
+  labels,
+  onClose,
+  context,
+  explainLanguage: explainLanguageProp,
+  header,
+  persistent,
+}: WordDetailPanelProps) {
+  const locale = useLocale()
+  const explainLanguage = explainLanguageProp ?? locale
   const [state, setState] = useState<PanelState>({ slug: '', word: null, error: false })
   const [retryVersion, setRetryVersion] = useState(0)
   const bodyRef = useRef<HTMLDivElement>(null)
@@ -240,7 +261,13 @@ export function WordDetailPanel({ language, slug, labels, onClose }: WordDetailP
   const closeButton = <PanelCloseButton label={labels.close} onClose={onClose} />
 
   return (
-    <SidePanel busy={isLoading} label={word?.lemma ?? labels.loading} onClose={onClose}>
+    <SidePanel
+      busy={isLoading}
+      label={word?.lemma ?? labels.loading}
+      persistent={persistent}
+      onClose={onClose}
+    >
+      {header}
       {word ? null : (
         <div className="flex h-12 shrink-0 items-center justify-end border-b border-[var(--line)] px-2">
           {closeButton}
@@ -249,7 +276,13 @@ export function WordDetailPanel({ language, slug, labels, onClose }: WordDetailP
 
       <div className="flex-1 overflow-y-auto px-4 pt-3 pb-4" ref={bodyRef}>
         {word ? (
-          <PanelWord actions={closeButton} language={language} labels={labels} word={word} />
+          <PanelWord
+            actions={closeButton}
+            context={context}
+            language={language}
+            labels={labels}
+            word={word}
+          />
         ) : !isLoading && state.error ? (
           <div className="py-12 text-center">
             <p className="text-[var(--mute)]">{labels.loadError}</p>

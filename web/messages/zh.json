@@ -6,13 +6,19 @@
     "roots": "构词成分",
     "flashcards": "单词卡",
     "favorites": "收藏",
+    "videos": "视频学习",
+    "videoLibrary": "视频库",
     "signIn": "登录",
     "account": "账户",
     "mainNavigation": "主导航",
     "collapseSidebar": "收起侧边栏",
     "expandSidebar": "展开侧边栏",
     "openMenu": "打开菜单",
-    "closeMenu": "关闭菜单"
+    "closeMenu": "关闭菜单",
+    "videoOptions": "视频选项",
+    "renameVideo": "重命名",
+    "deleteVideo": "删除",
+    "deleteVideoConfirm": "删除“{title}”？视频和字幕会从这台电脑上移除。"
   },
   "footer": {
     "description": "通过词与词之间的联系来学习单词。",
@@ -316,5 +322,40 @@
   "notFound": {
     "title": "页面不存在",
     "description": "你访问的页面不存在。"
+  },
+  "videoPage": {
+    "addTitle": "添加视频",
+    "addIntro": "粘贴一个 YouTube 链接。Kinlex 会下载视频，读取字幕（没有字幕时转录语音），翻译每一句，并把每个词和它的释义关联起来。处理在这台电脑上进行。",
+    "link": "YouTube 链接",
+    "linkPlaceholder": "https://www.youtube.com/watch?v=…",
+    "invalidLink": "这不是 YouTube 视频链接。",
+    "videoLanguage": "视频语言",
+    "meaningLanguage": "解释语言",
+    "start": "开始处理",
+    "captions": "字幕",
+    "original": "原文",
+    "translation": "译文",
+    "inThisVideo": "视频中的用法",
+    "playSentence": "播放这一句",
+    "dictionaryForm": "原形",
+    "notInVocabulary": "这个词还不在 Kinlex 词库中。",
+    "searchWords": "搜索单词",
+    "noMatches": "没有找到匹配的单词。",
+    "searchHint": "搜索词库，或点击字幕中的单词。",
+    "inVocabulary": "词库",
+    "similarSpelling": "拼写相近",
+    "processing": "正在处理",
+    "stages": {
+      "metadata": "读取视频信息",
+      "download": "下载视频",
+      "text": "读取字幕或转录语音",
+      "translation": "翻译句子",
+      "meanings": "解释单词",
+      "timing": "对齐单词时间"
+    },
+    "failed": "处理失败",
+    "stopped": "处理在完成前中断了。",
+    "retry": "重试",
+    "startFailed": "网站没能启动处理，原因见服务器日志。"
   }
 }
