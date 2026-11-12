@@ -10,7 +10,7 @@ providers:
     model: tts-1-hd
     fallback: null
     fallback_voice: null
-    voices: { de: alloy }
+    voices: { de: alloy, es: alloy }
     instructions: {}
 llm_concurrency: 4
 tts_concurrency: 4

@@ -3,14 +3,17 @@
 #
 #     src/scripts/run_batches.sh 10 14
 #     src/scripts/run_batches.sh 1 21 es --force
+#     KINLEX_COMMAND=audio src/scripts/run_batches.sh 1 21 es
 #
 # The optional third argument is the language (de by default); anything after it is passed on to
 # the pipeline. A German batch gets its database fields, its audio and its review files
 # (`prepare`). A Spanish batch gets its fields and review files only (`fields`), since audio
-# follows once every word is segmented. Each batch then gets a list of segmentations worth a look.
+# follows once every word is segmented. KINLEX_COMMAND picks another pipeline command, such as
+# audio for the Spanish audio. Each batch whose words were segmented then gets a list of
+# segmentations worth a look.
 # A batch with failures is noted in the log and the next one still runs; its failed words can be
 # retried by running the same batch again. Everything goes to
-# data/pipeline/<language>/logs/batches_<first>-<last>.out.
+# data/pipeline/<language>/logs/batches_<first>-<last>.out (audio_batches_… with KINLEX_COMMAND=audio).
 
 set -u
 
@@ -28,10 +31,11 @@ case "$language" in
   es) command=fields; vocabulary=spanish ;;
   *) echo "unknown language: $language" >&2; exit 2 ;;
 esac
+command=${KINLEX_COMMAND:-$command}
 
 cd "$(dirname "$0")/.."
 mkdir -p "../data/pipeline/$language/logs"
-log="../data/pipeline/$language/logs/batches_${first}-${last}.out"
+log="../data/pipeline/$language/logs/${KINLEX_COMMAND:+${KINLEX_COMMAND}_}batches_${first}-${last}.out"
 
 for batch in $(seq "$first" "$last"); do
   echo "=== batch $batch start $(date) ==="
@@ -42,7 +46,9 @@ for batch in $(seq "$first" "$last"); do
     "$@"; then
     echo "!!! batch $batch had failures"
   fi
-  .venv/bin/python -m scripts.check_morphology --language "$language" \
-    --output "../data/output/$language/morphology_issues_batch_$(printf '%04d' "$batch").md"
+  if [ "$command" != audio ]; then
+    .venv/bin/python -m scripts.check_morphology --language "$language" \
+      --output "../data/output/$language/morphology_issues_batch_$(printf '%04d' "$batch").md"
+  fi
   echo "=== batch $batch done $(date) ==="
 done 2>&1 | tee -a "$log"

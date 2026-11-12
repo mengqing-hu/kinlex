@@ -363,15 +363,17 @@ def audio_targets_for_words(
     rows = connection.execute(
         f"""
         with selected as (
-          select w.id, w.language, w.word, w.gender from public.words w
+          select w.id, w.language, w.word, w.gender, w.article from public.words w
           where w.language = %s
             and w.source = 'vocabulary_csv'
             and w.status in ('draft', 'in_review', 'published')
             {selected_filter}
           order by w.id limit %s
         ), targets as (
+          -- A Spanish noun is read with its article, as German nouns are ("der Mann"); a noun
+          -- used with both takes the first, since "el la estudiante" is not said.
           select 'word'::text owner_type, s.id owner_id, s.language,
-                 s.word text,
+                 coalesce(split_part(s.article, '/', 1) || ' ', '') || s.word text,
                  s.id word_id, s.gender from selected s
           union all
           select 'example', e.id, e.language, e.example_sentence, s.id, null
