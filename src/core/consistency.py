@@ -17,9 +17,9 @@ from dataclasses import dataclass
 from core.models import Segment, Word
 
 # The model sometimes writes a part in its root's spelling ("Wort" inside "Wörterbuch", "frio"
-# inside "enfriar"). Folding umlauts and accents keeps lengths, so parts can still be sliced from
-# the entry's own letters.
-_DIACRITICS = str.maketrans("äöüáéíóú", "aouaeiou")
+# inside "enfriar", "mão" inside "manual"). Folding umlauts, accents, tildes and the cedilla keeps
+# lengths, so parts can still be sliced from the entry's own letters.
+_DIACRITICS = str.maketrans("äöüáéíóúâêôãõàç", "aouaeiouaeoaoac")
 
 
 def spelling_key(text: str) -> str:

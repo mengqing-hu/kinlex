@@ -5,9 +5,10 @@ from pathlib import Path
 
 import httpx
 
-from config import REPO_ROOT, get_config, get_settings
+from config import get_config, get_settings
 from core.annotation import annotate_examples
 from core.consistency import ConsistencyResult
+from core.languages import LANGUAGES, language_profile
 from core.models import Segment
 from core.pipeline import (
     TaskResult,
@@ -23,8 +24,6 @@ from core.translation import translate_meanings
 from services.clients import revalidate_website
 from utils.runtime import get_logger
 
-DEFAULT_INPUT = REPO_ROOT / "data" / "vocabulary" / "german" / "german.csv"
-DEFAULT_OUTPUT_DIR = REPO_ROOT / "data" / "output" / "de"
 DEFAULT_BATCH_SIZE = 500
 
 
@@ -32,15 +31,13 @@ def _add_common_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--input",
         type=Path,
-        default=DEFAULT_INPUT,
-        help=f"source CSV; defaults to {DEFAULT_INPUT}",
+        help="source CSV; defaults to data/vocabulary/<name>/<name>.csv for --language",
     )
-    parser.add_argument("--language", default="de", help="ISO language code")
+    parser.add_argument("--language", default="de", choices=sorted(LANGUAGES))
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=DEFAULT_OUTPUT_DIR,
-        help=f"review export directory; defaults to {DEFAULT_OUTPUT_DIR}",
+        help="review export directory; defaults to data/output/<language>",
     )
     parser.add_argument("--limit", type=int, help="process at most N CSV rows")
     parser.add_argument("--batch", type=int, help="one-based batch number")
@@ -143,6 +140,9 @@ def _revalidate(processed: int) -> None:
 
 def main() -> int:
     args = _parser().parse_args()
+    profile = language_profile(args.language)
+    args.input = args.input or profile.vocabulary_path
+    args.output_dir = args.output_dir or profile.output_dir
     if not args.input.is_file():
         raise FileNotFoundError(f"vocabulary CSV does not exist: {args.input}")
 

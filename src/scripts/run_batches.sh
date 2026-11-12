@@ -3,13 +3,14 @@
 #
 #     src/scripts/run_batches.sh 10 14
 #     src/scripts/run_batches.sh 1 21 es --force
+#     src/scripts/run_batches.sh 1 19 pt
 #     KINLEX_COMMAND=audio src/scripts/run_batches.sh 1 21 es
 #
 # The optional third argument is the language (de by default); anything after it is passed on to
 # the pipeline. A German batch gets its database fields, its audio and its review files
-# (`prepare`). A Spanish batch gets its fields and review files only (`fields`), since audio
-# follows once every word is segmented. KINLEX_COMMAND picks another pipeline command, such as
-# audio for the Spanish audio. Each batch whose words were segmented then gets a list of
+# (`prepare`). A Spanish or Portuguese batch gets its fields and review files only (`fields`),
+# since audio follows once every word is segmented. KINLEX_COMMAND picks another pipeline command,
+# such as audio for the Spanish audio. Each batch whose words were segmented then gets a list of
 # segmentations worth a look.
 # A batch with failures is noted in the log and the next one still runs; its failed words can be
 # retried by running the same batch again. Everything goes to
@@ -29,6 +30,7 @@ shift $(($# < 3 ? $# : 3))
 case "$language" in
   de) command=prepare; vocabulary=german ;;
   es) command=fields; vocabulary=spanish ;;
+  pt) command=fields; vocabulary=portuguese ;;
   *) echo "unknown language: $language" >&2; exit 2 ;;
 esac
 command=${KINLEX_COMMAND:-$command}

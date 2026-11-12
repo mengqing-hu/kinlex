@@ -21,6 +21,7 @@ from core.consistency import (
     spelling_key,
     split_lead,
 )
+from core.languages import gender_from_label, language_profile
 from core.meaning_languages import language_name
 from core.models import AudioResult, AudioTarget, Segment, Word, WordEnrichment
 from core.verb_stems import use_verb_stems, verb_infinitives
@@ -69,14 +70,6 @@ from utils.vocabulary import read_vocabulary
 _FENCE = re.compile(r"^```(?:json)?\s*|\s*```$", re.MULTILINE)
 _ARTICLE = re.compile(r"^(?:der|die|das) (?=\S)")
 _REFLEXIVE = re.compile(r"^sich (?=\S)")
-PROMPTS = {"de": "word_enrichment_v2", "es": "word_enrichment_es_v2"}
-
-
-def enrichment_prompt(language: str) -> str:
-    try:
-        return PROMPTS[language]
-    except KeyError as error:
-        raise ValueError(f"no word enrichment prompt for language {language!r}") from error
 
 
 class PipelineError(RuntimeError):
@@ -148,8 +141,8 @@ def _spells(part: str, form: str, *, more_follow: bool) -> bool:
 
 
 def validate_affix_spelling(segments: list[Segment], forms: EntryForms) -> None:
-    """A Spanish affix part is written with one of its entry's spellings: "ante" for -ante, never
-    "iante"; "im" for in2-, whose spellings are in-, im-, i- and ir-."""
+    """A Spanish or Portuguese affix part is written with one of its entry's spellings: "ante"
+    for -ante, never "iante"; "im" for in2-, whose spellings are in-, im-, i- and ir-."""
     for index, segment in enumerate(segments):
         if segment.morpheme_type in (None, "root") or segment.morpheme is None:
             continue
@@ -159,18 +152,18 @@ def validate_affix_spelling(segments: list[Segment], forms: EntryForms) -> None:
             raise ValidationError(f"{segment.word_part!r} is not spelled like {segment.morpheme!r}")
 
 
-_VOWELS = frozenset("aeiouáéíóú")
+_VOWELS = frozenset("aeiouáéíóúâêôãõà")
 
 
 def tidy_segments(segments: list[Segment], language: str) -> list[Segment]:
-    """Settle the Spanish layouts the model writes either way before they are checked.
+    """Settle the stem layouts the model writes either way before they are checked.
 
     A part named by one of its spellings takes its entry's name, when only one entry has that
     spelling: dia- is di-. A linking vowel the model kept on a suffix becomes its own null part, so
     the suffix is spelled as listed: "ación" for -ción is "a" + "ción". An entry made only of
     function words (desde que) is one null part.
     """
-    if language != "es":
+    if not language_profile(language).stems:
         return segments
     if len(segments) > 1 and all(segment.morpheme_type is None for segment in segments):
         return [Segment(word_part="".join(segment.word_part for segment in segments))]
@@ -206,7 +199,7 @@ def validate_enrichment(
     segments = tidy_segments(segments, language)
     validate_segments(stem, segments)
     validate_lexicon_forms(segments, meanings, spelling_owners(language))
-    if language == "es":
+    if language_profile(language).stems:
         validate_affix_spelling(segments, lexicon_forms(language))
 
 
@@ -245,14 +238,15 @@ def postprocess_stem(
 
 
 def apply_source_metadata(
-    enrichment: WordEnrichment, *, lead: str, word_class: str, label: str
+    enrichment: WordEnrichment, *, lead: str, word_class: str, label: str, language: str
 ) -> WordEnrichment:
     """Set what the CSV already states instead of trusting the model with it.
 
     A German entry's article gives a noun's gender ("Nomen (Pl.)" entries have none). Spanish
-    entries have no article, so a noun keeps the gender and article the model gave; other word
-    classes have neither. "Verb (trennbar)" marks a separable verb: its first part, when that part
-    is a prefix, separates; every other verb prefix does not (vorbereiten: vor- separable, be- not).
+    entries have no article, so a noun keeps the gender and article the model gave. A Portuguese
+    label states the gender ("substantivo f."), which settles the article. Other word classes have
+    neither. "Verb (trennbar)" marks a separable verb: its first part, when that part is a prefix,
+    separates; every other verb prefix does not (vorbereiten: vor- separable, be- not).
     """
     gender: str | None = enrichment.gender
     article: str | None = enrichment.article
@@ -260,6 +254,8 @@ def apply_source_metadata(
         gender, article = None, None
     elif lead:
         gender, article = (None if "Pl." in label else lead.strip()), None
+    elif language_profile(language).gender_source == "label":
+        gender, article = gender_from_label(label) or (None, None)
     segments = list(enrichment.segments)
     separable = "trennbar" in label
     first_typed = next((i for i, s in enumerate(segments) if s.morpheme_type is not None), None)
@@ -422,7 +418,7 @@ def generate_database_fields(
     if not words:
         summary.write()
         return TaskResult(0, 0)
-    prompt_name = enrichment_prompt(language)
+    prompt_name = language_profile(language).prompt
     prompt = read_prompt(prompt_name)
     system = f"You are a careful {language_name(language)} dictionary editor. Reply with JSON only."
     tables = {
@@ -474,7 +470,7 @@ def generate_database_fields(
                 }
             )
             enrichment = apply_source_metadata(
-                enrichment, lead=lead, word_class=word.word_class, label=label
+                enrichment, lead=lead, word_class=word.word_class, label=label, language=language
             )
             with db.connect() as connection, connection.transaction():
                 db.replace_word_enrichment(
@@ -508,6 +504,7 @@ def apply_root_consistency(*, language: str, dry_run: bool = False) -> Consisten
     """
     affixes = lexicon_meanings(language)
     overrides = load_root_overrides(language)
+    stems = language_profile(language).stems
     with db.connect() as connection, connection.transaction():
         stored = db.segmented_words(connection, language=language)
         verbs = verb_infinitives([word for word, _segments in stored])
@@ -519,8 +516,8 @@ def apply_root_consistency(*, language: str, dry_run: bool = False) -> Consisten
                 word, stem, tidy_segments(body, language), affixes=affixes, overrides=overrides
             )
             # German verb roots are named by the infinitive and renamed to the stem here; Spanish
-            # stems come from the model already.
-            if language == "de":
+            # and Portuguese stems come from the model already.
+            if not stems:
                 body = use_verb_stems(word, body, verbs)
             updated.append((word, lead + body))
         result = make_roots_consistent(updated)
@@ -596,7 +593,7 @@ def generate_tts_audio(
     input_path: Path | None = None,
 ) -> TaskResult:
     setup_logging("tts_audio", language)
-    accent = "de-DE" if language == "de" else language
+    accent = language_profile(language).accent
     summary = RunSummary("tts_audio", language)
     with db.connect() as connection:
         selected_word_ids: list[int] | None = None

@@ -31,11 +31,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from config import REPO_ROOT
+from core.languages import LANGUAGES, language_profile
 from utils.affixes import LEXICON_ROOT
 
-# The vocabulary folder of each language that has a curated CSV.
-VOCABULARY = {"es": "spanish", "pt": "portuguese"}
+# The languages whose roots and affixes come from a curated CSV.
+CURATED = tuple(code for code, profile in LANGUAGES.items() if profile.stems)
 
 _CATEGORIES = ("prefix", "suffix", "root")
 _NO_VARIANTS = {"", "—", "-"}
@@ -196,15 +196,14 @@ def report(
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Build a language's lexicon JSON from its CSV.")
-    parser.add_argument("--language", choices=sorted(VOCABULARY), default="es")
+    parser.add_argument("--language", choices=CURATED, default="es")
     parser.add_argument("--input", type=Path)
     parser.add_argument("--report", type=Path)
     args = parser.parse_args()
-    language, vocabulary = args.language, VOCABULARY[args.language]
-    input_path = args.input or (
-        REPO_ROOT / "data" / "vocabulary" / vocabulary / f"{vocabulary}_roots_affixes.csv"
-    )
-    report_path = args.report or REPO_ROOT / "data" / "output" / language / "lexicon_report.md"
+    profile = language_profile(args.language)
+    language, vocabulary = profile.code, profile.vocabulary
+    input_path = args.input or profile.vocabulary_path.with_name(f"{vocabulary}_roots_affixes.csv")
+    report_path = args.report or profile.output_dir / "lexicon_report.md"
     affixes_path = LEXICON_ROOT / f"{language}_affixes.json"
     roots_path = LEXICON_ROOT / f"{language}_roots.json"
     rows, malformed = read_rows(input_path, f"{vocabulary}_example")

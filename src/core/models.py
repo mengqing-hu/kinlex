@@ -56,10 +56,14 @@ class Segment(Record):
 
 class WordEnrichment(Record):
     # German stores the article the CSV gives (der, die, das); Spanish asks the model for the
-    # gender, with "m/f" for nouns used with both articles (el/la estudiante).
+    # gender, with "m/f" for nouns used with both articles (el/la estudiante); Portuguese takes it
+    # from the CSV label.
     gender: Literal["der", "die", "das", "m", "f", "m/f"] | None = None
-    # The article shown before a Spanish noun, which the gender does not settle: el agua is "f".
-    article: Literal["el", "la", "el/la", "los", "las"] | None = None
+    # The article shown before a Spanish or Portuguese noun. The gender does not settle a Spanish
+    # one (el agua is "f"); a Portuguese one follows from the label.
+    article: (
+        Literal["el", "la", "el/la", "los", "las", "o", "a", "o/a", "os", "as", "os/as"] | None
+    ) = None
     plural: str | None = None
     segments: list[Segment]
 
