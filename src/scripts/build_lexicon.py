@@ -1,8 +1,9 @@
-"""Build the Spanish affix and etymological root dictionaries from the curated CSV.
+"""Build a language's affix and etymological root dictionaries from its curated CSV.
 
-Run from src/ whenever data/vocabulary/spanish/spanish_roots_affixes.csv changes:
+Run from src/ whenever data/vocabulary/<language>/<language>_roots_affixes.csv changes:
 
-    python -m scripts.build_es_lexicon
+    python -m scripts.build_lexicon --language es
+    python -m scripts.build_lexicon --language pt
 
 Every row becomes one entry: one meaning and all the spellings the row lists in `entry` and
 `variants`. A word's part keeps the letters it has in the word, and the entry is named after the
@@ -10,14 +11,14 @@ row's first spelling, so imposible is "im" under in- (not), together with incapa
 website lists the spellings the words use, most used first.
 
 Rows whose first spellings share their letters are numbered in row order, kept inside the hyphen
-so prefixes still end with "-": a1- (to, toward), a2- (not). Spanish morphemes never contain
-digits, so the number cannot be mistaken for a letter. A Latin or Greek root also gets a number
-when a hand-numbered modern stem in `numbered_roots` shares its letters (cap1- take, cap2- cape);
-the modern stems take the numbers after the rows'. The report lists the numbered entries, the
-spellings several entries share, and every malformed spelling.
+so prefixes still end with "-": a1- (to, toward), a2- (not). Spanish and Portuguese morphemes
+never contain digits, so the number cannot be mistaken for a letter. A Latin or Greek root also
+gets a number when a hand-numbered modern stem in `numbered_roots` shares its letters (cap1- take,
+cap2- cape); the modern stems take the numbers after the rows'. The report lists the numbered
+entries, the spellings several entries share, and every malformed spelling.
 
-Only the generated keys are rewritten: `prefix` and `suffix` in lexicon/es_affixes.json and
-`etymological_roots` in lexicon/es_roots.json. Hand-edited keys such as `overrides` and
+Only the generated keys are rewritten: `prefix` and `suffix` in lexicon/<code>_affixes.json and
+`etymological_roots` in lexicon/<code>_roots.json. Hand-edited keys such as `overrides` and
 `numbered_roots` are kept.
 """
 
@@ -33,10 +34,8 @@ from typing import Any
 from config import REPO_ROOT
 from utils.affixes import LEXICON_ROOT
 
-DEFAULT_INPUT = REPO_ROOT / "data" / "vocabulary" / "spanish" / "spanish_roots_affixes.csv"
-DEFAULT_REPORT = REPO_ROOT / "data" / "output" / "es" / "lexicon_report.md"
-AFFIXES_PATH = LEXICON_ROOT / "es_affixes.json"
-ROOTS_PATH = LEXICON_ROOT / "es_roots.json"
+# The vocabulary folder of each language that has a curated CSV.
+VOCABULARY = {"es": "spanish", "pt": "portuguese"}
 
 _CATEGORIES = ("prefix", "suffix", "root")
 _NO_VARIANTS = {"", "—", "-"}
@@ -67,7 +66,7 @@ def number_homograph(category: str, form: str, number: int) -> str:
     return f"{form}{mark}" if category == "suffix" else f"{form[:-1]}{mark}-"
 
 
-def read_rows(path: Path) -> tuple[list[Row], list[str]]:
+def read_rows(path: Path, example_column: str) -> tuple[list[Row], list[str]]:
     rows: list[Row] = []
     malformed: list[str] = []
     with path.open(encoding="utf-8-sig", newline="") as file:
@@ -95,7 +94,7 @@ def read_rows(path: Path) -> tuple[list[Row], list[str]]:
                         category=category,
                         forms=tuple(kept),
                         meaning=row["english_meaning"].strip(),
-                        example=row["spanish_example"].strip(),
+                        example=row[example_column].strip(),
                     )
                 )
     return rows, malformed
@@ -148,6 +147,7 @@ def _update_json(path: Path, generated: dict[str, Any]) -> None:
 
 
 def report(
+    title: str,
     entries: dict[str, dict[str, Any]],
     homographs: dict[tuple[str, str], list[tuple[str, Row]]],
     clashes: list[str],
@@ -155,7 +155,7 @@ def report(
 ) -> str:
     shared = shared_spellings(entries)
     lines = [
-        "# Spanish lexicon review",
+        f"# {title} lexicon review",
         "",
         ", ".join(f"{len(entries[category])} {category} entries" for category in _CATEGORIES) + ".",
         "",
@@ -195,23 +195,33 @@ def report(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Build the Spanish lexicon JSON from the CSV.")
-    parser.add_argument("--input", type=Path, default=DEFAULT_INPUT)
-    parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
+    parser = argparse.ArgumentParser(description="Build a language's lexicon JSON from its CSV.")
+    parser.add_argument("--language", choices=sorted(VOCABULARY), default="es")
+    parser.add_argument("--input", type=Path)
+    parser.add_argument("--report", type=Path)
     args = parser.parse_args()
-    rows, malformed = read_rows(args.input)
-    roots_data = json.loads(ROOTS_PATH.read_text(encoding="utf-8")) if ROOTS_PATH.is_file() else {}
+    language, vocabulary = args.language, VOCABULARY[args.language]
+    input_path = args.input or (
+        REPO_ROOT / "data" / "vocabulary" / vocabulary / f"{vocabulary}_roots_affixes.csv"
+    )
+    report_path = args.report or REPO_ROOT / "data" / "output" / language / "lexicon_report.md"
+    affixes_path = LEXICON_ROOT / f"{language}_affixes.json"
+    roots_path = LEXICON_ROOT / f"{language}_roots.json"
+    rows, malformed = read_rows(input_path, f"{vocabulary}_example")
+    roots_data = json.loads(roots_path.read_text(encoding="utf-8")) if roots_path.is_file() else {}
     entries, homographs, clashes = build(rows, roots_data.get("numbered_roots", {}))
-    _update_json(AFFIXES_PATH, {"prefix": entries["prefix"], "suffix": entries["suffix"]})
-    _update_json(ROOTS_PATH, {"etymological_roots": entries["root"]})
-    args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(report(entries, homographs, clashes, malformed), encoding="utf-8")
+    _update_json(affixes_path, {"prefix": entries["prefix"], "suffix": entries["suffix"]})
+    _update_json(roots_path, {"etymological_roots": entries["root"]})
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(
+        report(vocabulary.capitalize(), entries, homographs, clashes, malformed), encoding="utf-8"
+    )
     print(", ".join(f"{category}: {len(entries[category])}" for category in _CATEGORIES))
     print(
         f"numbered: {len(homographs)}, clashing modern stems: {len(clashes)}, "
         f"malformed: {len(malformed)}"
     )
-    print(f"report: {args.report}")
+    print(f"report: {report_path}")
     return 0 if not clashes else 1
 
 

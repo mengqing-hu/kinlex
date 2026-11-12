@@ -1,0 +1,1121 @@
+{
+  "prefix": {
+    "a1-": {
+      "meaning": "to, toward (verb-forming)",
+      "forms": [
+        "a-"
+      ]
+    },
+    "a2-": {
+      "meaning": "not, without",
+      "forms": [
+        "a-",
+        "an-"
+      ]
+    },
+    "ab-": {
+      "meaning": "away, from",
+      "forms": [
+        "ab-",
+        "abs-"
+      ]
+    },
+    "ad-": {
+      "meaning": "toward, to",
+      "forms": [
+        "ad-"
+      ]
+    },
+    "al-": {
+      "meaning": "the (fused Arabic article)",
+      "forms": [
+        "al-"
+      ]
+    },
+    "ambi-": {
+      "meaning": "both",
+      "forms": [
+        "ambi-"
+      ]
+    },
+    "ana-": {
+      "meaning": "back, again, against",
+      "forms": [
+        "ana-"
+      ]
+    },
+    "anfi-": {
+      "meaning": "both, on both sides",
+      "forms": [
+        "anfi-"
+      ]
+    },
+    "ante-": {
+      "meaning": "before, in front of",
+      "forms": [
+        "ante-"
+      ]
+    },
+    "anti-": {
+      "meaning": "against",
+      "forms": [
+        "anti-",
+        "ant-"
+      ]
+    },
+    "apo-": {
+      "meaning": "away from, off",
+      "forms": [
+        "apo-"
+      ]
+    },
+    "arqui-": {
+      "meaning": "chief, highest",
+      "forms": [
+        "arqui-",
+        "arce-"
+      ]
+    },
+    "auto-": {
+      "meaning": "self",
+      "forms": [
+        "auto-"
+      ]
+    },
+    "bem-": {
+      "meaning": "well, good",
+      "forms": [
+        "bem-",
+        "bene-",
+        "ben-"
+      ]
+    },
+    "bi-": {
+      "meaning": "two, twice",
+      "forms": [
+        "bi-",
+        "bis-"
+      ]
+    },
+    "cata-": {
+      "meaning": "down, completely",
+      "forms": [
+        "cata-",
+        "cat-"
+      ]
+    },
+    "centi-": {
+      "meaning": "hundred; hundredth",
+      "forms": [
+        "centi-",
+        "cent-"
+      ]
+    },
+    "circun-": {
+      "meaning": "around",
+      "forms": [
+        "circun-",
+        "circum-"
+      ]
+    },
+    "con-": {
+      "meaning": "with, together",
+      "forms": [
+        "con-",
+        "co-",
+        "com-",
+        "col-",
+        "cor-"
+      ]
+    },
+    "contra-": {
+      "meaning": "against, opposite",
+      "forms": [
+        "contra-"
+      ]
+    },
+    "de-": {
+      "meaning": "down, from; reversal",
+      "forms": [
+        "de-"
+      ]
+    },
+    "des-": {
+      "meaning": "negation, reversal, apart",
+      "forms": [
+        "des-"
+      ]
+    },
+    "di-": {
+      "meaning": "through, across",
+      "forms": [
+        "di-",
+        "dia-"
+      ]
+    },
+    "dis-": {
+      "meaning": "apart, in different directions",
+      "forms": [
+        "dis-",
+        "di-"
+      ]
+    },
+    "en-": {
+      "meaning": "in, into; to make (verb-forming)",
+      "forms": [
+        "en-",
+        "em-"
+      ]
+    },
+    "endo-": {
+      "meaning": "within, inside",
+      "forms": [
+        "endo-"
+      ]
+    },
+    "entre-": {
+      "meaning": "between, partly",
+      "forms": [
+        "entre-"
+      ]
+    },
+    "epi-": {
+      "meaning": "on, upon, over",
+      "forms": [
+        "epi-",
+        "ep-"
+      ]
+    },
+    "equi-": {
+      "meaning": "equal",
+      "forms": [
+        "equi-"
+      ]
+    },
+    "eu-": {
+      "meaning": "good, well",
+      "forms": [
+        "eu-",
+        "ev-"
+      ]
+    },
+    "ex-": {
+      "meaning": "out of; former",
+      "forms": [
+        "ex-",
+        "e-",
+        "es-"
+      ]
+    },
+    "exo-": {
+      "meaning": "outside, external",
+      "forms": [
+        "exo-"
+      ]
+    },
+    "extra-": {
+      "meaning": "outside, beyond",
+      "forms": [
+        "extra-"
+      ]
+    },
+    "hemi-": {
+      "meaning": "half",
+      "forms": [
+        "hemi-"
+      ]
+    },
+    "hetero-": {
+      "meaning": "other, different",
+      "forms": [
+        "hetero-"
+      ]
+    },
+    "hexa-": {
+      "meaning": "six",
+      "forms": [
+        "hexa-"
+      ]
+    },
+    "hiper-": {
+      "meaning": "over, excessive",
+      "forms": [
+        "hiper-"
+      ]
+    },
+    "hipo-": {
+      "meaning": "under, below",
+      "forms": [
+        "hipo-"
+      ]
+    },
+    "homo-": {
+      "meaning": "same",
+      "forms": [
+        "homo-",
+        "homeo-"
+      ]
+    },
+    "in1-": {
+      "meaning": "in, into",
+      "forms": [
+        "in-",
+        "im-"
+      ]
+    },
+    "in2-": {
+      "meaning": "not",
+      "forms": [
+        "in-",
+        "im-",
+        "i-",
+        "ir-"
+      ]
+    },
+    "infra-": {
+      "meaning": "below, beneath",
+      "forms": [
+        "infra-"
+      ]
+    },
+    "inter-": {
+      "meaning": "between, among",
+      "forms": [
+        "inter-"
+      ]
+    },
+    "intra-": {
+      "meaning": "within, inside",
+      "forms": [
+        "intra-",
+        "intro-"
+      ]
+    },
+    "iso-": {
+      "meaning": "equal",
+      "forms": [
+        "iso-"
+      ]
+    },
+    "macro-": {
+      "meaning": "large",
+      "forms": [
+        "macro-"
+      ]
+    },
+    "mal-": {
+      "meaning": "badly, wrong",
+      "forms": [
+        "mal-",
+        "male-"
+      ]
+    },
+    "mega-": {
+      "meaning": "large; million",
+      "forms": [
+        "mega-",
+        "megalo-"
+      ]
+    },
+    "meta-": {
+      "meaning": "beyond; change",
+      "forms": [
+        "meta-",
+        "met-"
+      ]
+    },
+    "micro-": {
+      "meaning": "small",
+      "forms": [
+        "micro-"
+      ]
+    },
+    "mini-": {
+      "meaning": "small, short",
+      "forms": [
+        "mini-"
+      ]
+    },
+    "mono-": {
+      "meaning": "one, single",
+      "forms": [
+        "mono-",
+        "mon-"
+      ]
+    },
+    "multi-": {
+      "meaning": "many",
+      "forms": [
+        "multi-"
+      ]
+    },
+    "neo-": {
+      "meaning": "new",
+      "forms": [
+        "neo-"
+      ]
+    },
+    "ob-": {
+      "meaning": "against, in the way",
+      "forms": [
+        "ob-",
+        "o-",
+        "op-",
+        "oc-"
+      ]
+    },
+    "oni-": {
+      "meaning": "all",
+      "forms": [
+        "oni-"
+      ]
+    },
+    "pan-": {
+      "meaning": "all, every",
+      "forms": [
+        "pan-",
+        "panto-"
+      ]
+    },
+    "para1-": {
+      "meaning": "beside; against, contrary",
+      "forms": [
+        "para-",
+        "par-"
+      ]
+    },
+    "para2-": {
+      "meaning": "stops, protects against (from parar)",
+      "forms": [
+        "para-"
+      ]
+    },
+    "per-": {
+      "meaning": "through, thoroughly",
+      "forms": [
+        "per-"
+      ]
+    },
+    "peri-": {
+      "meaning": "around",
+      "forms": [
+        "peri-"
+      ]
+    },
+    "poli-": {
+      "meaning": "many",
+      "forms": [
+        "poli-"
+      ]
+    },
+    "pro-": {
+      "meaning": "forward; in favour of; in place of",
+      "forms": [
+        "pro-",
+        "pró-"
+      ]
+    },
+    "proto-": {
+      "meaning": "first, original",
+      "forms": [
+        "proto-",
+        "prot-"
+      ]
+    },
+    "pré-": {
+      "meaning": "before, in advance",
+      "forms": [
+        "pré-",
+        "pre-"
+      ]
+    },
+    "pseudo-": {
+      "meaning": "false",
+      "forms": [
+        "pseudo-"
+      ]
+    },
+    "pós-": {
+      "meaning": "after, behind",
+      "forms": [
+        "pós-",
+        "pos-",
+        "post-"
+      ]
+    },
+    "quadri-": {
+      "meaning": "four",
+      "forms": [
+        "quadri-",
+        "quadr-",
+        "quatr-"
+      ]
+    },
+    "re-": {
+      "meaning": "again, back; intensive",
+      "forms": [
+        "re-"
+      ]
+    },
+    "recém-": {
+      "meaning": "newly, recently",
+      "forms": [
+        "recém-"
+      ]
+    },
+    "retro-": {
+      "meaning": "backward",
+      "forms": [
+        "retro-"
+      ]
+    },
+    "se-": {
+      "meaning": "apart",
+      "forms": [
+        "se-"
+      ]
+    },
+    "semi-": {
+      "meaning": "half, partly",
+      "forms": [
+        "semi-"
+      ]
+    },
+    "sin-": {
+      "meaning": "with, together",
+      "forms": [
+        "sin-",
+        "sim-"
+      ]
+    },
+    "sobre-": {
+      "meaning": "over, above, excessive",
+      "forms": [
+        "sobre-"
+      ]
+    },
+    "sub-": {
+      "meaning": "under, below",
+      "forms": [
+        "sub-",
+        "so-",
+        "su-",
+        "sus-"
+      ]
+    },
+    "super-": {
+      "meaning": "above, superior",
+      "forms": [
+        "super-",
+        "supra-"
+      ]
+    },
+    "tele-": {
+      "meaning": "far, at a distance",
+      "forms": [
+        "tele-"
+      ]
+    },
+    "tetra-": {
+      "meaning": "four",
+      "forms": [
+        "tetra-"
+      ]
+    },
+    "trans-": {
+      "meaning": "across, beyond",
+      "forms": [
+        "trans-",
+        "tras-",
+        "tra-",
+        "tres-"
+      ]
+    },
+    "tri-": {
+      "meaning": "three",
+      "forms": [
+        "tri-"
+      ]
+    },
+    "ultra-": {
+      "meaning": "beyond, extremely",
+      "forms": [
+        "ultra-"
+      ]
+    },
+    "uni-": {
+      "meaning": "one",
+      "forms": [
+        "uni-"
+      ]
+    },
+    "vice-": {
+      "meaning": "in place of, deputy",
+      "forms": [
+        "vice-",
+        "vis-"
+      ]
+    }
+  },
+  "suffix": {
+    "-ada": {
+      "meaning": "blow, amount, content, group",
+      "forms": [
+        "-ada"
+      ]
+    },
+    "-ado": {
+      "meaning": "office, rank, group; territory",
+      "forms": [
+        "-ado"
+      ]
+    },
+    "-agem": {
+      "meaning": "collection; action; fee",
+      "forms": [
+        "-agem"
+      ]
+    },
+    "-al1": {
+      "meaning": "relating to (adjective)",
+      "forms": [
+        "-al",
+        "-ar"
+      ]
+    },
+    "-al2": {
+      "meaning": "place where a plant grows; grove",
+      "forms": [
+        "-al",
+        "-edo",
+        "-eda",
+        "-zal"
+      ]
+    },
+    "-algia": {
+      "meaning": "pain",
+      "forms": [
+        "-algia"
+      ]
+    },
+    "-ano": {
+      "meaning": "relating to; native of",
+      "forms": [
+        "-ano"
+      ]
+    },
+    "-ante": {
+      "meaning": "one who does; doing (agent, adj.)",
+      "forms": [
+        "-ante",
+        "-ente",
+        "-inte"
+      ]
+    },
+    "-ança": {
+      "meaning": "action, result",
+      "forms": [
+        "-ança",
+        "-ença"
+      ]
+    },
+    "-aria": {
+      "meaning": "shop; quality, act",
+      "forms": [
+        "-aria"
+      ]
+    },
+    "-ato": {
+      "meaning": "office, institution; young animal",
+      "forms": [
+        "-ato"
+      ]
+    },
+    "-aço": {
+      "meaning": "blow, hit; augmentative",
+      "forms": [
+        "-aço",
+        "-aça"
+      ]
+    },
+    "-cida": {
+      "meaning": "killer; killing",
+      "forms": [
+        "-cida",
+        "-cídio"
+      ]
+    },
+    "-cracia": {
+      "meaning": "rule, government",
+      "forms": [
+        "-cracia",
+        "-crata"
+      ]
+    },
+    "-dade": {
+      "meaning": "quality, state",
+      "forms": [
+        "-dade"
+      ]
+    },
+    "-diço": {
+      "meaning": "tending to",
+      "forms": [
+        "-diço"
+      ]
+    },
+    "-do": {
+      "meaning": "past participle; having been",
+      "forms": [
+        "-do"
+      ]
+    },
+    "-dor": {
+      "meaning": "agent; machine",
+      "forms": [
+        "-dor",
+        "-tor",
+        "-sor"
+      ]
+    },
+    "-douro": {
+      "meaning": "place or instrument for an action",
+      "forms": [
+        "-douro",
+        "-doura"
+      ]
+    },
+    "-dão": {
+      "meaning": "quality, state; multitude",
+      "forms": [
+        "-dão"
+      ]
+    },
+    "-ear": {
+      "meaning": "verb-forming (do, act)",
+      "forms": [
+        "-ear"
+      ]
+    },
+    "-ecer": {
+      "meaning": "to become (verb-forming)",
+      "forms": [
+        "-ecer",
+        "-escer"
+      ]
+    },
+    "-eiro": {
+      "meaning": "occupation; container; tree",
+      "forms": [
+        "-eiro",
+        "-eira"
+      ]
+    },
+    "-ejar": {
+      "meaning": "verb-forming (repeated action)",
+      "forms": [
+        "-ejar"
+      ]
+    },
+    "-ema": {
+      "meaning": "unit, result (linguistics)",
+      "forms": [
+        "-ema"
+      ]
+    },
+    "-ense": {
+      "meaning": "from, native of",
+      "forms": [
+        "-ense"
+      ]
+    },
+    "-ento": {
+      "meaning": "having, full of",
+      "forms": [
+        "-ento"
+      ]
+    },
+    "-esa": {
+      "meaning": "feminine of titles",
+      "forms": [
+        "-esa",
+        "-isa",
+        "-triz"
+      ]
+    },
+    "-esco": {
+      "meaning": "in the manner of, -esque",
+      "forms": [
+        "-esco"
+      ]
+    },
+    "-ez": {
+      "meaning": "quality, state",
+      "forms": [
+        "-ez",
+        "-eza"
+      ]
+    },
+    "-fero": {
+      "meaning": "bearing, producing",
+      "forms": [
+        "-fero"
+      ]
+    },
+    "-filia": {
+      "meaning": "love of, attraction to",
+      "forms": [
+        "-filia",
+        "-filo"
+      ]
+    },
+    "-fobia": {
+      "meaning": "fear, aversion",
+      "forms": [
+        "-fobia",
+        "-fobo"
+      ]
+    },
+    "-geno": {
+      "meaning": "producing, generating",
+      "forms": [
+        "-geno",
+        "-gênio",
+        "-gênico"
+      ]
+    },
+    "-grafia": {
+      "meaning": "writing; description",
+      "forms": [
+        "-grafia",
+        "-grafo"
+      ]
+    },
+    "-ia": {
+      "meaning": "quality; science; office",
+      "forms": [
+        "-ia"
+      ]
+    },
+    "-ice": {
+      "meaning": "quality, state (often pejorative)",
+      "forms": [
+        "-ice"
+      ]
+    },
+    "-ico": {
+      "meaning": "relating to (adjective)",
+      "forms": [
+        "-ico",
+        "-ica"
+      ]
+    },
+    "-ificar": {
+      "meaning": "to make (verb-forming)",
+      "forms": [
+        "-ificar"
+      ]
+    },
+    "-il": {
+      "meaning": "relating to",
+      "forms": [
+        "-il"
+      ]
+    },
+    "-ilho": {
+      "meaning": "diminutive",
+      "forms": [
+        "-ilho",
+        "-ilha"
+      ]
+    },
+    "-im": {
+      "meaning": "diminutive",
+      "forms": [
+        "-im"
+      ]
+    },
+    "-ina": {
+      "meaning": "substance",
+      "forms": [
+        "-ina"
+      ]
+    },
+    "-inho": {
+      "meaning": "diminutive; affection",
+      "forms": [
+        "-inho",
+        "-zinho"
+      ]
+    },
+    "-ino": {
+      "meaning": "relating to; like",
+      "forms": [
+        "-ino"
+      ]
+    },
+    "-ismo": {
+      "meaning": "doctrine, system, practice",
+      "forms": [
+        "-ismo"
+      ]
+    },
+    "-ista": {
+      "meaning": "person who practises, follower",
+      "forms": [
+        "-ista"
+      ]
+    },
+    "-ite": {
+      "meaning": "inflammation",
+      "forms": [
+        "-ite"
+      ]
+    },
+    "-ivo": {
+      "meaning": "tending to, having the function of",
+      "forms": [
+        "-ivo",
+        "-iva",
+        "-tivo"
+      ]
+    },
+    "-izar": {
+      "meaning": "to make, to convert into",
+      "forms": [
+        "-izar"
+      ]
+    },
+    "-iço": {
+      "meaning": "tending to; somewhat",
+      "forms": [
+        "-iço",
+        "-iça"
+      ]
+    },
+    "-logia": {
+      "meaning": "study of; specialist in",
+      "forms": [
+        "-logia",
+        "-ólogo"
+      ]
+    },
+    "-ma": {
+      "meaning": "result of an action",
+      "forms": [
+        "-ma"
+      ]
+    },
+    "-mania": {
+      "meaning": "obsession, mania",
+      "forms": [
+        "-mania",
+        "-maníaco",
+        "-ômano"
+      ]
+    },
+    "-mente": {
+      "meaning": "-ly (adverb-forming)",
+      "forms": [
+        "-mente"
+      ]
+    },
+    "-mento": {
+      "meaning": "action, result",
+      "forms": [
+        "-mento"
+      ]
+    },
+    "-metro": {
+      "meaning": "measure, measuring device",
+      "forms": [
+        "-metro",
+        "-metria"
+      ]
+    },
+    "-oide": {
+      "meaning": "like, resembling",
+      "forms": [
+        "-oide"
+      ]
+    },
+    "-or": {
+      "meaning": "state, quality",
+      "forms": [
+        "-or"
+      ]
+    },
+    "-ose": {
+      "meaning": "process; disease, condition",
+      "forms": [
+        "-ose"
+      ]
+    },
+    "-oso": {
+      "meaning": "full of, having",
+      "forms": [
+        "-oso",
+        "-osa"
+      ]
+    },
+    "-ote": {
+      "meaning": "diminutive or augmentative",
+      "forms": [
+        "-ote",
+        "-ota"
+      ]
+    },
+    "-patia": {
+      "meaning": "feeling; disease",
+      "forms": [
+        "-patia",
+        "-pata"
+      ]
+    },
+    "-scópio": {
+      "meaning": "instrument for viewing; examination",
+      "forms": [
+        "-scópio",
+        "-scopia"
+      ]
+    },
+    "-se": {
+      "meaning": "action, process",
+      "forms": [
+        "-se"
+      ]
+    },
+    "-teca": {
+      "meaning": "place for keeping",
+      "forms": [
+        "-teca"
+      ]
+    },
+    "-tude": {
+      "meaning": "state, quality",
+      "forms": [
+        "-tude"
+      ]
+    },
+    "-ucho": {
+      "meaning": "pejorative; somewhat",
+      "forms": [
+        "-ucho",
+        "-ucha"
+      ]
+    },
+    "-udo": {
+      "meaning": "having a lot of (often large)",
+      "forms": [
+        "-udo",
+        "-uda"
+      ]
+    },
+    "-ume": {
+      "meaning": "state; collection",
+      "forms": [
+        "-ume"
+      ]
+    },
+    "-uno": {
+      "meaning": "relating to; belonging to",
+      "forms": [
+        "-uno",
+        "-una"
+      ]
+    },
+    "-ura": {
+      "meaning": "quality; result",
+      "forms": [
+        "-ura"
+      ]
+    },
+    "-vel": {
+      "meaning": "able to be, -able",
+      "forms": [
+        "-vel"
+      ]
+    },
+    "-voro": {
+      "meaning": "eating",
+      "forms": [
+        "-voro",
+        "-vora"
+      ]
+    },
+    "-áceo": {
+      "meaning": "resembling, of the nature of",
+      "forms": [
+        "-áceo",
+        "-ácea"
+      ]
+    },
+    "-ário": {
+      "meaning": "person; place; collection",
+      "forms": [
+        "-ário"
+      ]
+    },
+    "-ático": {
+      "meaning": "relating to (adjective)",
+      "forms": [
+        "-ático",
+        "-ática"
+      ]
+    },
+    "-ância": {
+      "meaning": "state, quality, action",
+      "forms": [
+        "-ância",
+        "-ência"
+      ]
+    },
+    "-ão": {
+      "meaning": "augmentative",
+      "forms": [
+        "-ão",
+        "-ona",
+        "-zão"
+      ]
+    },
+    "-ção": {
+      "meaning": "action, result of an action",
+      "forms": [
+        "-ção",
+        "-são"
+      ]
+    },
+    "-érrimo": {
+      "meaning": "absolute superlative (learned)",
+      "forms": [
+        "-érrimo"
+      ]
+    },
+    "-ês": {
+      "meaning": "native of, nationality",
+      "forms": [
+        "-ês"
+      ]
+    },
+    "-íssimo": {
+      "meaning": "very (absolute superlative)",
+      "forms": [
+        "-íssimo"
+      ]
+    },
+    "-ístico": {
+      "meaning": "relating to",
+      "forms": [
+        "-ístico",
+        "-ástico"
+      ]
+    },
+    "-ório": {
+      "meaning": "place for; relating to",
+      "forms": [
+        "-ório",
+        "-tório"
+      ]
+    }
+  }
+}
