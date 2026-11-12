@@ -12,6 +12,8 @@ providers:
     fallback_voice: null
     voices: { de: alloy, es: alloy, pt: alloy }
     instructions: {}
+  stt:
+    model: openai/whisper-large-v3-turbo
 llm_concurrency: 4
 tts_concurrency: 4
 retries: 3

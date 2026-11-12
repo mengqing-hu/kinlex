@@ -6,6 +6,8 @@ Notes/
 .env.*
 !.env.example
 !**/.env.example
+# Exported browser sign-in cookies, such as YouTube's for kinlex-video
+*cookies*.txt
 
 # Node.js and Next.js
 node_modules/

@@ -83,7 +83,7 @@ is unchanged, so a forced rerun only calls the model for words it has not answer
 
 ## Example annotations
 
-`annotate` needs spaCy and its German model, which are an optional extra:
+`annotate` needs spaCy and its German, Spanish and Portuguese models, which are an optional extra:
 
 ```bash
 pip install -e ".[annotate]"
@@ -97,6 +97,36 @@ asked, 20 sentences per call, only for words whose entry lists several meanings 
 words that are not in the vocabulary, such as articles. The command is idempotent: it tokenizes
 only examples without tokens and asks only for meanings still missing, so rerunning it retries
 failed batches. `--limit N` counts examples; `--force` tokenizes every example again.
+
+## Videos
+
+`kinlex-video` downloads a YouTube video and turns its captions into a study file for the video
+module: sentences with their times, translations, and every word's dictionary form, vocabulary
+entry and meaning in its sentence. It needs the `annotate` extra and yt-dlp, ffmpeg on the path,
+the LLM settings, and `DATABASE_URL` to read the vocabulary:
+
+```bash
+pip install -e ".[annotate,video]"
+kinlex-video "https://www.youtube.com/watch?v=..." --language es               # explained in English
+kinlex-video "https://www.youtube.com/watch?v=..." --language es --meaning-language zh
+```
+
+The video is saved as an MP4 of at most 720p, which the website plays. Its official captions in
+the language are used when it has them; otherwise Whisper (`providers.stt` in `config.yaml`)
+transcribes the sound in ten-minute pieces. YouTube's automatic captions are not shown, but their
+word times are matched to the words shown, so the website can follow the speech word by word; a
+word without a match shares the time between its neighbours by its length. Sentences are translated 15 per call, then annotated as example sentences are. Files go
+to `data/pipeline/<language>/videos/`: `<id>.mp4` and `<id>.<meaning language>.json`, unless
+`--output` says otherwise. The transcript and every LLM answer are cached, so rerunning a failed
+video only asks for what failed.
+
+Videos are read without signing in. A video YouTube shows only to an account, such as an
+age-restricted one, is read again signed in with `YOUTUBE_COOKIES_FILE` (a cookies.txt, best from a
+spare account) or `YOUTUBE_COOKIES_FROM_BROWSER` (chrome, firefox, safari, edge, brave) in `.env`.
+
+The website's add-video page runs the same command on this computer (`next dev` only), with
+`--status-file data/pipeline/<language>/videos/<id>.<meaning language>.job.json`, which the command
+keeps up to date with its stage and progress; its output goes to the `.job.log` beside it.
 
 ## Other meaning languages
 
@@ -202,6 +232,13 @@ utils/runtime.py                    cache, logging, and summaries
 lexicon/de_affixes.json             curated prefixes, suffixes, and root homographs
 lexicon/de_roots.json               root overrides and lowercase roots
 prompts/word_enrichment_v2.md       LLM output contract (v1 is kept for its cached responses)
+video/cli.py                        kinlex-video entry point
+video/pipeline.py                   video stages: captions, sentences, translations, word meanings
+video/youtube.py                    video details, official captions and download through yt-dlp
+video/captions.py                   caption sentences and their times
+video/transcription.py              Whisper transcription of videos without captions
+video/timing.py                     word times matched from YouTube's recognition of the speech
+video/translation.py                sentence translation in batches
 ```
 
 ## Checks

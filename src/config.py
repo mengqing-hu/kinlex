@@ -33,6 +33,10 @@ class Settings(BaseSettings):
     r2_bucket: str = ""
     web_revalidate_url: str = ""
     revalidate_secret: SecretStr = SecretStr("")
+    # Signed-in YouTube cookies, for videos that need an account (age-restricted ones): a browser
+    # to read them from (chrome, firefox, safari, edge, brave), or a cookies.txt file.
+    youtube_cookies_from_browser: str = ""
+    youtube_cookies_file: str = ""
 
     def require(self, *names: str) -> None:
         missing = [name.upper() for name in names if not _is_set(getattr(self, name))]
@@ -84,9 +88,14 @@ class TTSConfig(BaseModel):
     instructions: dict[str, str] = Field(default_factory=dict)
 
 
+class STTConfig(BaseModel):
+    model: str
+
+
 class ProvidersConfig(BaseModel):
     llm: LLMConfig
     tts: TTSConfig
+    stt: STTConfig
 
 
 class Config(BaseModel):

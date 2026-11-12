@@ -1,9 +1,9 @@
-"""OpenAI-compatible LLM and TTS clients."""
+"""OpenAI-compatible LLM, TTS and speech recognition clients."""
 
 import threading
 import time
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Any, Protocol
 
 import httpx
 
@@ -37,6 +37,12 @@ class TTSProvider(Protocol):
     model: str
 
     def synthesize(self, text: str, voice: Voice) -> bytes: ...
+
+
+class STTProvider(Protocol):
+    model: str
+
+    def transcribe(self, audio: bytes, filename: str, language: str) -> dict[str, Any]: ...
 
 
 _RETRYABLE = {408, 409, 429, 500, 502, 503, 504}
@@ -131,6 +137,26 @@ class _TTS:
         return _post(self.client, "/audio/speech", json=body).content
 
 
+class _STT:
+    def __init__(self, client: httpx.Client, model: str) -> None:
+        self.client = client
+        self.model = model
+
+    def transcribe(self, audio: bytes, filename: str, language: str) -> dict[str, Any]:
+        """The text in segments with their start and end in seconds (verbose_json)."""
+        response = _post(
+            self.client,
+            "/audio/transcriptions",
+            data={"model": self.model, "language": language, "response_format": "verbose_json"},
+            files={"file": (filename, audio)},
+        )
+        try:
+            result: dict[str, Any] = response.json()
+        except ValueError as error:
+            raise ProviderError("unexpected transcription response") from error
+        return result
+
+
 def model_client(settings: Settings) -> httpx.Client:
     settings.require("scads_api_url", "scads_api_key")
     return httpx.Client(
@@ -147,6 +173,10 @@ def create_llm(client: httpx.Client, config: Config) -> LLMProvider:
 
 def create_tts(client: httpx.Client, config: Config) -> TTSProvider:
     return _TTS(client, config.providers.tts.model)
+
+
+def create_stt(client: httpx.Client, config: Config) -> STTProvider:
+    return _STT(client, config.providers.stt.model)
 
 
 def create_fallback_tts(client: httpx.Client, config: Config) -> TTSProvider | None:

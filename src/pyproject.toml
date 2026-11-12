@@ -18,10 +18,20 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# The annotate command's word splitting and dictionary forms.
+# The annotate command's and kinlex-video's word splitting and dictionary forms.
 annotate = [
   "spacy==3.8.16",
   "de_core_news_md @ https://github.com/explosion/spacy-models/releases/download/de_core_news_md-3.8.0/de_core_news_md-3.8.0-py3-none-any.whl",
+  "es_core_news_md @ https://github.com/explosion/spacy-models/releases/download/es_core_news_md-3.8.0/es_core_news_md-3.8.0-py3-none-any.whl",
+  "pt_core_news_md @ https://github.com/explosion/spacy-models/releases/download/pt_core_news_md-3.8.0/pt_core_news_md-3.8.0-py3-none-any.whl",
+]
+# kinlex-video downloads YouTube videos. The default extra brings yt-dlp-ejs, the script that
+# answers YouTube's JavaScript challenges with Deno, which must be installed (brew install deno).
+# bgutil-ytdlp-pot-provider asks a PO token server on port 4416 for the tokens age-restricted
+# videos need; without the server running, other videos still download.
+video = [
+  "bgutil-ytdlp-pot-provider==2.0.2",
+  "yt-dlp[default]==2026.8.19",
 ]
 dev = [
   "mypy==2.4.1",
@@ -31,26 +41,27 @@ dev = [
 
 [project.scripts]
 kinlex-pipeline = "cli:main"
+kinlex-video = "video.cli:main"
 
 [tool.setuptools]
 py-modules = ["cli", "config"]
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["core*", "scripts*", "services*", "utils*"]
+include = ["core*", "scripts*", "services*", "utils*", "video*"]
 namespaces = false
 
 [tool.ruff]
 target-version = "py313"
 line-length = 100
-src = ["core", "scripts", "services", "utils"]
+src = ["core", "scripts", "services", "utils", "video"]
 extend-exclude = ["data"]
 
 [tool.ruff.lint]
 select = ["B", "E", "F", "I", "RUF", "SIM", "UP"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["config", "core", "scripts", "services", "utils"]
+known-first-party = ["config", "core", "scripts", "services", "utils", "video"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -61,7 +72,7 @@ docstring-code-format = true
 [tool.mypy]
 python_version = "3.13"
 plugins = ["pydantic.mypy"]
-files = ["cli.py", "config.py", "core", "scripts", "services", "utils"]
+files = ["cli.py", "config.py", "core", "scripts", "services", "utils", "video"]
 exclude = "(^|/)data/"
 strict = true
 pretty = true
@@ -72,7 +83,7 @@ warn_unreachable = true
 module = ["boto3", "boto3.*", "botocore", "botocore.*"]
 ignore_missing_imports = true
 
-# spaCy comes with the optional annotate extra, which CI does not install.
+# spaCy and yt-dlp come with the optional annotate and video extras, which CI does not install.
 [[tool.mypy.overrides]]
-module = ["spacy", "spacy.*"]
+module = ["spacy", "spacy.*", "yt_dlp", "yt_dlp.*"]
 ignore_missing_imports = true
