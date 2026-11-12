@@ -28,6 +28,11 @@ class LanguageProfile:
     gender_source: GenderSource
     # The accent stored with each audio file.
     accent: str
+    # The spaCy pipeline that splits sentences into words and finds their dictionary forms.
+    spacy_model: str
+    # How a reflexive verb is listed after its infinitive: levantarse, chamar-se. spaCy gives the
+    # plain infinitive, so the entry is also looked up with this ending. German lists "sich" first.
+    reflexive_ending: str | None = None
 
     @property
     def vocabulary_path(self) -> Path:
@@ -41,9 +46,22 @@ class LanguageProfile:
 LANGUAGES = {
     profile.code: profile
     for profile in (
-        LanguageProfile("de", "german", "word_enrichment_v2", False, "article", "de-DE"),
-        LanguageProfile("es", "spanish", "word_enrichment_es_v2", True, "model", "es"),
-        LanguageProfile("pt", "portuguese", "word_enrichment_pt_v1", True, "label", "pt-BR"),
+        LanguageProfile(
+            "de", "german", "word_enrichment_v2", False, "article", "de-DE", "de_core_news_md"
+        ),
+        LanguageProfile(
+            "es", "spanish", "word_enrichment_es_v2", True, "model", "es", "es_core_news_md", "se"
+        ),
+        LanguageProfile(
+            "pt",
+            "portuguese",
+            "word_enrichment_pt_v1",
+            True,
+            "label",
+            "pt-BR",
+            "pt_core_news_md",
+            "-se",
+        ),
     )
 }
 

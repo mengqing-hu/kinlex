@@ -7,6 +7,9 @@ entry lists several meanings ("from, of") and words that are not in the vocabula
 
 English is annotated first, while splitting the sentences. Another language reuses that split and
 needs its word meanings and sentence translations first (the translate command).
+
+The spaCy model and how reflexive verbs are listed come from the learning language's profile.
+tokenize and request_glosses also annotate video captions, which are not example sentences.
 """
 
 import json
@@ -16,6 +19,7 @@ from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING
 
 from config import Config, get_settings
+from core.languages import LanguageProfile, language_profile
 from core.meaning_languages import language_name
 from core.models import (
     ExampleToken,
@@ -26,15 +30,14 @@ from core.models import (
 )
 from core.pipeline import TaskResult, ValidationError, _generate_json, _run_many
 from services import db, example_tokens
-from services.clients import create_llm, model_client
+from services.clients import LLMProvider, create_llm, model_client
 from utils.runtime import Cache, RunSummary, get_logger, read_prompt, setup_logging
 
 if TYPE_CHECKING:
     from spacy.language import Language
     from spacy.tokens import Doc
 
-SPACY_MODEL = "de_core_news_md"
-PROMPT = "token_glosses_v2"
+PROMPT = "token_glosses_v3"
 SENTENCES_PER_CALL = 20
 MAX_GLOSS_LENGTH = 60
 
@@ -81,6 +84,7 @@ _MODAL_FORMS: dict[str, str] = {
     }.items()
     for form in forms.split()
 }
+_LEMMA_FIXES: dict[str, dict[str, str]] = {"de": _MODAL_FORMS}
 
 
 def lexicon_key(word: str) -> str:
@@ -89,7 +93,9 @@ def lexicon_key(word: str) -> str:
 
 
 class Lexicon:
-    def __init__(self, entries: Iterable[LexiconEntry]) -> None:
+    def __init__(self, entries: Iterable[LexiconEntry], profile: LanguageProfile) -> None:
+        self.lemma_fixes = _LEMMA_FIXES.get(profile.code, {})
+        self.reflexive_ending = profile.reflexive_ending
         self.by_key: dict[str, list[LexiconEntry]] = defaultdict(list)
         self.by_id: dict[int, LexiconEntry] = {}
         for entry in entries:
@@ -109,10 +115,15 @@ class Lexicon:
     def match(self, lemma: str, surface: str, pos: str) -> tuple[str, list[LexiconEntry], bool]:
         """The lemma to store, its entries, and whether the entry is certain enough to take its
         meaning without asking the model."""
-        lemma = _MODAL_FORMS.get(surface.lower(), lemma)
+        lemma = self.lemma_fixes.get(surface.lower(), lemma)
         entries = self.find(lemma, pos)
         if entries:
             return lemma, entries, True
+        # "me levanto" is the entry levantarse when the vocabulary has no plain levantar.
+        if self.reflexive_ending and pos in {"VERB", "AUX"}:
+            entries = self.find(lemma + self.reflexive_ending, pos)
+            if entries:
+                return entries[0].word, entries, True
         # spaCy's lemma is sometimes wrong where the word as written is an entry: Kuchen, not Kuche.
         entries = self.find(surface, pos)
         if entries:
@@ -126,14 +137,14 @@ class Lexicon:
         return lemma, [], False
 
 
-def load_spacy() -> "Language":
+def load_spacy(model: str) -> "Language":
     try:
         import spacy
     except ImportError as error:
         raise RuntimeError(
-            'annotate needs spaCy and its German model: pip install -e ".[annotate]"'
+            'annotate needs spaCy and its language models: pip install -e ".[annotate]"'
         ) from error
-    return spacy.load(SPACY_MODEL, disable=["ner"])
+    return spacy.load(model, disable=["ner"])
 
 
 def parse(nlp: "Language", sentence: str) -> "Doc":
@@ -241,7 +252,7 @@ def _validate_reply(reply: TokenGlossReply, pending: Sequence[TokenToGloss]) -> 
                 raise ValidationError(f"bad meaning for {row.surface!r} in example {example_id}")
 
 
-def _batches(rows: Sequence[TokenToGloss]) -> list[list[TokenToGloss]]:
+def gloss_batches(rows: Sequence[TokenToGloss]) -> list[list[TokenToGloss]]:
     grouped = list(_by_example(rows).values())
     return [
         [row for sentence in grouped[start : start + SENTENCES_PER_CALL] for row in sentence]
@@ -256,6 +267,43 @@ def _settled_gloss(row: TokenToGloss, lexicon: Lexicon) -> str | None:
     if entry is None or not row.entry_certain or not entry.gloss:
         return None
     return None if _SEVERAL_MEANINGS.search(entry.gloss) else entry.gloss
+
+
+def request_glosses(
+    llm: LLMProvider,
+    batch: Sequence[TokenToGloss],
+    lexicon: Lexicon,
+    *,
+    language: str,
+    meaning_language: str,
+    cache: Cache,
+    config: Config,
+    summary: RunSummary,
+) -> tuple[dict[tuple[int, int], str], bool]:
+    """Ask the model for the meanings of a batch of words, keyed by (sentence id, position)."""
+    source = language_name(language)
+    reply, cached = _generate_json(
+        llm=llm,
+        cache=cache,
+        word=f"sentences {batch[0].example_id}-{batch[-1].example_id}",
+        model=config.providers.llm.model,
+        prompt=read_prompt(PROMPT).substitute(
+            source_language=source,
+            language=language_name(meaning_language),
+            sentences=_request(batch, lexicon),
+        ),
+        schema=TokenGlossReply,
+        validate=lambda value: _validate_reply(value, batch),
+        config=config,
+        summary=summary,
+        system=f"You are a careful {source} dictionary editor. Reply with JSON only.",
+    )
+    answered = {sentence.id: sentence.glosses for sentence in reply.sentences}
+    glosses = {
+        (row.example_id, row.position): answered[row.example_id][str(row.position)].strip()
+        for row in batch
+    }
+    return glosses, cached
 
 
 def annotate_examples(
@@ -275,12 +323,14 @@ def annotate_examples(
     language_name(meaning_language)
     setup_logging("annotate", language)
     summary = RunSummary("annotate", language)
-    nlp = load_spacy()
+    profile = language_profile(language)
+    nlp = load_spacy(profile.spacy_model)
     with db.connect() as connection:
         lexicon = Lexicon(
             example_tokens.lexicon_entries(
                 connection, language=language, meaning_language=meaning_language
-            )
+            ),
+            profile,
         )
         examples = example_tokens.examples_to_tokenize(
             connection, language=language, limit=limit, force=force
@@ -331,43 +381,36 @@ def annotate_examples(
         summary.write()
         return TaskResult(processed=len(examples), failed=0)
 
-    model = config.providers.llm.model
-    template = read_prompt(PROMPT)
     cache = Cache(language, "token_glosses")
     with model_client(get_settings()) as client:
         llm = create_llm(client, config)
 
         def gloss_batch(batch: list[TokenToGloss]) -> tuple[list[TokenGloss], bool]:
-            reply, cached = _generate_json(
-                llm=llm,
+            answered, cached = request_glosses(
+                llm,
+                batch,
+                lexicon,
+                language=language,
+                meaning_language=meaning_language,
                 cache=cache,
-                word=f"examples {batch[0].example_id}-{batch[-1].example_id}",
-                model=model,
-                prompt=template.substitute(
-                    language=language_name(meaning_language),
-                    sentences=_request(batch, lexicon),
-                ),
-                schema=TokenGlossReply,
-                validate=lambda value: _validate_reply(value, batch),
                 config=config,
                 summary=summary,
             )
-            answered = {sentence.id: sentence.glosses for sentence in reply.sentences}
             glosses = [
                 TokenGloss(
-                    example_id=row.example_id,
-                    position=row.position,
+                    example_id=example_id,
+                    position=position,
                     meaning_language=meaning_language,
-                    gloss=answered[row.example_id][str(row.position)].strip(),
+                    gloss=gloss,
                     source="model",
                 )
-                for row in batch
+                for (example_id, position), gloss in answered.items()
             ]
             with db.connect() as connection, connection.transaction():
                 example_tokens.upsert_glosses(connection, glosses)
             return glosses, cached
 
-        batches = _batches(pending)
+        batches = gloss_batches(pending)
         _results, failed = _run_many(
             batches,
             gloss_batch,
