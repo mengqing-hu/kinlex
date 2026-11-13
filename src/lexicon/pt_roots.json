@@ -1,4 +1,27 @@
 {
+  "numbered_roots": {
+    "cas1-": "house, home; marry",
+    "fic1-": "stay, remain; become",
+    "not1-": "note, mark; notice",
+    "port2-": "door, gate",
+    "port3-": "port, harbour",
+    "pass2-": "pass, step",
+    "mor2-": "live, reside",
+    "son2-": "sleep; dream",
+    "vir2-": "turn",
+    "doc2-": "sweet",
+    "sec2-": "dry",
+    "med2-": "fear",
+    "med3-": "measure",
+    "prim2-": "cousin",
+    "pont2-": "bridge",
+    "lat2-": "tin can",
+    "vac2-": "cow",
+    "pot2-": "jar, pot",
+    "pac2-": "package, bundle",
+    "par3-": "stop",
+    "sal3-": "room, hall"
+  },
   "etymological_roots": {
     "aer-": {
       "meaning": "air",
@@ -446,7 +469,7 @@
         "dinam-"
       ]
     },
-    "doc-": {
+    "doc1-": {
       "meaning": "teach",
       "forms": [
         "doc-",
@@ -936,7 +959,7 @@
         "leit-"
       ]
     },
-    "lat-": {
+    "lat1-": {
       "meaning": "side",
       "forms": [
         "lat-",
@@ -1091,7 +1114,7 @@
         "mecan-"
       ]
     },
-    "med-": {
+    "med1-": {
       "meaning": "middle",
       "forms": [
         "med-",
@@ -1200,7 +1223,7 @@
         "mostr-"
       ]
     },
-    "mor-": {
+    "mor1-": {
       "meaning": "die, death",
       "forms": [
         "mor-",
@@ -1390,7 +1413,7 @@
         "osteo-"
       ]
     },
-    "pac-": {
+    "pac1-": {
       "meaning": "peace",
       "forms": [
         "pac-",
@@ -1421,7 +1444,7 @@
         "part-"
       ]
     },
-    "pass-": {
+    "pass1-": {
       "meaning": "suffer, feel",
       "forms": [
         "pass-",
@@ -1542,7 +1565,7 @@
         "por-"
       ]
     },
-    "pont-": {
+    "pont1-": {
       "meaning": "point, prick",
       "forms": [
         "pont-",
@@ -1557,13 +1580,13 @@
         "pov-"
       ]
     },
-    "port-": {
+    "port1-": {
       "meaning": "carry",
       "forms": [
         "port-"
       ]
     },
-    "pot-": {
+    "pot1-": {
       "meaning": "be able, power",
       "forms": [
         "pot-",
@@ -1589,7 +1612,7 @@
         "prim-"
       ]
     },
-    "prim-": {
+    "prim1-": {
       "meaning": "first",
       "forms": [
         "prim-",
@@ -1754,7 +1777,7 @@
         "scri-"
       ]
     },
-    "sec-": {
+    "sec1-": {
       "meaning": "cut",
       "forms": [
         "sec-",
@@ -1768,7 +1791,8 @@
       "forms": [
         "sed-",
         "sid-",
-        "ses-"
+        "ses-",
+        "sent-"
       ]
     },
     "sem-": {
@@ -1850,7 +1874,7 @@
         "solu-"
       ]
     },
-    "son-": {
+    "son1-": {
       "meaning": "sound",
       "forms": [
         "son-"
@@ -2121,7 +2145,7 @@
         "ut-"
       ]
     },
-    "vac-": {
+    "vac1-": {
       "meaning": "empty",
       "forms": [
         "vac-",
@@ -2227,7 +2251,7 @@
         "venc-"
       ]
     },
-    "vir-": {
+    "vir1-": {
       "meaning": "poison",
       "forms": [
         "vir-"

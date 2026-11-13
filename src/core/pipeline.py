@@ -159,7 +159,9 @@ def tidy_segments(segments: list[Segment], language: str) -> list[Segment]:
     """Settle the stem layouts the model writes either way before they are checked.
 
     A part named by one of its spellings takes its entry's name, when only one entry has that
-    spelling: dia- is di-. A linking vowel the model kept on a suffix becomes its own null part, so
+    spelling: dia- is di-. A spelling that numbered modern stems also take is left as written, so
+    it is rejected for its missing number: cas- may be cas1- (house), not cad- (fall), whose
+    spellings include cas-. A linking vowel the model kept on a suffix becomes its own null part, so
     the suffix is spelled as listed: "ación" for -ción is "a" + "ción". An entry made only of
     function words (desde que) is one null part.
     """
@@ -169,6 +171,7 @@ def tidy_segments(segments: list[Segment], language: str) -> list[Segment]:
         return [Segment(word_part="".join(segment.word_part for segment in segments))]
     forms = lexicon_forms(language)
     owners = spelling_owners(language)
+    numbered = homograph_keys(lexicon_meanings(language))
     tidied: list[Segment] = []
     for segment in segments:
         morpheme_type, morpheme = segment.morpheme_type, segment.morpheme
@@ -176,7 +179,11 @@ def tidy_segments(segments: list[Segment], language: str) -> list[Segment]:
             tidied.append(segment)
             continue
         names = owners.get((morpheme_type, morpheme), [])
-        if (morpheme_type, morpheme) not in forms and len(names) == 1:
+        if (
+            (morpheme_type, morpheme) not in forms
+            and len(names) == 1
+            and (morpheme_type, homograph_key(morpheme_type, morpheme)) not in numbered
+        ):
             morpheme = names[0]
             segment = segment.model_copy(update={"morpheme": morpheme})
         part = segment.word_part
