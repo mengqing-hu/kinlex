@@ -32,7 +32,7 @@ export async function AppShell({ children, language }: AppShellProps) {
   const base = `/${language}`
   const links: SidebarLink[] = [
     {
-      href: `${base}/vocabulary/a1`,
+      href: `${base}/vocabulary/all`,
       icon: 'levels',
       label: t('levels'),
       match: `${base}/vocabulary`,
