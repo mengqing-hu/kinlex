@@ -49,6 +49,8 @@ export interface VideoJob {
 export interface StudyVideoLink {
   id: string
   href: string
+  // The language the video is in, which its page and its rename and delete calls go under.
+  language: string
   title: string
 }
 

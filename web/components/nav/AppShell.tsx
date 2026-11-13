@@ -4,7 +4,7 @@ import { getTranslations } from 'next-intl/server'
 import { Sidebar, type SidebarLink } from '@/components/nav/Sidebar'
 import { WORD_PANEL_SLOT_ID } from '@/lib/wordPanel'
 import { getLanguageNames } from '@/i18n/server'
-import type { SupportedLanguageCode } from '@/lib/languages'
+import { supportedLanguageCodes, type SupportedLanguageCode } from '@/lib/languages'
 import { listStudyVideos } from '@/lib/videos/studyFiles'
 
 interface AppShellProps {
@@ -17,7 +17,17 @@ export async function AppShell({ children, language }: AppShellProps) {
   const [t, languageNames, videos] = await Promise.all([
     getTranslations('navigation'),
     getLanguageNames(),
-    listStudyVideos(language),
+    // Every processed video, whatever the language being learned.
+    Promise.all(
+      supportedLanguageCodes.map(async (code) =>
+        (await listStudyVideos(code)).map((video) => ({
+          id: video.id,
+          href: `/${code}/videos/${video.id}`,
+          language: code,
+          title: video.title,
+        })),
+      ),
+    ),
   ])
   const base = `/${language}`
   const links: SidebarLink[] = [
@@ -40,7 +50,6 @@ export async function AppShell({ children, language }: AppShellProps) {
       label: t('favorites'),
       match: `${base}/favorites`,
     },
-    { href: `${base}/videos`, icon: 'videos', label: t('videos'), match: `${base}/videos` },
   ]
 
   return (
@@ -70,11 +79,8 @@ export async function AppShell({ children, language }: AppShellProps) {
         language={language}
         languageNames={languageNames}
         links={links}
-        videos={videos.map((video) => ({
-          id: video.id,
-          href: `${base}/videos/${video.id}`,
-          title: video.title,
-        }))}
+        videos={videos.flat().toSorted((left, right) => left.title.localeCompare(right.title))}
+        videosHref={`${base}/videos`}
       />
       <div className="flex min-w-0 flex-1 flex-col">{children}</div>
       {/* The word detail panel portals in here, becoming the third column on wide screens. */}
