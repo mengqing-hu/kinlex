@@ -15,6 +15,8 @@ interface LanguageSwitcherProps {
   // The sidebar's shared item styling, so the switcher lines up with the links below it.
   itemClassName: string
   label: string
+  // Each learning language's name in the interface language, by code.
+  languageNames: Record<string, string>
 }
 
 export function LanguageSwitcher({
@@ -22,6 +24,7 @@ export function LanguageSwitcher({
   currentLanguage,
   itemClassName,
   label,
+  languageNames,
 }: LanguageSwitcherProps) {
   return (
     <DropdownMenu>
@@ -66,7 +69,7 @@ export function LanguageSwitcher({
                 className={isCurrent ? 'bg-[var(--bg)] text-[var(--ink)]' : ''}
                 href={`/${language.code}/vocabulary/a1`}
               >
-                {language.name}
+                {languageNames[language.code] ?? language.name}
               </Link>
             </DropdownMenuItem>
           )

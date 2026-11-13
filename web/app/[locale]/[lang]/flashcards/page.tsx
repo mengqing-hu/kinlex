@@ -4,7 +4,7 @@ import { getTranslations } from 'next-intl/server'
 
 import { requireUser } from '@/app/[locale]/me/requireUser'
 import { FlashcardSession } from '@/components/flashcards/FlashcardSession'
-import { applyRouteLocale } from '@/i18n/server'
+import { applyRouteLocale, getLanguageName } from '@/i18n/server'
 import { isSupportedLanguage } from '@/lib/languages'
 
 interface FlashcardsPageProps {
@@ -25,9 +25,10 @@ export default async function FlashcardsPage({ params }: FlashcardsPageProps) {
   }
 
   await requireUser(`/${lang}/flashcards`)
-  const [t, wordT] = await Promise.all([
+  const [t, wordT, language] = await Promise.all([
     getTranslations('flashcardsPage'),
     getTranslations('wordDetail'),
+    getLanguageName(lang),
   ])
 
   return (
@@ -77,7 +78,7 @@ export default async function FlashcardsPage({ params }: FlashcardsPageProps) {
             cardSection: t('settings.cardSection'),
             direction: t('settings.direction'),
             directions: {
-              'de-en': t('settings.directions.de-en'),
+              'de-en': t('settings.directions.de-en', { language }),
               'en-de': t('settings.directions.en-de'),
               mixed: t('settings.directions.mixed'),
             },

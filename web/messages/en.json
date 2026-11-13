@@ -1,4 +1,8 @@
 {
+  "languageNames": {
+    "de": "German",
+    "es": "Spanish"
+  },
   "navigation": {
     "home": "Kinlex",
     "learningLanguage": "Learning {language}",
@@ -38,8 +42,8 @@
       "root": "Roots",
       "suffix": "Suffixes"
     },
-    "metadataTitle": "German roots, prefixes and suffixes",
-    "metadataDescription": "Explore German word families through roots, prefixes and suffixes.",
+    "metadataTitle": "{language} roots, prefixes and suffixes",
+    "metadataDescription": "Explore {language} word families through roots, prefixes and suffixes.",
     "views": {
       "view": "View",
       "list": "List",
@@ -80,8 +84,8 @@
       "root": "Root",
       "suffix": "Suffix"
     },
-    "metadataTitle": "{root} German word family",
-    "metadataDescription": "Learn German words containing {root}, meaning {meaning}."
+    "metadataTitle": "{root} {language} word family",
+    "metadataDescription": "Learn {language} words containing {root}, meaning {meaning}."
   },
   "wordDetail": {
     "plural": "Plural: {plural}",
@@ -117,10 +121,8 @@
   },
   "levelPage": {
     "backToHome": "Kinlex",
-    "eyebrow": "German vocabulary",
     "title": "Level {level} words",
-    "allLevelsTitle": "All German words",
-    "description": "Build your German vocabulary with clear meanings, examples and word structure.",
+    "allLevelsTitle": "All {language} words",
     "allLevels": "All levels",
     "levelFilter": "Level",
     "allPartsOfSpeech": "All word types",
@@ -131,7 +133,7 @@
     "otherTopic": "Other",
     "otherTopicHint": "Words without a topic",
     "searchWords": "Search",
-    "searchPlaceholder": "Search German words",
+    "searchPlaceholder": "Search {language} words",
     "loadMore": "Load more",
     "loading": "Loading words",
     "empty": "No words match these filters.",
@@ -142,10 +144,10 @@
     "slowAudio": "Replay at a slower speed",
     "familiarity": "Familiarity {level} of 5",
     "openWord": "Open details for {word}",
-    "metadataTitle": "German {level} vocabulary",
-    "metadataDescription": "Learn German {level} vocabulary with meanings, examples and word structure.",
-    "allLevelsMetadataTitle": "German vocabulary",
-    "allLevelsMetadataDescription": "Learn German vocabulary across all CEFR levels with meanings, examples and word structure.",
+    "metadataTitle": "{language} {level} vocabulary",
+    "metadataDescription": "Learn {language} {level} vocabulary with meanings, examples and word structure.",
+    "allLevelsMetadataTitle": "{language} vocabulary",
+    "allLevelsMetadataDescription": "Learn {language} vocabulary across all CEFR levels with meanings, examples and word structure.",
     "sorting": {
       "sort": "Sort",
       "sortBy": "Sort by",
@@ -270,7 +272,7 @@
       "cardSection": "Cards",
       "direction": "Show first",
       "directions": {
-        "de-en": "German",
+        "de-en": "{language}",
         "en-de": "Meaning",
         "mixed": "Mixed"
       },

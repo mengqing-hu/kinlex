@@ -6,7 +6,7 @@ import { getTranslations } from 'next-intl/server'
 import { WordList } from '@/components/list/WordList'
 import { MorphemeLabel } from '@/components/word/MorphemeLabel'
 import { getPathname, Link } from '@/i18n/navigation'
-import { applyRouteLocale } from '@/i18n/server'
+import { applyRouteLocale, getLanguageName } from '@/i18n/server'
 import { getWordListLabels } from '@/lib/wordListLabels'
 import { config } from '@/lib/config'
 import { NotFoundError, UnsupportedLanguageError } from '@/lib/errors'
@@ -50,17 +50,19 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: RootPageProps): Promise<Metadata> {
   const { lang, root } = await params
   const locale = await applyRouteLocale(params)
-  const [morpheme, t] = await Promise.all([
+  const [morpheme, t, language] = await Promise.all([
     loadMorphemeOrNotFound(lang, root, locale),
     getTranslations('rootPage'),
+    getLanguageName(lang),
   ])
   const canonicalUrl = new URL(
     getPathname({ href: `/${lang}/word-parts/${morpheme.slug}`, locale }),
     config.siteUrl,
   ).toString()
   return {
-    title: t('metadataTitle', { root: morphemeLabelText(morpheme) }),
+    title: t('metadataTitle', { language, root: morphemeLabelText(morpheme) }),
     description: t('metadataDescription', {
+      language,
       root: morphemeLabelText(morpheme),
       meaning: morpheme.meaning,
     }),
@@ -77,7 +79,7 @@ export default async function RootPage({ params }: RootPageProps) {
     listWords(db, { lang, explain: locale, morpheme: morpheme.slug, limit: PAGE_SIZE }),
     listWordFilterOptions(db, lang, { morpheme: morpheme.slug }),
     getTranslations('rootPage'),
-    getWordListLabels(),
+    getWordListLabels(lang),
   ])
 
   return (

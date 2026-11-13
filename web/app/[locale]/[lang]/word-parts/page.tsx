@@ -4,7 +4,7 @@ import { getTranslations } from 'next-intl/server'
 
 import { RootDirectory, type RootDirectoryLabels } from '@/components/root/RootDirectory'
 import { getPathname } from '@/i18n/navigation'
-import { applyRouteLocale } from '@/i18n/server'
+import { applyRouteLocale, getLanguageName } from '@/i18n/server'
 import { config } from '@/lib/config'
 import { isSupportedLanguage, supportedLanguageCodes } from '@/lib/languages'
 import { listMorphemes } from '@/lib/services/morphemeService'
@@ -26,14 +26,14 @@ export async function generateMetadata({ params }: RootsPageProps): Promise<Meta
   const locale = await applyRouteLocale(params)
   if (!isSupportedLanguage(lang)) notFound()
 
-  const t = await getTranslations('rootsPage')
+  const [t, language] = await Promise.all([getTranslations('rootsPage'), getLanguageName(lang)])
   const canonicalUrl = new URL(
     getPathname({ href: `/${lang}/word-parts`, locale }),
     config.siteUrl,
   ).toString()
   return {
-    title: t('metadataTitle'),
-    description: t('metadataDescription'),
+    title: t('metadataTitle', { language }),
+    description: t('metadataDescription', { language }),
     alternates: { canonical: canonicalUrl },
   }
 }
@@ -46,7 +46,7 @@ export default async function RootsPage({ params }: RootsPageProps) {
   const [items, t, listLabels] = await Promise.all([
     listMorphemes(getPublicSupabase(), lang, locale),
     getTranslations('rootsPage'),
-    getWordListLabels(),
+    getWordListLabels(lang),
   ])
 
   return (

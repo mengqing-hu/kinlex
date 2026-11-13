@@ -33,7 +33,7 @@ export default async function FavoritesPage({ params }: FavoritesPageProps) {
     listWords(supabase, { lang, explain: locale, favorites: true, limit: PAGE_SIZE }, user.id),
     listWordFilterOptions(supabase, lang, { favorites: true }, user.id),
     getTranslations('favoritesPage'),
-    getWordListLabels(),
+    getWordListLabels(lang),
   ])
 
   return (

@@ -29,7 +29,7 @@ export default async function VideoPage({ params }: VideoPageProps) {
   const [video, t, listLabels] = await Promise.all([
     getStudyVideo(lang, videoId, locale),
     getTranslations('videoPage'),
-    getWordListLabels(),
+    getWordListLabels(lang),
   ])
   if (!video) notFound()
 

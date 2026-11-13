@@ -4,12 +4,15 @@ import { getTranslations } from 'next-intl/server'
 
 import type { SortSelectLabels } from '@/components/list/SortSelect'
 import type { WordListLabels } from '@/components/list/WordList'
+import { getLanguageName } from '@/i18n/server'
 
-export async function getWordListLabels(): Promise<WordListLabels> {
-  const [t, wordT, morphemeT] = await Promise.all([
+// The labels of a word list of the learning language `language`.
+export async function getWordListLabels(language: string): Promise<WordListLabels> {
+  const [t, wordT, morphemeT, languageName] = await Promise.all([
     getTranslations('levelPage'),
     getTranslations('wordDetail'),
     getTranslations('morphemeCard'),
+    getLanguageName(language),
   ])
 
   const morphemeTypes = {
@@ -30,7 +33,7 @@ export async function getWordListLabels(): Promise<WordListLabels> {
     otherTopic: t('otherTopic'),
     otherTopicHint: t('otherTopicHint'),
     searchWords: t('searchWords'),
-    searchPlaceholder: t('searchPlaceholder'),
+    searchPlaceholder: t('searchPlaceholder', { language: languageName }),
     views: {
       view: t('views.view'),
       list: t('views.list'),

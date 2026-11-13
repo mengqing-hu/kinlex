@@ -4,7 +4,7 @@ import { getTranslations } from 'next-intl/server'
 
 import { WordList } from '@/components/list/WordList'
 import { getPathname, permanentRedirect } from '@/i18n/navigation'
-import { applyRouteLocale } from '@/i18n/server'
+import { applyRouteLocale, getLanguageName } from '@/i18n/server'
 import { getWordListLabels } from '@/lib/wordListLabels'
 import { config } from '@/lib/config'
 import { UnsupportedLanguageError } from '@/lib/errors'
@@ -56,15 +56,17 @@ export async function generateMetadata({ params }: LevelPageProps): Promise<Meta
     notFound()
   }
 
-  const t = await getTranslations('levelPage')
+  const [t, language] = await Promise.all([getTranslations('levelPage'), getLanguageName(lang)])
   const canonicalUrl = new URL(
     getPathname({ href: getLevelPath(lang, level ?? ALL_LEVELS_ROUTE), locale }),
     config.siteUrl,
   ).toString()
-  const title = level ? t('metadataTitle', { level }) : t('allLevelsMetadataTitle')
+  const title = level
+    ? t('metadataTitle', { language, level })
+    : t('allLevelsMetadataTitle', { language })
   const description = level
-    ? t('metadataDescription', { level })
-    : t('allLevelsMetadataDescription')
+    ? t('metadataDescription', { language, level })
+    : t('allLevelsMetadataDescription', { language })
 
   return {
     title,
@@ -112,8 +114,12 @@ export default async function LevelPage({ params }: LevelPageProps) {
     throw error
   }
 
-  const [t, labels] = await Promise.all([getTranslations('levelPage'), getWordListLabels()])
-  const pageTitle = level ? t('title', { level }) : t('allLevelsTitle')
+  const [t, labels, language] = await Promise.all([
+    getTranslations('levelPage'),
+    getWordListLabels(lang),
+    getLanguageName(lang),
+  ])
+  const pageTitle = level ? t('title', { level }) : t('allLevelsTitle', { language })
 
   return (
     <main className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-12">

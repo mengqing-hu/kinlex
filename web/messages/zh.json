@@ -1,4 +1,8 @@
 {
+  "languageNames": {
+    "de": "德语",
+    "es": "西班牙语"
+  },
   "navigation": {
     "home": "Kinlex",
     "learningLanguage": "正在学习{language}",
@@ -38,8 +42,8 @@
       "root": "词根",
       "suffix": "后缀"
     },
-    "metadataTitle": "德语词根、前缀和后缀",
-    "metadataDescription": "通过词根、前缀和后缀探索德语词族。",
+    "metadataTitle": "{language}词根、前缀和后缀",
+    "metadataDescription": "通过词根、前缀和后缀探索{language}词族。",
     "views": {
       "view": "视图",
       "list": "列表",
@@ -80,8 +84,8 @@
       "root": "词根",
       "suffix": "后缀"
     },
-    "metadataTitle": "{root} 德语词族",
-    "metadataDescription": "学习含有 {root}（意为 {meaning}）的德语单词。"
+    "metadataTitle": "{root} {language}词族",
+    "metadataDescription": "学习含有 {root}（意为 {meaning}）的{language}单词。"
   },
   "wordDetail": {
     "plural": "复数：{plural}",
@@ -117,10 +121,8 @@
   },
   "levelPage": {
     "backToHome": "Kinlex",
-    "eyebrow": "德语词汇",
     "title": "{level} 级单词",
-    "allLevelsTitle": "全部德语单词",
-    "description": "通过清晰的释义、例句和单词结构积累德语词汇。",
+    "allLevelsTitle": "全部{language}单词",
     "allLevels": "全部级别",
     "levelFilter": "级别",
     "allPartsOfSpeech": "全部词性",
@@ -157,7 +159,7 @@
     "otherTopic": "其他",
     "otherTopicHint": "没有主题的单词",
     "searchWords": "搜索",
-    "searchPlaceholder": "搜索德语单词",
+    "searchPlaceholder": "搜索{language}单词",
     "loadMore": "加载更多",
     "loading": "正在加载单词",
     "empty": "没有符合这些筛选条件的单词。",
@@ -168,10 +170,10 @@
     "slowAudio": "慢速重播",
     "familiarity": "熟悉度 {level}/5",
     "openWord": "打开 {word} 的详情",
-    "metadataTitle": "德语 {level} 词汇",
-    "metadataDescription": "通过释义、例句和单词结构学习德语 {level} 词汇。",
-    "allLevelsMetadataTitle": "德语词汇",
-    "allLevelsMetadataDescription": "通过释义、例句和单词结构学习欧标各级别的德语词汇。",
+    "metadataTitle": "{language} {level} 词汇",
+    "metadataDescription": "通过释义、例句和单词结构学习{language} {level} 词汇。",
+    "allLevelsMetadataTitle": "{language}词汇",
+    "allLevelsMetadataDescription": "通过释义、例句和单词结构学习欧标各级别的{language}词汇。",
     "sorting": {
       "sort": "排序",
       "sortBy": "排序方式",
@@ -296,7 +298,7 @@
       "cardSection": "卡片",
       "direction": "先显示",
       "directions": {
-        "de-en": "德语",
+        "de-en": "{language}",
         "en-de": "释义",
         "mixed": "混合"
       },

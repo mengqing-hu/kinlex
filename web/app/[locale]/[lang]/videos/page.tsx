@@ -4,7 +4,7 @@ import { getTranslations } from 'next-intl/server'
 
 import { AddVideoForm } from '@/components/videos/AddVideoForm'
 import { localeNames, locales } from '@/i18n/locales'
-import { applyRouteLocale } from '@/i18n/server'
+import { applyRouteLocale, getLanguageNames } from '@/i18n/server'
 import { isSupportedLanguage, supportedLanguages } from '@/lib/languages'
 import { listStudyVideos } from '@/lib/videos/studyFiles'
 
@@ -25,8 +25,9 @@ export default async function VideosPage({ params }: VideosPageProps) {
   await applyRouteLocale(params)
   if (!isSupportedLanguage(lang)) notFound()
 
-  const [t, processed] = await Promise.all([
+  const [t, languageNames, processed] = await Promise.all([
     getTranslations('videoPage'),
+    getLanguageNames(),
     Promise.all(
       supportedLanguages.map(async ({ code }) => [code, await listStudyVideos(code)] as const),
     ),
@@ -58,7 +59,10 @@ export default async function VideosPage({ params }: VideosPageProps) {
         retry: t('retry'),
       }}
       language={lang}
-      languages={supportedLanguages.map(({ code, name }) => ({ code, name }))}
+      languages={supportedLanguages.map(({ code, name }) => ({
+        code,
+        name: languageNames[code] ?? name,
+      }))}
       meaningLanguages={locales.map((code) => ({ code, name: localeNames[code] }))}
       processed={Object.fromEntries(processed)}
     />

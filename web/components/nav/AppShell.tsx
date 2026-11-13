@@ -3,7 +3,8 @@ import { getTranslations } from 'next-intl/server'
 
 import { Sidebar, type SidebarLink } from '@/components/nav/Sidebar'
 import { WORD_PANEL_SLOT_ID } from '@/lib/wordPanel'
-import { getLanguageDefinition, type SupportedLanguageCode } from '@/lib/languages'
+import { getLanguageNames } from '@/i18n/server'
+import type { SupportedLanguageCode } from '@/lib/languages'
 import { listStudyVideos } from '@/lib/videos/studyFiles'
 
 interface AppShellProps {
@@ -13,7 +14,11 @@ interface AppShellProps {
 
 // The site navigation as a left sidebar, with the page beside it.
 export async function AppShell({ children, language }: AppShellProps) {
-  const [t, videos] = await Promise.all([getTranslations('navigation'), listStudyVideos(language)])
+  const [t, languageNames, videos] = await Promise.all([
+    getTranslations('navigation'),
+    getLanguageNames(),
+    listStudyVideos(language),
+  ])
   const base = `/${language}`
   const links: SidebarLink[] = [
     {
@@ -48,7 +53,7 @@ export async function AppShell({ children, language }: AppShellProps) {
           expandSidebar: t('expandSidebar'),
           home: t('home'),
           learningLanguage: t('learningLanguage', {
-            language: getLanguageDefinition(language).name,
+            language: languageNames[language] ?? language,
           }),
           mainNavigation: t('mainNavigation'),
           openMenu: t('openMenu'),
@@ -63,6 +68,7 @@ export async function AppShell({ children, language }: AppShellProps) {
           },
         }}
         language={language}
+        languageNames={languageNames}
         links={links}
         videos={videos.map((video) => ({
           id: video.id,

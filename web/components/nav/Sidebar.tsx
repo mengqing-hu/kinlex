@@ -38,6 +38,8 @@ export interface SidebarLabels {
 interface SidebarProps {
   labels: SidebarLabels
   language: SupportedLanguageCode
+  // Each learning language's name in the interface language, by code.
+  languageNames: Record<string, string>
   links: readonly SidebarLink[]
   // The processed videos, listed under the videos link.
   videos: readonly StudyVideoLink[]
@@ -114,7 +116,7 @@ const navItemClass =
   'md:sidebar-collapsed:justify-center md:sidebar-collapsed:px-0 flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none'
 const navItemIdleClass = 'text-[var(--mute)] hover:bg-[var(--bg)] hover:text-[var(--ink)]'
 
-export function Sidebar({ labels, language, links, videos }: SidebarProps) {
+export function Sidebar({ labels, language, languageNames, links, videos }: SidebarProps) {
   const pathname = usePathname()
   const collapsed = useSyncExternalStore(subscribeToCollapsed, getCollapsedSnapshot, () => false)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -218,6 +220,7 @@ export function Sidebar({ labels, language, links, videos }: SidebarProps) {
                 currentLanguage={language}
                 itemClassName={navItemClass}
                 label={labels.learningLanguage}
+                languageNames={languageNames}
               />
             </li>
             <li aria-hidden="true" className="mx-1 my-2 h-px bg-[var(--line)]" />
