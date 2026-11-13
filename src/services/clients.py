@@ -1,5 +1,6 @@
 """OpenAI-compatible LLM, TTS and speech recognition clients."""
 
+import random
 import threading
 import time
 from dataclasses import dataclass
@@ -46,26 +47,39 @@ class STTProvider(Protocol):
 
 
 _RETRYABLE = {408, 409, 429, 500, 502, 503, 504}
+_ATTEMPTS = 6
+# A 429 means the key's parallel requests are taken. They free up as other requests finish, and a
+# long completion holds one for a minute or two; anything else sharing the key (the website's chat)
+# takes one too. So a 429 is waited out for about five minutes rather than one.
+_RATE_LIMITED_ATTEMPTS = 10
+_MAX_WAIT_SECONDS = 60
+
+
+def _wait_seconds(attempt: int) -> float:
+    # The jitter keeps parallel requests that were turned away together from coming back together.
+    return min(2.0**attempt, _MAX_WAIT_SECONDS) + random.uniform(0, 1)
 
 
 def _post(client: httpx.Client, path: str, **kwargs: object) -> httpx.Response:
-    for attempt in range(1, 7):
+    attempt = 0
+    while True:
+        attempt += 1
         try:
             response = client.post(path, **kwargs)  # type: ignore[arg-type]
         except httpx.TransportError as error:
-            if attempt == 6:
+            if attempt >= _ATTEMPTS:
                 raise ProviderError(f"POST {path} failed: {error}") from error
-            time.sleep(2**attempt)
+            time.sleep(_wait_seconds(attempt))
             continue
-        if response.status_code not in _RETRYABLE or attempt == 6:
+        attempts = _RATE_LIMITED_ATTEMPTS if response.status_code == 429 else _ATTEMPTS
+        if response.status_code not in _RETRYABLE or attempt >= attempts:
             if response.is_error:
                 raise ProviderError(
                     f"POST {path} returned {response.status_code}: {response.text[:300]}"
                 )
             return response
         retry_after = response.headers.get("retry-after", "")
-        time.sleep(max(2**attempt, int(retry_after) if retry_after.isdigit() else 0))
-    raise AssertionError("unreachable")
+        time.sleep(max(_wait_seconds(attempt), int(retry_after) if retry_after.isdigit() else 0))
 
 
 class _Limiter:
