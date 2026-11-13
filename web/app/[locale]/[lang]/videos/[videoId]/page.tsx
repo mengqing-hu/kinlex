@@ -38,10 +38,13 @@ export default async function VideoPage({ params }: VideoPageProps) {
       key={video.id}
       labels={{
         captions: t('captions'),
+        options: t('options'),
+        sidePanel: t('sidePanel'),
         original: t('original'),
         translation: t('translation'),
         inThisVideo: t('inThisVideo'),
         playSentence: t('playSentence'),
+        sentenceSpeed: t('sentenceSpeed'),
         dictionaryForm: t('dictionaryForm'),
         notInVocabulary: t('notInVocabulary'),
         close: listLabels.wordPanel.close,
@@ -51,6 +54,15 @@ export default async function VideoPage({ params }: VideoPageProps) {
         inVocabulary: t('inVocabulary'),
         similarSpelling: t('similarSpelling'),
         wordPanel: listLabels.wordPanel,
+        chat: {
+          chat: t('chat'),
+          chatHint: t('chatHint'),
+          chatPlaceholder: t('chatPlaceholder'),
+          send: t('send'),
+          chatFailed: t('chatFailed'),
+          chatBusy: t('chatBusy'),
+          close: listLabels.wordPanel.close,
+        },
       }}
       video={video}
     />

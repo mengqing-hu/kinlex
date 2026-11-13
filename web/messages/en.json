@@ -307,6 +307,8 @@
     "meaningLanguage": "Explain in",
     "start": "Start processing",
     "captions": "Captions",
+    "options": "Options",
+    "sidePanel": "Side panel",
     "original": "Original",
     "translation": "Translation",
     "inThisVideo": "In this video",
@@ -314,6 +316,12 @@
     "dictionaryForm": "Dictionary form",
     "notInVocabulary": "This word is not in the Kinlex vocabulary yet.",
     "searchWords": "Search words",
+    "chat": "Ask AI",
+    "chatHint": "Ask about a word, the grammar, or what is going on. The AI reads the captions around where you are in the video.",
+    "chatPlaceholder": "Ask about the video…",
+    "send": "Send",
+    "chatFailed": "The AI could not answer. Try again in a moment.",
+    "chatBusy": "The AI is busy with other requests. Send the question again in a few seconds.",
     "noMatches": "No words match.",
     "searchHint": "Search the vocabulary, or click a word in the captions.",
     "inVocabulary": "In the vocabulary",
@@ -330,6 +338,7 @@
     "failed": "Processing failed",
     "stopped": "Processing stopped before it finished.",
     "retry": "Try again",
-    "startFailed": "The website could not start processing. The server log says why."
+    "startFailed": "The website could not start processing. The server log says why.",
+    "sentenceSpeed": "Speed for playing the sentence"
   }
 }

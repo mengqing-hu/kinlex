@@ -333,6 +333,8 @@
     "meaningLanguage": "解释语言",
     "start": "开始处理",
     "captions": "字幕",
+    "options": "选项",
+    "sidePanel": "右侧栏",
     "original": "原文",
     "translation": "译文",
     "inThisVideo": "视频中的用法",
@@ -340,6 +342,12 @@
     "dictionaryForm": "原形",
     "notInVocabulary": "这个词还不在 Kinlex 词库中。",
     "searchWords": "搜索单词",
+    "chat": "AI 对话",
+    "chatHint": "可以问单词、语法或剧情。AI 会读你当前播放位置附近的字幕。",
+    "chatPlaceholder": "问问这段视频…",
+    "send": "发送",
+    "chatFailed": "AI 暂时没有回答，请稍后再试。",
+    "chatBusy": "AI 正在处理其他请求，请过几秒再发送。",
     "noMatches": "没有找到匹配的单词。",
     "searchHint": "搜索词库，或点击字幕中的单词。",
     "inVocabulary": "词库",
@@ -356,6 +364,7 @@
     "failed": "处理失败",
     "stopped": "处理在完成前中断了。",
     "retry": "重试",
-    "startFailed": "网站没能启动处理，原因见服务器日志。"
+    "startFailed": "网站没能启动处理，原因见服务器日志。",
+    "sentenceSpeed": "播放这一句的速度"
   }
 }

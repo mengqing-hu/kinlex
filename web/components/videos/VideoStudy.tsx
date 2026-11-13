@@ -1,9 +1,21 @@
 'use client'
 
-import { memo, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  memo,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react'
 
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/Popover'
 import { PanelCloseButton, panelSectionLabelClass, SidePanel } from '@/components/ui/SidePanel'
+import { Switch } from '@/components/ui/Switch'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip'
+import { useVideoChat, VideoChatPanel, type VideoChatLabels } from '@/components/videos/VideoChat'
 import {
   findVideoMatches,
   useWordSearch,
@@ -23,10 +35,13 @@ import {
 
 export interface VideoStudyLabels {
   captions: string
+  options: string
+  sidePanel: string
   original: string
   translation: string
   inThisVideo: string
   playSentence: string
+  sentenceSpeed: string
   dictionaryForm: string
   notInVocabulary: string
   close: string
@@ -36,7 +51,11 @@ export interface VideoStudyLabels {
   inVocabulary: string
   similarSpelling: string
   wordPanel: WordPanelLabels
+  chat: VideoChatLabels
 }
+
+// What the right column shows when no word is picked, chosen with the captions' tool buttons.
+type Tool = 'chat' | 'search'
 
 // The word shown in the right column: one clicked in the captions, or one found by searching.
 type Selection = { kind: 'caption'; line: number; token: number } | { kind: 'search'; slug: string }
@@ -96,6 +115,151 @@ function SentenceWords({
   return <>{parts}</>
 }
 
+// The speeds a sentence can be played at from the word panel, in the order a click steps through.
+// Below normal speed it plays once and stops.
+const SENTENCE_RATES = [1, 0.75, 0.5]
+
+// 1.0×, 0.75×, 0.5×: normal speed keeps its decimal, so it reads as one of the speeds.
+function formatRate(rate: number): string {
+  return `${Number.isInteger(rate) ? rate.toFixed(1) : rate}×`
+}
+// Further past the slow sentence than this, the learner moved on, so it is not stopped there.
+const SLOW_STOP_SLACK_MS = 1000
+
+// Plays from the sentence's start; at the given rate, or the one the learner chose in the player.
+function play(player: HTMLVideoElement | null, line: StudyLine, rate?: number) {
+  if (!player) return
+  if (rate !== undefined) player.playbackRate = rate
+  player.currentTime = line.startMs / 1000
+  void player.play()
+}
+
+function finishSlowPlay(player: HTMLVideoElement | null, pause: boolean) {
+  if (!player) return
+  if (pause) player.pause()
+  player.playbackRate = 1
+}
+
+function SectionTitle({ id, children }: { id: string; children: ReactNode }) {
+  return (
+    <p
+      className="mb-2 text-[11px] font-semibold tracking-widest text-[var(--mute)] uppercase"
+      id={id}
+    >
+      {children}
+    </p>
+  )
+}
+
+// One button, like the word list's options, that opens the page's options: which captions to
+// show, and what the right column shows. It is tinted while a caption is hidden.
+function StudyOptions({
+  labels,
+  showOriginal,
+  showTranslation,
+  tool,
+  onShowOriginal,
+  onShowTranslation,
+  onTool,
+}: {
+  labels: VideoStudyLabels
+  showOriginal: boolean
+  showTranslation: boolean
+  // What the column shows; null while it is closed or shows a word, so any choice opens it.
+  tool: Tool | null
+  onShowOriginal: (shown: boolean) => void
+  onShowTranslation: (shown: boolean) => void
+  onTool: (tool: Tool) => void
+}) {
+  const captions = [
+    { label: labels.original, checked: showOriginal, onChange: onShowOriginal },
+    { label: labels.translation, checked: showTranslation, onChange: onShowTranslation },
+  ]
+  const tools = [
+    { value: 'chat', label: labels.chat.chat },
+    { value: 'search', label: labels.searchWords },
+  ] as const
+  const active = !showOriginal || !showTranslation
+  return (
+    <Popover>
+      <PopoverTrigger
+        aria-label={labels.options}
+        className={`inline-flex h-9 w-12 items-center justify-center rounded-lg border transition-colors focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none ${
+          active
+            ? 'border-[var(--root)]/50 bg-[var(--root)]/15 text-[var(--ink)] hover:border-[var(--root)]/70 data-[state=open]:border-[var(--root)]/70'
+            : 'border-[var(--line)] bg-[var(--card)] text-[var(--mute)] hover:border-[var(--mute)] hover:text-[var(--ink)] data-[state=open]:border-[var(--mute)]'
+        }`}
+        title={labels.options}
+      >
+        <svg
+          aria-hidden="true"
+          className="size-4"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+        >
+          <path d="M4 7h10M18 7h2M4 17h4M12 17h8" />
+          <circle cx="16" cy="7" r="2" />
+          <circle cx="10" cy="17" r="2" />
+        </svg>
+      </PopoverTrigger>
+      <PopoverContent aria-label={labels.options} className="w-72 space-y-4">
+        <section aria-labelledby="study-options-captions">
+          <SectionTitle id="study-options-captions">{labels.captions}</SectionTitle>
+          <div className="space-y-2.5">
+            {captions.map((option) => (
+              <label
+                className="flex cursor-pointer items-center justify-between gap-3 text-sm text-[var(--ink)]"
+                key={option.label}
+              >
+                {option.label}
+                <Switch checked={option.checked} onCheckedChange={option.onChange} />
+              </label>
+            ))}
+          </div>
+        </section>
+
+        <section aria-labelledby="study-options-panel" role="radiogroup">
+          <SectionTitle id="study-options-panel">{labels.sidePanel}</SectionTitle>
+          <div className="flex rounded-lg bg-[var(--bg)] p-0.5">
+            {tools.map((option) => (
+              <label className="flex-1" key={option.value}>
+                <input
+                  checked={tool === option.value}
+                  className="peer sr-only"
+                  name="study-panel"
+                  type="radio"
+                  value={option.value}
+                  onChange={() => onTool(option.value)}
+                />
+                <span className="block cursor-pointer rounded-md px-2 py-1.5 text-center text-xs font-medium whitespace-nowrap text-[var(--mute)] transition-colors peer-checked:bg-[var(--card)] peer-checked:text-[var(--ink)] peer-checked:shadow-sm peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--info)] hover:text-[var(--ink)]">
+                  {option.label}
+                </span>
+              </label>
+            ))}
+          </div>
+        </section>
+      </PopoverContent>
+    </Popover>
+  )
+}
+
+// Wide enough for the right column to stand beside the captions rather than cover them.
+const WIDE_QUERY = '(min-width: 768px)'
+
+function subscribeToWidth(onChange: () => void) {
+  const query = window.matchMedia(WIDE_QUERY)
+  query.addEventListener('change', onChange)
+  return () => query.removeEventListener('change', onChange)
+}
+
+function isWide() {
+  return window.matchMedia(WIDE_QUERY).matches
+}
+
 function showCaptions(player: HTMLVideoElement | null) {
   const track = player?.textTracks[0]
   if (track) track.mode = 'showing'
@@ -130,7 +294,7 @@ const CaptionRow = memo(function CaptionRow({
 }: CaptionRowProps) {
   return (
     <div
-      className={`flex cursor-pointer gap-3 rounded-xl px-3 py-2.5 transition-colors ${
+      className={`flex cursor-pointer items-baseline gap-3 rounded-lg px-3 py-1.5 transition-colors ${
         isCurrent
           ? 'bg-[var(--card)] shadow-sm ring-1 ring-[var(--line)]'
           : 'hover:bg-[var(--row-hover)]'
@@ -140,7 +304,7 @@ const CaptionRow = memo(function CaptionRow({
     >
       <button
         aria-label={`${playLabel} ${formatTime(line.startMs)}`}
-        className="shrink-0 pt-0.5 font-mono text-xs text-[var(--mute)] hover:text-[var(--ink)]"
+        className="shrink-0 font-mono text-xs text-[var(--mute)] hover:text-[var(--ink)]"
         type="button"
         onClick={(event) => {
           event.stopPropagation()
@@ -151,7 +315,7 @@ const CaptionRow = memo(function CaptionRow({
       </button>
       <div className="min-w-0 flex-1">
         {showOriginal ? (
-          <p className="text-sm leading-6 text-[var(--ink)]">
+          <p className="text-sm leading-5.5 text-[var(--ink)]">
             <SentenceWords
               line={line}
               selectedToken={selectedToken}
@@ -173,12 +337,16 @@ function VideoContext({
   line,
   token,
   labels,
+  rate,
   onPlay,
+  onNextRate,
 }: {
   line: StudyLine
   token: StudyToken
   labels: VideoStudyLabels
+  rate: number
   onPlay: () => void
+  onNextRate: () => void
 }) {
   return (
     <section>
@@ -193,13 +361,28 @@ function VideoContext({
           {line.text.slice(token.end)}
         </p>
         {line.translation ? <p className="text-[var(--mute)]">{line.translation}</p> : null}
-        <button
-          className="text-xs font-semibold text-[var(--info)] hover:underline"
-          type="button"
-          onClick={onPlay}
-        >
-          ▶ {labels.playSentence} · {formatTime(line.startMs)}
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            className="text-xs font-semibold text-[var(--info)] hover:underline"
+            type="button"
+            onClick={onPlay}
+          >
+            ▶ {labels.playSentence} · {formatTime(line.startMs)}
+          </button>
+          <button
+            aria-label={`${labels.sentenceSpeed}: ${formatRate(rate)}`}
+            className={`w-12 rounded-md border py-0.5 text-center text-xs font-semibold tabular-nums hover:border-[var(--info)] ${
+              rate < 1
+                ? 'border-[var(--info)] text-[var(--info)]'
+                : 'border-[var(--line)] text-[var(--mute)]'
+            }`}
+            title={labels.sentenceSpeed}
+            type="button"
+            onClick={onNextRate}
+          >
+            {formatRate(rate)}
+          </button>
+        </div>
       </div>
     </section>
   )
@@ -247,6 +430,13 @@ export function VideoStudy({ video, labels }: { video: StudyVideo; labels: Video
   const timeMs = useVideoTime(videoRef)
   const [selection, setSelection] = useState<Selection | null>(null)
   const [query, setQuery] = useState('')
+  // The chat or the search, or neither; a picked word shows over either. The chat is open at
+  // first on wide screens; on phones it would cover the captions, so it waits to be picked.
+  const wide = useSyncExternalStore(subscribeToWidth, isWide, () => true)
+  const [pickedTool, setPickedTool] = useState<Tool | null | undefined>(undefined)
+  const toolPicked = pickedTool !== undefined
+  const tool = toolPicked ? pickedTool : wide ? 'chat' : null
+  const chat = useVideoChat(video)
   const search = useWordSearch(video.language, video.meaningLanguage, query)
   const [showOriginal, setShowOriginal] = useState(true)
   const [showTranslation, setShowTranslation] = useState(true)
@@ -281,12 +471,28 @@ export function VideoStudy({ video, labels }: { video: StudyVideo; labels: Video
   }, [current])
 
   // Stable, so the memoized rows do not render again for them.
+  // Where a slowly played sentence ends, to stop there and go back to normal speed.
+  const slowStopRef = useRef<number | null>(null)
+
   const playLine = useCallback((line: StudyLine) => {
-    const player = videoRef.current
-    if (!player) return
-    player.currentTime = line.startMs / 1000
-    void player.play()
+    // Interrupting a slow sentence goes back to normal speed; otherwise the speed stays as set.
+    const wasSlow = slowStopRef.current !== null
+    slowStopRef.current = null
+    play(videoRef.current, line, wasSlow ? 1 : undefined)
   }, [])
+
+  const playLineSlowly = useCallback((line: StudyLine, rate: number) => {
+    slowStopRef.current = line.endMs
+    play(videoRef.current, line, rate)
+  }, [])
+  const [sentenceRate, setSentenceRate] = useState(1)
+
+  useEffect(() => {
+    const stop = slowStopRef.current
+    if (stop === null || timeMs < stop) return
+    slowStopRef.current = null
+    finishSlowPlay(videoRef.current, timeMs < stop + SLOW_STOP_SLACK_MS)
+  }, [timeMs])
 
   const selectWord = useCallback((line: number, token: number) => {
     videoRef.current?.pause()
@@ -296,15 +502,17 @@ export function VideoStudy({ video, labels }: { video: StudyVideo; labels: Video
   const caption = selection?.kind === 'caption' ? selection : null
   const selectedLine = caption ? video.lines[caption.line] : undefined
   const selectedToken = caption ? selectedLine?.tokens[caption.token] : undefined
-  // Closing a word goes back to the search and its results.
+  // Closing a word goes back to the search when it was open, and otherwise closes the column.
   const closePanel = () => setSelection(null)
+  const pickTool = (next: Tool | null) => setPickedTool(next)
   const searchBox = (
     <WordSearchBox
-      focus={selection === null && query !== ''}
+      focus={selection === null && (toolPicked || query !== '')}
       label={labels.searchWords}
       value={query}
       onChange={(value) => {
         setQuery(value)
+        pickTool('search')
         setSelection(null)
       }}
     />
@@ -315,21 +523,24 @@ export function VideoStudy({ video, labels }: { video: StudyVideo; labels: Video
         labels={labels}
         line={selectedLine}
         token={selectedToken}
-        onPlay={() => playLine(selectedLine)}
+        rate={sentenceRate}
+        onNextRate={() =>
+          setSentenceRate(
+            (rate) =>
+              SENTENCE_RATES[(SENTENCE_RATES.indexOf(rate) + 1) % SENTENCE_RATES.length] ?? 1,
+          )
+        }
+        onPlay={() =>
+          sentenceRate < 1 ? playLineSlowly(selectedLine, sentenceRate) : playLine(selectedLine)
+        }
       />
     ) : null
 
-  const toggleClass = (on: boolean) =>
-    `rounded-md border px-2 py-1 text-xs font-semibold transition-colors ${
-      on
-        ? 'border-[var(--ink)] bg-[var(--ink)] text-[var(--card)]'
-        : 'border-[var(--line)] text-[var(--mute)] hover:text-[var(--ink)]'
-    }`
-
   return (
-    <main className="mx-auto flex w-full max-w-4xl flex-col gap-4 px-4 py-4 md:h-dvh md:px-6 md:py-6">
+    <main className="flex w-full flex-col md:h-dvh">
+      {/* The player fills the top of the column, edge to edge; the captions keep a reading width. */}
       <video
-        className="aspect-video w-full shrink-0 rounded-2xl bg-black md:max-h-[48dvh]"
+        className="aspect-video w-full shrink-0 bg-black md:max-h-[55dvh]"
         controls
         playsInline
         preload="metadata"
@@ -348,31 +559,27 @@ export function VideoStudy({ video, labels }: { video: StudyVideo; labels: Video
         ) : null}
       </video>
 
-      <section className="flex min-h-0 flex-1 flex-col">
+      <section className="mx-auto flex min-h-0 w-full max-w-4xl flex-1 flex-col px-4 pt-4 pb-4 md:px-6">
         <div className="mb-2 flex items-center justify-between gap-3">
           <h2 className="text-xs font-bold tracking-[0.08em] text-[var(--mute)] uppercase">
             {labels.captions}
           </h2>
           <div className="flex gap-1.5">
-            <button
-              aria-pressed={showOriginal}
-              className={toggleClass(showOriginal)}
-              type="button"
-              onClick={() => setShowOriginal((on) => !on)}
-            >
-              {labels.original}
-            </button>
-            <button
-              aria-pressed={showTranslation}
-              className={toggleClass(showTranslation)}
-              type="button"
-              onClick={() => setShowTranslation((on) => !on)}
-            >
-              {labels.translation}
-            </button>
+            <StudyOptions
+              labels={labels}
+              showOriginal={showOriginal}
+              showTranslation={showTranslation}
+              tool={selection === null ? tool : null}
+              onShowOriginal={setShowOriginal}
+              onShowTranslation={setShowTranslation}
+              onTool={(next) => {
+                pickTool(next)
+                setSelection(null)
+              }}
+            />
           </div>
         </div>
-        <div className="relative min-h-0 flex-1 space-y-1 overflow-y-auto pr-1" ref={listRef}>
+        <div className="relative min-h-0 flex-1 space-y-0.5 overflow-y-auto pr-1" ref={listRef}>
           {video.lines.map((line, index) => (
             <CaptionRow
               index={index}
@@ -409,8 +616,15 @@ export function VideoStudy({ video, labels }: { video: StudyVideo; labels: Video
           token={selectedToken}
           onClose={closePanel}
         />
-      ) : (
-        <SidePanel busy={false} label={labels.searchWords} persistent onClose={() => setQuery('')}>
+      ) : tool === 'chat' ? (
+        <VideoChatPanel
+          chat={chat}
+          labels={labels.chat}
+          line={Math.max(0, current)}
+          onClose={() => pickTool(null)}
+        />
+      ) : tool === 'search' ? (
+        <SidePanel busy={false} label={labels.searchWords} onClose={() => pickTool(null)}>
           {searchBox}
           <div className="flex-1 overflow-y-auto">
             <WordSearchResults
@@ -425,7 +639,7 @@ export function VideoStudy({ video, labels }: { video: StudyVideo; labels: Video
             />
           </div>
         </SidePanel>
-      )}
+      ) : null}
     </main>
   )
 }
