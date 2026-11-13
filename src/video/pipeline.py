@@ -24,12 +24,20 @@ from services import db, example_tokens
 from services.clients import LLMProvider, create_llm, create_stt, model_client
 from utils.runtime import Cache, RunSummary, get_logger
 from video import youtube
-from video.captions import CaptionLine, lines_from_cues, official_cues, timed_words
+from video.captions import (
+    CaptionLine,
+    cues_from_words,
+    lines_from_cues,
+    official_cues,
+    timed_words,
+)
 from video.timing import time_words
 from video.transcription import cues_from_transcript, transcript
 from video.translation import translate_lines
 
-CaptionSource = Literal["official", "whisper"]
+# Where the captions come from: the video's own track, YouTube's recognition of the speech, or
+# a transcription of the sound with Whisper.
+CaptionSource = Literal["official", "automatic", "whisper"]
 Stage = Literal[
     "metadata", "download", "captions", "transcription", "translation", "meanings", "timing"
 ]
@@ -85,7 +93,7 @@ class StudyVideo(Record):
     language: str
     meaning_language: str
     caption_source: CaptionSource
-    # The official track's code (es, es-419), or the speech recognition model.
+    # The official or automatic track's code (es, es-419), or the speech recognition model.
     caption_track: str
     lines: list[StudyLine]
 
@@ -180,9 +188,15 @@ def process_video(
     language: str,
     meaning_language: str,
     directory: Path,
+    captions: CaptionSource | None = None,
     report: Report = _ignore,
+    on_video: Callable[[str, int | None], None] | None = None,
 ) -> StudyVideo:
-    """Download the video into directory, unless it is there already, and study its captions."""
+    """Download the video into directory, unless it is there already, and study its captions.
+
+    captions picks where they come from; without it, the official track when there is one and
+    Whisper otherwise. A source the video lacks raises NoCaptionsError.
+    """
     language_profile(language)
     language_name(meaning_language)
     log = get_logger()
@@ -191,6 +205,8 @@ def process_video(
     report("metadata", None)
     info = youtube.read_video(identifier)
     log.info("video %s: %s%s", identifier, info.title, " (signed in)" if info.signed_in else "")
+    if on_video:
+        on_video(info.title, info.duration_ms)
     path = video_path(directory, identifier)
     if not path.is_file():
         log.info("downloading the video")
@@ -202,17 +218,31 @@ def process_video(
     with model_client(get_settings()) as client:
         llm = create_llm(client, config)
         track = youtube.pick_track(info, language)
-        source: CaptionSource
-        if track is not None:
+        speech = youtube.pick_speech_track(info, language)
+        source: CaptionSource = captions or ("official" if track is not None else "whisper")
+        # YouTube's recognition of the speech times the words of any captions, so it is read once.
+        heard = (
+            timed_words(youtube.download_track(speech, signed_in=info.signed_in)) if speech else []
+        )
+        if source == "official":
+            if track is None:
+                raise NoCaptionsError(f"{identifier} has no official {language} captions")
             report("captions", None)
             log.info("captions: official track %s", track.code)
-            source, caption_track = "official", track.code
+            caption_track = track.code
             data = youtube.download_track(track, signed_in=info.signed_in)
             lines = lines_from_cues(official_cues(data))
+        elif source == "automatic":
+            if speech is None:
+                raise NoCaptionsError(f"{identifier} has no automatic {language} captions")
+            report("captions", None)
+            log.info("captions: YouTube's automatic track %s", speech.code)
+            caption_track = speech.code
+            lines = lines_from_cues(cues_from_words(heard))
         else:
             stt = create_stt(client, config)
-            log.info("no official %s captions; transcribing with %s", language, stt.model)
-            source, caption_track = "whisper", stt.model
+            log.info("transcribing the %s speech with %s", language, stt.model)
+            caption_track = stt.model
             report("transcription", 0)
             result = transcript(
                 path,
@@ -254,8 +284,6 @@ def process_video(
         )
 
     report("timing", None)
-    speech = youtube.pick_speech_track(info, language)
-    heard = timed_words(youtube.download_track(speech, signed_in=info.signed_in)) if speech else []
     log.info("timing words with %d words YouTube heard", len(heard))
     lines, word_times = time_words(
         lines, [[token.surface for token in tokens[line.position]] for line in lines], heard

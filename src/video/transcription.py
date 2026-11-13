@@ -107,7 +107,12 @@ def transcript(
 
 
 def cues_from_transcript(result: Transcript) -> list[Cue]:
-    """One cue per sentence, timed within its segment by its share of the segment's text."""
+    """One cue per sentence, timed within its segment by its share of the segment's text.
+
+    Whisper ends a segment where the speaker pauses or another one starts, often without a full
+    stop, so a segment's last sentence ends its line: joined with the next segment, a whole
+    exchange would show as one caption.
+    """
     cues = []
     for segment in result.segments:
         sentences = [clean(part) for part in _SENTENCE_BREAK.split(segment.text)]
@@ -116,10 +121,15 @@ def cues_from_transcript(result: Transcript) -> list[Cue]:
         start_ms = round(segment.start * 1000)
         span_ms = max(0, round(segment.end * 1000) - start_ms)
         done = 0
-        for sentence in sentences:
+        for index, sentence in enumerate(sentences):
             cue_start = start_ms + span_ms * done // total
             done += len(sentence)
             cues.append(
-                Cue(start_ms=cue_start, end_ms=start_ms + span_ms * done // total, text=sentence)
+                Cue(
+                    start_ms=cue_start,
+                    end_ms=start_ms + span_ms * done // total,
+                    text=sentence,
+                    ends_line=index == len(sentences) - 1,
+                )
             )
     return cues

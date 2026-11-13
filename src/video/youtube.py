@@ -1,8 +1,9 @@
 """Read a YouTube video's details and official caption tracks, and download the video with yt-dlp.
 
 The video is kept as an MP4 the browser plays: H.264 video and AAC sound, at most 720p. YouTube's
-automatic captions ("es-orig", its recognition of the speech) are not shown, as they mishear too
-often, but they time each word, so they are read to time the words of the captions that are.
+automatic captions ("es-orig", its recognition of the speech) time each word, so they time the
+words of whichever captions are shown; they are shown themselves only when the learner picks them,
+as they mishear more often than an official track.
 
 Videos are read without signing in. Only a video YouTube will not show without an account, such
 as an age-restricted one, is read again signed in with the cookies the settings name, so the

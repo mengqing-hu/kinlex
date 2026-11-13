@@ -1,7 +1,8 @@
 """Put caption text into whole sentences with their times.
 
 Captions come as cues: lines of an official track, or sentences of a transcript. Cues are joined
-until one ends a sentence, within limits for text that has no punctuation.
+until one ends a sentence, within limits for text that has no punctuation. A transcript's segment
+always ends where the speaker paused or changed, so its last cue ends the line even unpunctuated.
 """
 
 import re
@@ -20,6 +21,9 @@ MAX_LINE_MS = 15_000
 MAX_LINE_CHARS = 220
 # A word before a pause ends this long after it starts, not when the next word starts.
 MAX_WORD_MS = 1_500
+# Automatic captions time only where each word starts; a next word starting later than this is
+# after a pause.
+PAUSE_MS = 1_200
 _NOT_WORD = re.compile("[^\\w'\u2019-]+")
 
 
@@ -27,6 +31,8 @@ class Cue(Record):
     start_ms: int
     end_ms: int
     text: str
+    # Ends its line even without closing punctuation, as the last sentence of a transcript segment.
+    ends_line: bool = False
 
 
 class CaptionLine(Record):
@@ -84,6 +90,23 @@ def timed_words(data: dict[str, Any]) -> list[TimedWord]:
     return words
 
 
+def cues_from_words(words: Sequence[TimedWord]) -> list[Cue]:
+    """YouTube's automatic captions as cues of one word each. A word followed by a pause ends its
+    line, as the speaker stopped or another one started; punctuation ends it too."""
+    cues = []
+    for index, word in enumerate(words):
+        following = words[index + 1].start_ms if index + 1 < len(words) else None
+        cues.append(
+            Cue(
+                start_ms=word.start_ms,
+                end_ms=word.end_ms,
+                text=word.text,
+                ends_line=following is None or following - word.start_ms > PAUSE_MS,
+            )
+        )
+    return cues
+
+
 def lines_from_cues(cues: Sequence[Cue]) -> list[CaptionLine]:
     lines: list[CaptionLine] = []
     pending: list[Cue] = []
@@ -107,7 +130,7 @@ def lines_from_cues(cues: Sequence[Cue]) -> list[CaptionLine]:
         ):
             close()
         pending.append(cue)
-        if _SENTENCE_END.search(cue.text):
+        if cue.ends_line or _SENTENCE_END.search(cue.text):
             close()
     close()
     return lines
