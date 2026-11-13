@@ -67,7 +67,7 @@ export function LanguageSwitcher({
               <Link
                 aria-current={isCurrent ? 'page' : undefined}
                 className={isCurrent ? 'bg-[var(--bg)] text-[var(--ink)]' : ''}
-                href={`/${language.code}/vocabulary/a1`}
+                href={`/${language.code}/vocabulary/all`}
               >
                 {languageNames[language.code] ?? language.name}
               </Link>
