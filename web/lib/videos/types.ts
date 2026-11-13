@@ -38,12 +38,37 @@ export interface StudyVideoSummary {
   meaningLanguages: string[]
 }
 
+// Where a video's captions come from: the uploader's track on YouTube, YouTube's own recognition
+// of the speech, or a Whisper transcription the pipeline makes.
+export const captionSources = ['official', 'automatic', 'whisper'] as const
+export type CaptionSource = (typeof captionSources)[number]
+
+// Which YouTube captions a video has in a language. Whisper needs none, so it is always possible.
+export interface VideoCaptions {
+  official: boolean
+  automatic: boolean
+}
+
 // Processing a video, as its status file tells it. stage is one of the pipeline's stages.
 export interface VideoJob {
-  status: 'running' | 'done' | 'failed'
+  status: 'running' | 'paused' | 'done' | 'failed'
   stage: string | null
   progress: number | null
   error: string | null
+  // Null until the pipeline has read the video's details.
+  title: string | null
+  // About how long processing still needs, and when it should be done (Unix milliseconds), while
+  // it runs.
+  remainingSeconds: number | null
+  finishesAt: number | null
+}
+
+// Processing still running or stopped by a failure, as the add page lists it.
+export interface UnfinishedVideoJob extends VideoJob {
+  id: string
+  language: string
+  meaningLanguage: string
+  captions: CaptionSource
 }
 
 export interface StudyVideoLink {

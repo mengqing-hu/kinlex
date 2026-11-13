@@ -333,6 +333,21 @@
     "invalidLink": "这不是 YouTube 视频链接。",
     "videoLanguage": "视频语言",
     "meaningLanguage": "解释语言",
+    "captionSource": "字幕来源",
+    "captionSources": {
+      "official": "YouTube 字幕",
+      "automatic": "YouTube 自动字幕",
+      "whisper": "用 Whisper 转录"
+    },
+    "captionHints": {
+      "official": "上传者制作的字幕。视频有这种字幕时最准确。",
+      "automatic": "YouTube 自己的语音识别。免费、速度快，但更容易听错。",
+      "whisper": "由 Kinlex 转录语音。所有视频都能用，需要几分钟。"
+    },
+    "captionUnavailable": "这个视频没有这种语言的这类字幕。",
+    "captionNeedsLink": "粘贴链接后会查询视频有没有这类字幕。",
+    "captionChecking": "正在查询视频的字幕…",
+    "captionCheckFailed": "无法查询视频的字幕，仍可以用 Whisper 转录。",
     "start": "开始处理",
     "captions": "字幕",
     "options": "选项",
@@ -366,6 +381,16 @@
     "failed": "处理失败",
     "stopped": "处理在完成前中断了。",
     "retry": "重试",
+    "done": "处理完成",
+    "openVideo": "打开视频",
+    "dismiss": "移除",
+    "pause": "暂停",
+    "resume": "继续",
+    "cancel": "取消",
+    "paused": "已暂停",
+    "cancelConfirm": "停止处理“{title}”？已下载的视频文件也会删除，已经完成的翻译会保留，下次处理时直接使用。",
+    "finishesAround": "预计 {time} 完成（约 {minutes} 分钟）",
+    "almostDone": "即将完成",
     "startFailed": "网站没能启动处理，原因见服务器日志。",
     "sentenceSpeed": "播放这一句的速度"
   }

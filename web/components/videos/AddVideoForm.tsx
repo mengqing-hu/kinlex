@@ -1,9 +1,18 @@
 'use client'
 
+import { useLocale } from 'next-intl'
 import { type FormEvent, useEffect, useState } from 'react'
 
-import { useRouter } from '@/i18n/navigation'
-import { getYouTubeId, type StudyVideoSummary, type VideoJob } from '@/lib/videos/types'
+import { Link, useRouter } from '@/i18n/navigation'
+import {
+  type CaptionSource,
+  captionSources,
+  getYouTubeId,
+  type StudyVideoSummary,
+  type UnfinishedVideoJob,
+  type VideoCaptions,
+  type VideoJob,
+} from '@/lib/videos/types'
 
 export interface AddVideoLabels {
   title: string
@@ -13,6 +22,13 @@ export interface AddVideoLabels {
   invalidLink: string
   videoLanguage: string
   meaningLanguage: string
+  captionSource: string
+  captionSources: Record<CaptionSource, string>
+  captionHints: Record<CaptionSource, string>
+  captionUnavailable: string
+  captionNeedsLink: string
+  captionChecking: string
+  captionCheckFailed: string
   start: string
   processing: string
   stages: Record<StageRow, string>
@@ -20,6 +36,18 @@ export interface AddVideoLabels {
   stopped: string
   startFailed: string
   retry: string
+  done: string
+  openVideo: string
+  dismiss: string
+  pause: string
+  resume: string
+  cancel: string
+  paused: string
+  // Template with {title}.
+  cancelConfirm: string
+  // Templates with {time} and {minutes}.
+  finishesAround: string
+  almostDone: string
 }
 
 interface Option {
@@ -33,6 +61,8 @@ interface AddVideoFormProps {
   meaningLanguages: Option[]
   // The videos already processed, by the language they are in.
   processed: Record<string, StudyVideoSummary[]>
+  // Processing still running or failed, found when the page was opened.
+  unfinished: UnfinishedVideoJob[]
   labels: AddVideoLabels
 }
 
@@ -40,7 +70,30 @@ interface Job {
   id: string
   language: string
   meaningLanguage: string
+  captions: CaptionSource
 }
+
+// A job shown on the page. attempt grows with every retry, so its card starts following afresh.
+interface TrackedJob extends Job {
+  status: VideoJob
+  attempt: number
+  // Started from this page now: open the video when it is ready. A job found when the page opened
+  // may finish while the learner does something else, so it only offers a link.
+  openWhenDone: boolean
+}
+
+function jobKey(job: Job): string {
+  return `${job.language}:${job.id}:${job.meaningLanguage}`
+}
+
+// The YouTube captions found for one video in one language; null when they could not be checked.
+interface CaptionCheck {
+  key: string
+  captions: VideoCaptions | null
+}
+
+// Waits for the link to stop changing before asking YouTube about it.
+const CAPTION_CHECK_DELAY_MS = 400
 
 // The steps shown while processing. The pipeline reads official captions or transcribes the
 // speech, one or the other, so they share a step.
@@ -68,6 +121,7 @@ async function startJob(job: Job): Promise<boolean> {
       url: `https://www.youtube.com/watch?v=${job.id}`,
       language: job.language,
       meaningLanguage: job.meaningLanguage,
+      captions: job.captions,
     }),
   })
   return response.ok
@@ -115,39 +169,75 @@ function ProcessingSteps({ status, labels }: { status: VideoJob; labels: AddVide
   )
 }
 
-// Opens a video that is already processed, or processes it on this computer and follows the
-// pipeline's progress until the video can be opened.
-export function AddVideoForm({
-  language,
-  languages,
-  meaningLanguages,
-  processed,
+function jobParams(job: Job): URLSearchParams {
+  return new URLSearchParams({ lang: job.language, explain: job.meaningLanguage })
+}
+
+// One video's processing: its steps, followed until it finishes, fails or is paused. It can be
+// paused and continued, or cancelled.
+function JobCard({
+  job,
   labels,
-}: AddVideoFormProps) {
+  onRestart,
+  onCancelled,
+}: {
+  job: TrackedJob
+  labels: AddVideoLabels
+  // Starts it again: to retry a failure or continue after a pause.
+  onRestart: () => void
+  onCancelled: () => void
+}) {
   const router = useRouter()
-  const [link, setLink] = useState('')
-  const [videoLanguage, setVideoLanguage] = useState(language)
-  const [meaningLanguage, setMeaningLanguage] = useState('en')
-  const [error, setError] = useState(false)
-  // The job being followed, and the last one asked for, which a retry asks for again.
-  const [job, setJob] = useState<Job | null>(null)
-  const [attempt, setAttempt] = useState<Job | null>(null)
-  const [status, setStatus] = useState<VideoJob | null>(null)
+  const [status, setStatus] = useState(job.status)
+  const [stopping, setStopping] = useState(false)
+
+  async function pause() {
+    setStopping(true)
+    const response = await fetch(`/api/v1/videos/${job.id}/job?${jobParams(job)}`, {
+      method: 'PATCH',
+    }).catch(() => null)
+    setStopping(false)
+    if (response?.ok) {
+      setStatus((current) => ({
+        ...current,
+        status: 'paused',
+        remainingSeconds: null,
+        finishesAt: null,
+      }))
+    }
+  }
+
+  async function cancel() {
+    // A failed job is only taken off the list; one running or paused loses its download too.
+    if (
+      status.status !== 'failed' &&
+      !window.confirm(labels.cancelConfirm.replace('{title}', status.title ?? job.id))
+    ) {
+      return
+    }
+    setStopping(true)
+    const response = await fetch(`/api/v1/videos/${job.id}/job?${jobParams(job)}`, {
+      method: 'DELETE',
+    }).catch(() => null)
+    setStopping(false)
+    // A job that never started has no files to remove.
+    if (response?.ok || status.error === 'start') onCancelled()
+  }
 
   useEffect(() => {
-    if (!job) return
-    const params = new URLSearchParams({ lang: job.language, explain: job.meaningLanguage })
+    if (job.status.status !== 'running') return
     const timer = window.setInterval(() => {
-      void fetch(`/api/v1/videos/${job.id}/job?${params}`, { cache: 'no-store' })
+      void fetch(`/api/v1/videos/${job.id}/job?${jobParams(job)}`, { cache: 'no-store' })
         .then((response) => (response.ok ? (response.json() as Promise<VideoJob>) : null))
         .then((next) => {
           if (!next) return
           setStatus(next)
           if (next.status === 'done') {
             window.clearInterval(timer)
-            router.push(`/${job.language}/videos/${job.id}`)
+            if (job.openWhenDone) router.push(`/${job.language}/videos/${job.id}`)
+            // The sidebar lists the new video.
             router.refresh()
-          } else if (next.status === 'failed') {
+          } else if (next.status === 'failed' || next.status === 'paused') {
             window.clearInterval(timer)
           }
         })
@@ -156,15 +246,226 @@ export function AddVideoForm({
     return () => window.clearInterval(timer)
   }, [job, router])
 
-  async function run(next: Job) {
-    setAttempt(next)
-    setJob(null)
-    setStatus({ status: 'running', stage: null, progress: null, error: null })
-    if (await startJob(next)) {
-      setJob(next)
-    } else {
-      setStatus({ status: 'failed', stage: null, progress: null, error: 'start' })
+  const locale = useLocale()
+  const summary =
+    status.status === 'failed'
+      ? labels.failed
+      : status.status === 'done'
+        ? labels.done
+        : status.status === 'paused'
+          ? labels.paused
+          : status.remainingSeconds === null || status.finishesAt === null
+            ? labels.processing
+            : `${labels.processing} · ${
+                status.remainingSeconds < 60
+                  ? labels.almostDone
+                  : labels.finishesAround
+                      .replace(
+                        '{time}',
+                        new Intl.DateTimeFormat(locale, { timeStyle: 'short' }).format(
+                          status.finishesAt,
+                        ),
+                      )
+                      .replace('{minutes}', String(Math.ceil(status.remainingSeconds / 60)))
+              }`
+
+  return (
+    <section className="rounded-2xl border border-[var(--line)] bg-[var(--card)]">
+      {/* Closed, only the title and how it is going; the steps open below. */}
+      <details className="group">
+        <summary className="flex cursor-pointer list-none items-center gap-3 rounded-2xl px-5 py-4 focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none [&::-webkit-details-marker]:hidden">
+          <span className="min-w-0 flex-1">
+            <span className="block truncate font-semibold text-[var(--ink)]">
+              {status.title ?? `youtube.com/watch?v=${job.id}`}
+            </span>
+            <span
+              aria-live="polite"
+              className={`mt-0.5 block text-sm ${
+                status.status === 'failed' ? 'text-[var(--familiarity-1)]' : 'text-[var(--mute)]'
+              }`}
+            >
+              {summary}
+            </span>
+          </span>
+          <svg
+            aria-hidden="true"
+            className="size-4 shrink-0 text-[var(--mute)] transition-transform group-open:rotate-180"
+            fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.8"
+            viewBox="0 0 24 24"
+          >
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </summary>
+        <div className="border-t border-[var(--line)] px-5 pb-5">
+          <ProcessingSteps labels={labels} status={status} />
+          {status.status === 'failed' && status.error ? (
+            <p className="mt-4 text-sm break-words text-[var(--mute)]">
+              {status.error === 'stopped'
+                ? labels.stopped
+                : status.error === 'start'
+                  ? labels.startFailed
+                  : status.error}
+            </p>
+          ) : null}
+        </div>
+      </details>
+      {/* What can be done next stays in view without opening the details. */}
+      {status.status !== 'done' ? (
+        <div className="flex justify-end gap-2 px-5 pb-4">
+          <button
+            className="rounded-lg px-3 py-1.5 text-sm text-[var(--mute)] hover:text-[var(--ink)] disabled:opacity-60"
+            disabled={stopping}
+            type="button"
+            onClick={() => void cancel()}
+          >
+            {status.status === 'failed' ? labels.dismiss : labels.cancel}
+          </button>
+          <button
+            className="rounded-lg border border-[var(--line)] px-3 py-1.5 text-sm font-semibold text-[var(--ink)] hover:border-[var(--info)] disabled:opacity-60"
+            disabled={stopping}
+            type="button"
+            onClick={status.status === 'running' ? () => void pause() : onRestart}
+          >
+            {status.status === 'running'
+              ? labels.pause
+              : status.status === 'paused'
+                ? labels.resume
+                : labels.retry}
+          </button>
+        </div>
+      ) : null}
+      {status.status === 'done' && !job.openWhenDone ? (
+        <div className="px-5 pb-4">
+          <Link
+            className="inline-block rounded-lg bg-[var(--ink)] px-3 py-1.5 text-sm font-semibold text-[var(--card)] hover:opacity-90"
+            href={`/${job.language}/videos/${job.id}`}
+          >
+            {labels.openVideo}
+          </Link>
+        </div>
+      ) : null}
+    </section>
+  )
+}
+
+// Opens a video that is already processed, or processes it on this computer and follows the
+// pipeline's progress until the video can be opened. Processing carries on when the learner leaves
+// the page, so the jobs still running or failed are listed again when they come back.
+export function AddVideoForm({
+  language,
+  languages,
+  meaningLanguages,
+  processed,
+  unfinished,
+  labels,
+}: AddVideoFormProps) {
+  const router = useRouter()
+  const [link, setLink] = useState('')
+  const [videoLanguage, setVideoLanguage] = useState(language)
+  const [meaningLanguage, setMeaningLanguage] = useState('en')
+  const [error, setError] = useState(false)
+  const [jobs, setJobs] = useState<TrackedJob[]>(() =>
+    unfinished.map(({ id, language, meaningLanguage, captions, ...status }) => ({
+      id,
+      language,
+      meaningLanguage,
+      captions,
+      status,
+      attempt: 0,
+      openWhenDone: false,
+    })),
+  )
+  // The source the learner picked; until then, the best one the video has.
+  const [chosenSource, setChosenSource] = useState<CaptionSource | null>(null)
+  const [captionCheck, setCaptionCheck] = useState<CaptionCheck | null>(null)
+  const videoId = getYouTubeId(link)
+  const captionKey = videoId ? `${videoId}:${videoLanguage}` : null
+  const checked = captionCheck?.key === captionKey ? captionCheck : null
+  const checkingCaptions = captionKey !== null && checked === null
+
+  useEffect(() => {
+    if (!videoId) return
+    const key = `${videoId}:${videoLanguage}`
+    const controller = new AbortController()
+    const timer = window.setTimeout(() => {
+      const params = new URLSearchParams({
+        url: `https://www.youtube.com/watch?v=${videoId}`,
+        lang: videoLanguage,
+      })
+      void fetch(`/api/v1/videos/captions?${params}`, { signal: controller.signal })
+        .then((response) => (response.ok ? (response.json() as Promise<VideoCaptions>) : null))
+        .then((captions) => setCaptionCheck({ key, captions }))
+        .catch((error: unknown) => {
+          if (error instanceof Error && error.name === 'AbortError') return
+          setCaptionCheck({ key, captions: null })
+        })
+    }, CAPTION_CHECK_DELAY_MS)
+    return () => {
+      window.clearTimeout(timer)
+      controller.abort()
     }
+  }, [videoId, videoLanguage])
+
+  // Whisper needs nothing from YouTube; the YouTube captions only once the video is known to have
+  // them.
+  function isAvailable(source: CaptionSource): boolean {
+    return source === 'whisper' || checked?.captions?.[source] === true
+  }
+  const captionSource: CaptionSource =
+    chosenSource && isAvailable(chosenSource)
+      ? chosenSource
+      : isAvailable('official')
+        ? 'official'
+        : 'whisper'
+
+  function captionNote(source: CaptionSource): string {
+    if (isAvailable(source)) return labels.captionHints[source]
+    if (!captionKey) return labels.captionNeedsLink
+    if (checkingCaptions) return labels.captionChecking
+    return labels.captionUnavailable
+  }
+
+  // Starts a job, or starts it again, keeping its place in the list.
+  async function run(next: Job) {
+    const key = jobKey(next)
+    const existing = jobs.find((job) => jobKey(job) === key)
+    // A retry keeps the title it had until the pipeline reads it again.
+    const title = existing?.status.title ?? null
+    const tracked = (status: VideoJob): TrackedJob => ({
+      ...next,
+      status,
+      attempt: (existing?.attempt ?? 0) + 1,
+      openWhenDone: true,
+    })
+    const started = await startJob(next)
+    const status: VideoJob = started
+      ? {
+          status: 'running',
+          stage: null,
+          progress: null,
+          error: null,
+          title,
+          remainingSeconds: null,
+          finishesAt: null,
+        }
+      : {
+          status: 'failed',
+          stage: null,
+          progress: null,
+          error: 'start',
+          title,
+          remainingSeconds: null,
+          finishesAt: null,
+        }
+    setJobs((current) => [tracked(status), ...current.filter((job) => jobKey(job) !== key)])
+  }
+
+  function forget(job: TrackedJob) {
+    setJobs((current) => current.filter((item) => jobKey(item) !== jobKey(job)))
   }
 
   function handleSubmit(event: FormEvent) {
@@ -178,10 +479,13 @@ export function AddVideoForm({
       router.push(`/${videoLanguage}/videos/${id}`)
       return
     }
-    void run({ id, language: videoLanguage, meaningLanguage })
+    const next = { id, language: videoLanguage, meaningLanguage, captions: captionSource }
+    // Already being processed: its card is followed below.
+    if (jobs.some((job) => jobKey(job) === jobKey(next) && job.status.status === 'running')) {
+      return
+    }
+    void run(next)
   }
-
-  const busy = status?.status === 'running'
 
   return (
     <main className="mx-auto w-full max-w-2xl px-5 py-10 sm:px-8">
@@ -193,7 +497,7 @@ export function AddVideoForm({
         noValidate
         onSubmit={handleSubmit}
       >
-        <fieldset className="space-y-5" disabled={busy}>
+        <fieldset className="space-y-5">
           <label className="block">
             <span className="mb-1.5 block text-sm font-semibold text-[var(--ink)]">
               {labels.link}
@@ -248,8 +552,53 @@ export function AddVideoForm({
             </label>
           </div>
 
+          <fieldset>
+            <legend className="mb-1.5 block text-sm font-semibold text-[var(--ink)]">
+              {labels.captionSource}
+            </legend>
+            <div className="space-y-2">
+              {captionSources.map((source) => {
+                const available = isAvailable(source)
+                return (
+                  <label
+                    className={`flex items-start gap-3 rounded-lg border px-3 py-2.5 ${
+                      captionSource === source
+                        ? 'border-[var(--info)] bg-[var(--bg)]'
+                        : 'border-[var(--line)]'
+                    } ${available ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'}`}
+                    key={source}
+                  >
+                    <input
+                      checked={captionSource === source}
+                      className="mt-1 accent-[var(--info)]"
+                      disabled={!available}
+                      name="captions"
+                      type="radio"
+                      value={source}
+                      onChange={() => setChosenSource(source)}
+                    />
+                    <span className="min-w-0">
+                      <span className="block text-sm font-medium text-[var(--ink)]">
+                        {labels.captionSources[source]}
+                      </span>
+                      <span className="mt-0.5 block text-xs leading-5 text-[var(--mute)]">
+                        {captionNote(source)}
+                      </span>
+                    </span>
+                  </label>
+                )
+              })}
+            </div>
+            {checked && checked.captions === null ? (
+              <p className="mt-2 text-xs text-[var(--familiarity-1)]" role="alert">
+                {labels.captionCheckFailed}
+              </p>
+            ) : null}
+          </fieldset>
+
           <button
             className="w-full rounded-lg bg-[var(--ink)] px-4 py-2.5 text-sm font-semibold text-[var(--card)] hover:opacity-90 disabled:opacity-60"
+            disabled={checkingCaptions}
             type="submit"
           >
             {labels.start}
@@ -257,36 +606,18 @@ export function AddVideoForm({
         </fieldset>
       </form>
 
-      {status ? (
-        <section
-          aria-live="polite"
-          className="mt-6 rounded-2xl border border-[var(--line)] bg-[var(--card)] p-5"
-        >
-          <h2 className="font-semibold text-[var(--ink)]">
-            {status.status === 'failed' ? labels.failed : labels.processing}
-          </h2>
-          <ProcessingSteps labels={labels} status={status} />
-          {status.status === 'failed' ? (
-            <div className="mt-4 flex items-start justify-between gap-3">
-              <p className="min-w-0 text-sm break-words text-[var(--mute)]">
-                {status.error === 'stopped'
-                  ? labels.stopped
-                  : status.error === 'start'
-                    ? labels.startFailed
-                    : status.error}
-              </p>
-              {attempt ? (
-                <button
-                  className="shrink-0 rounded-lg border border-[var(--line)] px-3 py-1.5 text-sm font-semibold text-[var(--ink)] hover:border-[var(--info)]"
-                  type="button"
-                  onClick={() => void run(attempt)}
-                >
-                  {labels.retry}
-                </button>
-              ) : null}
-            </div>
-          ) : null}
-        </section>
+      {jobs.length > 0 ? (
+        <div className="mt-6 space-y-4">
+          {jobs.map((job) => (
+            <JobCard
+              job={job}
+              key={`${jobKey(job)}:${job.attempt}`}
+              labels={labels}
+              onCancelled={() => forget(job)}
+              onRestart={() => void run(job)}
+            />
+          ))}
+        </div>
       ) : null}
     </main>
   )

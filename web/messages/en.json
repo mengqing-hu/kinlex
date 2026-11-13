@@ -307,6 +307,21 @@
     "invalidLink": "This is not a link to a YouTube video.",
     "videoLanguage": "Language spoken",
     "meaningLanguage": "Explain in",
+    "captionSource": "Captions from",
+    "captionSources": {
+      "official": "YouTube captions",
+      "automatic": "YouTube automatic captions",
+      "whisper": "Transcribe with Whisper"
+    },
+    "captionHints": {
+      "official": "Made by the uploader. The most accurate when the video has them.",
+      "automatic": "YouTube's own speech recognition. Free and quick, but it mishears more often.",
+      "whisper": "Kinlex transcribes the speech. Works for every video and takes a few minutes."
+    },
+    "captionUnavailable": "This video has none in this language.",
+    "captionNeedsLink": "Paste a link to see whether the video has them.",
+    "captionChecking": "Checking the video's captions…",
+    "captionCheckFailed": "The video's captions could not be checked. You can still transcribe it with Whisper.",
     "start": "Start processing",
     "captions": "Captions",
     "options": "Options",
@@ -340,6 +355,16 @@
     "failed": "Processing failed",
     "stopped": "Processing stopped before it finished.",
     "retry": "Try again",
+    "done": "Processing finished",
+    "openVideo": "Open the video",
+    "dismiss": "Remove",
+    "pause": "Pause",
+    "resume": "Continue",
+    "cancel": "Cancel",
+    "paused": "Paused",
+    "cancelConfirm": "Stop processing “{title}”? The downloaded video is deleted too. Translations made so far are kept for next time.",
+    "finishesAround": "ready around {time} (about {minutes} min)",
+    "almostDone": "almost done",
     "startFailed": "The website could not start processing. The server log says why.",
     "sentenceSpeed": "Speed for playing the sentence"
   }

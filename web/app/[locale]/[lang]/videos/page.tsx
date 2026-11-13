@@ -6,6 +6,7 @@ import { AddVideoForm } from '@/components/videos/AddVideoForm'
 import { localeNames, locales } from '@/i18n/locales'
 import { applyRouteLocale, getLanguageNames } from '@/i18n/server'
 import { isSupportedLanguage, supportedLanguages } from '@/lib/languages'
+import { listUnfinishedVideoJobs } from '@/lib/videos/jobs'
 import { listStudyVideos } from '@/lib/videos/studyFiles'
 
 // The study files change whenever the pipeline processes a video.
@@ -25,12 +26,13 @@ export default async function VideosPage({ params }: VideosPageProps) {
   await applyRouteLocale(params)
   if (!isSupportedLanguage(lang)) notFound()
 
-  const [t, languageNames, processed] = await Promise.all([
+  const [t, languageNames, processed, unfinished] = await Promise.all([
     getTranslations('videoPage'),
     getLanguageNames(),
     Promise.all(
       supportedLanguages.map(async ({ code }) => [code, await listStudyVideos(code)] as const),
     ),
+    listUnfinishedVideoJobs(),
   ])
 
   return (
@@ -43,6 +45,21 @@ export default async function VideosPage({ params }: VideosPageProps) {
         invalidLink: t('invalidLink'),
         videoLanguage: t('videoLanguage'),
         meaningLanguage: t('meaningLanguage'),
+        captionSource: t('captionSource'),
+        captionSources: {
+          official: t('captionSources.official'),
+          automatic: t('captionSources.automatic'),
+          whisper: t('captionSources.whisper'),
+        },
+        captionHints: {
+          official: t('captionHints.official'),
+          automatic: t('captionHints.automatic'),
+          whisper: t('captionHints.whisper'),
+        },
+        captionUnavailable: t('captionUnavailable'),
+        captionNeedsLink: t('captionNeedsLink'),
+        captionChecking: t('captionChecking'),
+        captionCheckFailed: t('captionCheckFailed'),
         start: t('start'),
         processing: t('processing'),
         stages: {
@@ -57,6 +74,16 @@ export default async function VideosPage({ params }: VideosPageProps) {
         stopped: t('stopped'),
         startFailed: t('startFailed'),
         retry: t('retry'),
+        done: t('done'),
+        openVideo: t('openVideo'),
+        dismiss: t('dismiss'),
+        pause: t('pause'),
+        resume: t('resume'),
+        cancel: t('cancel'),
+        paused: t('paused'),
+        cancelConfirm: t.raw('cancelConfirm') as string,
+        finishesAround: t.raw('finishesAround') as string,
+        almostDone: t('almostDone'),
       }}
       language={lang}
       languages={supportedLanguages.map(({ code, name }) => ({
@@ -65,6 +92,7 @@ export default async function VideosPage({ params }: VideosPageProps) {
       }))}
       meaningLanguages={locales.map((code) => ({ code, name: localeNames[code] }))}
       processed={Object.fromEntries(processed)}
+      unfinished={unfinished}
     />
   )
 }

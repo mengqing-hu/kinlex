@@ -5,12 +5,13 @@ import { z } from 'zod'
 import { isLocale } from '@/i18n/locales'
 import { isSupportedLanguage } from '@/lib/languages'
 import { startVideoJob } from '@/lib/videos/jobs'
-import { getYouTubeId } from '@/lib/videos/types'
+import { captionSources, getYouTubeId } from '@/lib/videos/types'
 
 const startSchema = z.object({
   url: z.string(),
   language: z.string().refine(isSupportedLanguage),
   meaningLanguage: z.string().refine(isLocale),
+  captions: z.enum(captionSources),
 })
 
 // Starts processing a YouTube video on this computer; the job route follows it. Processing runs
@@ -28,6 +29,7 @@ export async function POST(request: NextRequest) {
     id,
     language: parsed.data.language,
     meaningLanguage: parsed.data.meaningLanguage,
+    captions: parsed.data.captions,
   })
   return NextResponse.json({ id }, { status: 202 })
 }

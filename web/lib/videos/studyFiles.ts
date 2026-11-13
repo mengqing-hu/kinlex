@@ -52,6 +52,12 @@ export function videoDirectory(language: string): string {
   return path.join(STUDY_ROOT, language, 'videos')
 }
 
+// How long earlier processing took, stage by stage, one JSON record per line; kinlex-video adds to
+// it as it finishes a video.
+export function videoTimingsFile(): string {
+  return path.join(STUDY_ROOT, 'video_timings.jsonl')
+}
+
 async function listFiles(language: string): Promise<{ id: string; meaningLanguage: string }[]> {
   try {
     const names = await readdir(videoDirectory(language))
