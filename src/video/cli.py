@@ -12,7 +12,8 @@ from typing import get_args
 from config import get_config
 from core.languages import LANGUAGES
 from services import db, video_words
-from utils.runtime import DATA_ROOT, setup_logging
+from utils.runtime import DATA_ROOT, get_logger, setup_logging
+from video.entries import add_missing_words
 from video.pipeline import CaptionSource, Stage, process_video, video_path
 from video.youtube import pick_speech_track, pick_track, read_video, video_id
 
@@ -216,6 +217,18 @@ def main(argv: list[str] | None = None) -> int:
     status.done(video.caption_source)
     print(f"{len(video.lines)} sentences ({video.caption_source} captions): {output}")
     print(f"video: {video_path(output.parent, video.video_id)}")
+    if args.owner_id:
+        # The video can be studied now; the words the vocabulary lacks get entries meanwhile.
+        try:
+            counts = add_missing_words(
+                get_config(),
+                language=args.language,
+                owner_id=args.owner_id,
+                video_id=video.video_id,
+            )
+            print("new words:", ", ".join(f"{name}: {n}" for name, n in counts.items()) or "none")
+        except Exception:
+            get_logger().exception("entries for the new words of %s failed", video.video_id)
     return 0
 
 

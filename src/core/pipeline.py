@@ -396,6 +396,87 @@ def _run_many[T, R](
     )
 
 
+class Enricher:
+    """Completes a stored word as the vocabulary's are completed: its gender, article and plural,
+    and its segments, checked against the lexicon of affixes and roots."""
+
+    def __init__(
+        self, config: Config, *, language: str, llm: LLMProvider, summary: RunSummary
+    ) -> None:
+        self.config = config
+        self.language = language
+        self.llm = llm
+        self.summary = summary
+        self.affixes = lexicon_meanings(language)
+        self.overrides = load_root_overrides(language)
+        self.prompt_name = language_profile(language).prompt
+        self.prompt = read_prompt(self.prompt_name)
+        self.system = (
+            f"You are a careful {language_name(language)} dictionary editor. Reply with JSON only."
+        )
+        forms = lexicon_forms(language)
+        self.tables = {
+            "prefixes": _lexicon_table(self.affixes, forms, "prefix"),
+            "suffixes": _lexicon_table(self.affixes, forms, "suffix"),
+            "etymological_roots": _lexicon_table(load_etymological_roots(language), forms, "root"),
+            "numbered_roots": _lexicon_table(load_numbered_roots(language), {}, "root"),
+        }
+        self.cache = Cache(language, "database_fields")
+
+    def enrich(self, word: Word, label: str) -> bool:
+        """Generate and store the word's metadata; True when the answer came from the cache."""
+        lead, stem = split_article(word)
+        enrichment, cached = _generate_json(
+            llm=self.llm,
+            cache=self.cache,
+            word=word.word,
+            model=self.config.providers.llm.model,
+            system=self.system,
+            prompt=self.prompt.substitute(
+                self.tables,
+                word=word.word,
+                stem=stem,
+                word_class=label,
+                word_meaning=word.word_meaning or "not provided",
+                example_sentence=word.example_sentence or "not provided",
+                sentence_meaning=word.sentence_meaning or "not provided",
+            ),
+            schema=WordEnrichment,
+            validate=lambda value: validate_enrichment(
+                stem, value.segments, self.affixes, language=self.language
+            ),
+            config=self.config,
+            summary=self.summary,
+        )
+        enrichment = enrichment.model_copy(
+            update={
+                "segments": postprocess_stem(
+                    word,
+                    stem,
+                    restore_spelling(stem, tidy_segments(enrichment.segments, self.language)),
+                    affixes=self.affixes,
+                    overrides=self.overrides,
+                )
+            }
+        )
+        enrichment = apply_source_metadata(
+            enrichment,
+            lead=lead,
+            word_class=word.word_class,
+            label=label,
+            language=self.language,
+        )
+        with db.connect() as connection, connection.transaction():
+            db.replace_word_enrichment(
+                connection,
+                word=word,
+                enrichment=enrichment,
+                model=self.config.providers.llm.model,
+                prompt=self.prompt_name,
+            )
+        return cached
+
+
 def generate_database_fields(
     config: Config,
     *,
@@ -410,7 +491,6 @@ def generate_database_fields(
     items = read_vocabulary(input_path, language=language, offset=offset, limit=limit)
     labels = {(item.word, item.word_class): item.word_class_label for item in items}
     affixes = lexicon_meanings(language)
-    overrides = load_root_overrides(language)
     with db.connect() as connection:
         with connection.transaction():
             selected_words = db.import_vocabulary(connection, items)
@@ -425,69 +505,14 @@ def generate_database_fields(
     if not words:
         summary.write()
         return TaskResult(0, 0)
-    prompt_name = language_profile(language).prompt
-    prompt = read_prompt(prompt_name)
-    system = f"You are a careful {language_name(language)} dictionary editor. Reply with JSON only."
-    tables = {
-        "prefixes": _lexicon_table(affixes, lexicon_forms(language), "prefix"),
-        "suffixes": _lexicon_table(affixes, lexicon_forms(language), "suffix"),
-        "etymological_roots": _lexicon_table(
-            load_etymological_roots(language), lexicon_forms(language), "root"
-        ),
-        "numbered_roots": _lexicon_table(load_numbered_roots(language), {}, "root"),
-    }
-    cache = Cache(language, "database_fields")
     with model_client(get_settings()) as client:
-        llm = create_llm(client, config)
+        enricher = Enricher(
+            config, language=language, llm=create_llm(client, config), summary=summary
+        )
 
         def work(word: Word) -> tuple[Word, bool]:
-            lead, stem = split_article(word)
             label = labels.get((word.word, word.word_class), word.word_class)
-            enrichment, cached = _generate_json(
-                llm=llm,
-                cache=cache,
-                word=word.word,
-                model=config.providers.llm.model,
-                system=system,
-                prompt=prompt.substitute(
-                    tables,
-                    word=word.word,
-                    stem=stem,
-                    word_class=label,
-                    word_meaning=word.word_meaning or "not provided",
-                    example_sentence=word.example_sentence or "not provided",
-                    sentence_meaning=word.sentence_meaning or "not provided",
-                ),
-                schema=WordEnrichment,
-                validate=lambda value: validate_enrichment(
-                    stem, value.segments, affixes, language=language
-                ),
-                config=config,
-                summary=summary,
-            )
-            enrichment = enrichment.model_copy(
-                update={
-                    "segments": postprocess_stem(
-                        word,
-                        stem,
-                        restore_spelling(stem, tidy_segments(enrichment.segments, language)),
-                        affixes=affixes,
-                        overrides=overrides,
-                    )
-                }
-            )
-            enrichment = apply_source_metadata(
-                enrichment, lead=lead, word_class=word.word_class, label=label, language=language
-            )
-            with db.connect() as connection, connection.transaction():
-                db.replace_word_enrichment(
-                    connection,
-                    word=word,
-                    enrichment=enrichment,
-                    model=config.providers.llm.model,
-                    prompt=prompt_name,
-                )
-            return word, cached
+            return word, enricher.enrich(word, label)
 
         _, failed = _run_many(
             words,
