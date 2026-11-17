@@ -93,7 +93,7 @@ async function findAllFavoriteWordIds(
 
 async function findFilterWordIds(
   db: SupabaseClient<Database>,
-  params: Pick<WordListQuery, 'favorites' | 'morpheme'>,
+  params: Pick<WordListQuery, 'favorites' | 'morpheme' | 'source'>,
   userId?: string,
 ): Promise<number[] | undefined> {
   const lookups: Array<Promise<number[]>> = []
@@ -104,6 +104,23 @@ async function findFilterWordIds(
 
   if (params.morpheme) {
     lookups.push(findMorphemeWordIds(db, params.morpheme))
+  }
+
+  if (params.source === 'video' && userId) {
+    // The generated type is refreshed after the migration is applied; keep this query isolated
+    // until then so existing builds remain compatible with older type snapshots.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- migration tables are not in generated types yet.
+    const videoDb = db as unknown as { from: (table: string) => any }
+    const { data, error } = await videoDb
+      .from('video_tokens')
+      .select('word_id, videos!inner(owner_id)')
+      .eq('videos.owner_id', userId)
+      .not('word_id', 'is', null)
+    assertQuerySucceeded(error, 'filter words from videos')
+    const ids: number[] = (data ?? []).flatMap((row: { word_id?: number | null }) =>
+      row.word_id == null ? [] : [Number(row.word_id)],
+    )
+    lookups.push(Promise.resolve([...new Set(ids)]))
   }
 
   return intersectIds(await Promise.all(lookups))
@@ -204,7 +221,7 @@ async function findExamples(
       .in('meaning_language', getMeaningLanguages(explainLanguage)),
     db
       .from('audio')
-      .select('owner_id, path, id')
+      .select('owner_id, path, id, model, voice')
       .eq('owner_type', 'example')
       .in('owner_id', exampleIds)
       .order('id', { ascending: true }),
@@ -220,7 +237,10 @@ async function findExamples(
   )
   const translationsByExampleId = pickTranslations(translationsResult.data ?? [], explainLanguage)
   const audioByExampleId = new Map<number, string>()
-  for (const audio of audioResult.data ?? []) {
+  for (const audio of (audioResult.data ?? []).toSorted(
+    (left, right) =>
+      Number(right.model === 'original') - Number(left.model === 'original') || left.id - right.id,
+  )) {
     if (!audioByExampleId.has(audio.owner_id)) {
       audioByExampleId.set(audio.owner_id, audio.path)
     }
@@ -318,9 +338,9 @@ function queryWordRows(
     query = query.eq('level', params.level)
   }
 
-  if (params.q) {
-    query = query.ilike('word', `%${params.q}%`)
-  }
+  if (params.q) query = query.ilike('word', `%${params.q}%`)
+
+  if ((params.source ?? 'catalog') === 'catalog') query = query.is('owner_id', null)
 
   if (params.pos) {
     query = query.or(
@@ -401,7 +421,7 @@ export async function findWordsByIds(
 
   const { data, error } = await queryWordRows(
     db,
-    { lang: language, explain: explainLanguage, limit: wordIds.length },
+    { lang: language, explain: explainLanguage, limit: wordIds.length, source: 'all' },
     wordIds.length,
     { include: wordIds },
   )
@@ -666,7 +686,7 @@ async function findWordDetailExamples(
       .in('meaning_language', getMeaningLanguages(explainLanguage)),
     db
       .from('audio')
-      .select('owner_id, path, id')
+      .select('owner_id, path, id, model, voice')
       .eq('owner_type', 'example')
       .in('owner_id', exampleIds)
       .order('id', { ascending: true }),
@@ -680,7 +700,10 @@ async function findWordDetailExamples(
   const examplesById = new Map((examplesResult.data ?? []).map((example) => [example.id, example]))
   const translationsById = pickTranslations(translationsResult.data ?? [], explainLanguage)
   const audioById = new Map<number, string>()
-  for (const audio of audioResult.data ?? []) {
+  for (const audio of (audioResult.data ?? []).toSorted(
+    (left, right) =>
+      Number(right.model === 'original') - Number(left.model === 'original') || left.id - right.id,
+  )) {
     if (!audioById.has(audio.owner_id)) {
       audioById.set(audio.owner_id, audio.path)
     }

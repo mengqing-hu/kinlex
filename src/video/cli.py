@@ -11,6 +11,7 @@ from typing import get_args
 
 from config import get_config
 from core.languages import LANGUAGES
+from services import db, video_words
 from utils.runtime import DATA_ROOT, setup_logging
 from video.pipeline import CaptionSource, Stage, process_video, video_path
 from video.youtube import pick_speech_track, pick_track, read_video, video_id
@@ -52,6 +53,10 @@ def _parser() -> argparse.ArgumentParser:
         "--status-file",
         type=Path,
         help="keep a JSON file up to date with the stage and progress, for the website to show",
+    )
+    parser.add_argument(
+        "--owner-id",
+        help="Supabase auth user id; when provided, also persist the study in the video tables",
     )
     return parser
 
@@ -183,6 +188,7 @@ def main(argv: list[str] | None = None) -> int:
             captions=args.captions,
             report=status.report,
             on_video=status.describe,
+            owner_id=args.owner_id,
         )
     except Exception as error:
         status.write(status="failed", stage=status.stage, error=str(error))
@@ -194,6 +200,19 @@ def main(argv: list[str] | None = None) -> int:
     temporary = output.with_suffix(".tmp")
     temporary.write_text(video.model_dump_json(indent=1), encoding="utf-8")
     temporary.replace(output)
+    if args.owner_id:
+        try:
+            with db.connect() as connection:
+                video_words.persist_study_video(
+                    connection,
+                    video,
+                    owner_id=args.owner_id,
+                    source_url=args.url,
+                    media_path=str(video_path(output.parent, video.video_id)),
+                )
+        except Exception as error:
+            status.write(status="failed", stage="saving", error=str(error))
+            raise
     status.done(video.caption_source)
     print(f"{len(video.lines)} sentences ({video.caption_source} captions): {output}")
     print(f"video: {video_path(output.parent, video.video_id)}")

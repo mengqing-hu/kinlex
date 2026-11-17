@@ -9,9 +9,17 @@ from core.models import ExampleToken, LexiconEntry, TokenGloss, TokenToGloss
 
 
 def lexicon_entries(
-    connection: psycopg.Connection[Any], *, language: str, meaning_language: str
+    connection: psycopg.Connection[Any],
+    *,
+    language: str,
+    meaning_language: str,
+    owner_id: str | None = None,
 ) -> list[LexiconEntry]:
-    """Every vocabulary entry with its first meaning, most common entries first."""
+    """Every vocabulary entry with its first meaning, most common entries first.
+
+    With owner_id, also the words that learner's videos added, so their next video links to them;
+    another learner's words never match.
+    """
     rows = connection.execute(
         """
         select w.id, w.word, w.word_class,
@@ -24,11 +32,12 @@ def lexicon_entries(
                )
         from public.words w
         where w.language = %s
+          and (w.owner_id is null or w.owner_id = %s)
         order by array_position(array['A1', 'A2', 'B1', 'B2', 'C1', 'C2'], w.level),
                  w.freq_rank nulls last,
                  w.id
         """,
-        (meaning_language, language),
+        (meaning_language, language, owner_id),
     ).fetchall()
     return [LexiconEntry(id=row[0], word=row[1], word_class=row[2], gloss=row[3]) for row in rows]
 
@@ -42,6 +51,7 @@ def examples_to_tokenize(
         select e.id, e.example_sentence
         from public.examples e
         where e.language = %s
+          and e.owner_id is null
           and (%s or not exists (
             select 1 from public.example_tokens t where t.example_id = e.id
           ))

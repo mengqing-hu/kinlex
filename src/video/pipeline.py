@@ -107,12 +107,13 @@ def _annotate(
     meaning_language: str,
     config: Config,
     report: Report,
+    owner_id: str | None = None,
 ) -> dict[int, list[LineToken]]:
     profile = language_profile(language)
     nlp = load_spacy(profile.spacy_model)
     with db.connect() as connection:
         entries = example_tokens.lexicon_entries(
-            connection, language=language, meaning_language=meaning_language
+            connection, language=language, meaning_language=meaning_language, owner_id=owner_id
         )
     lexicon = Lexicon(entries, profile)
     tokens = {line.position: tokenize(nlp, lexicon, line.text) for line in lines}
@@ -191,6 +192,7 @@ def process_video(
     captions: CaptionSource | None = None,
     report: Report = _ignore,
     on_video: Callable[[str, int | None], None] | None = None,
+    owner_id: str | None = None,
 ) -> StudyVideo:
     """Download the video into directory, unless it is there already, and study its captions.
 
@@ -281,6 +283,7 @@ def process_video(
             meaning_language=meaning_language,
             config=config,
             report=report,
+            owner_id=owner_id,
         )
 
     report("timing", None)

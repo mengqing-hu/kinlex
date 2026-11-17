@@ -22,6 +22,8 @@ export const wordListParamsSchema = z.object({
     .literal('1')
     .transform(() => true)
     .optional(),
+  // Missing means the vocabulary list (catalog); words a video added are only in 'video' and 'all'.
+  source: z.enum(['catalog', 'video', 'all']).optional(),
   cursor: z.string().trim().min(1, 'cursor cannot be empty').max(500).optional(),
   limit: limitSchema,
 })

@@ -88,25 +88,35 @@ def connect() -> Iterator[psycopg.Connection[Any]]:
 
 
 def _available_slug(
-    connection: psycopg.Connection[Any], language: str, word: str, word_class: str
+    connection: psycopg.Connection[Any],
+    language: str,
+    word: str,
+    word_class: str,
+    owner_id: str | None = None,
 ) -> str:
+    """A slug no vocabulary entry uses, nor, for a learner's own word, another of theirs."""
+
+    def taken(candidate: str) -> bool:
+        return (
+            connection.execute(
+                """
+                select 1 from public.words
+                where language = %s and slug = %s
+                  and (owner_id is null or owner_id = %s)
+                """,
+                (language, candidate, owner_id),
+            ).fetchone()
+            is not None
+        )
+
     base = _slugify(word) or "entry"
-    candidates = (base, f"{base}-{_slugify(word_class)}")
-    for candidate in candidates:
-        exists = connection.execute(
-            "select 1 from public.words where language = %s and slug = %s",
-            (language, candidate),
-        ).fetchone()
-        if exists is None:
+    for candidate in (base, f"{base}-{_slugify(word_class)}"):
+        if not taken(candidate):
             return candidate
     suffix = 2
     while True:
         candidate = f"{base}-{_slugify(word_class)}-{suffix}"
-        exists = connection.execute(
-            "select 1 from public.words where language = %s and slug = %s",
-            (language, candidate),
-        ).fetchone()
-        if exists is None:
+        if not taken(candidate):
             return candidate
         suffix += 1
 
@@ -134,7 +144,7 @@ def import_vocabulary(
         row = connection.execute(
             """
             select id from public.words
-            where language = %s and word = %s and word_class = %s
+            where language = %s and word = %s and word_class = %s and owner_id is null
             """,
             (item.language, item.word, word_class),
         ).fetchone()
@@ -191,7 +201,8 @@ def import_vocabulary(
                 """
                 insert into public.examples (language, example_sentence, level, status, source)
                 values (%s, %s, %s, 'draft', 'vocabulary_csv')
-                on conflict (language, example_sentence) do update set level = excluded.level
+                on conflict (language, example_sentence) where owner_id is null
+                do update set level = excluded.level
                 returning id
                 """,
                 (item.language, item.example_sentence, item.level),
@@ -649,7 +660,7 @@ def upsert_audio(
         """
         insert into public.audio (owner_type, owner_id, accent, voice, model, path)
         values (%s, %s, %s, %s, %s, %s)
-        on conflict (owner_type, owner_id, accent) do update set
+        on conflict (owner_type, owner_id, accent) where model <> 'original' do update set
           voice = excluded.voice,
           model = excluded.model,
           path = excluded.path
