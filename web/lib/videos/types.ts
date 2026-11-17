@@ -13,6 +13,16 @@ export interface StudyToken {
   // When the word is said, if the study file times its words.
   startMs: number | null
   endMs: number | null
+  // Why a word without an entry is no vocabulary word, or null for an ordinary word.
+  filtered: FilteredKind | null
+}
+
+// Names, sounds, words of another language and numbers never get a vocabulary entry.
+export const filteredKinds = ['name', 'interjection', 'foreign', 'number'] as const
+export type FilteredKind = (typeof filteredKinds)[number]
+
+export function toFilteredKind(value: unknown): FilteredKind | null {
+  return filteredKinds.find((kind) => kind === value) ?? null
 }
 
 export interface StudyLine {

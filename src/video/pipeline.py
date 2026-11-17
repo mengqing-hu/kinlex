@@ -15,10 +15,17 @@ from typing import Literal
 from pydantic import Field
 
 from config import Config, get_settings
-from core.annotation import Lexicon, gloss_batches, load_spacy, request_glosses, tokenize
+from core.annotation import (
+    Lexicon,
+    gloss_batches,
+    load_spacy,
+    place_form,
+    request_glosses_and_forms,
+    tokenize,
+)
 from core.languages import language_profile
 from core.meaning_languages import language_name
-from core.models import Record, TokenToGloss
+from core.models import ExampleToken, Record, TokenToGloss, WordForm
 from core.pipeline import PipelineError, _run_many
 from services import db, example_tokens
 from services.clients import LLMProvider, create_llm, create_stt, model_client
@@ -79,6 +86,11 @@ class LineToken(Record):
     gloss: str | None = None
     start_ms: int | None = None
     end_ms: int | None = None
+    # "model" when the model gave the dictionary form: word_id is its entry, or null for a word the
+    # vocabulary lacks, which gets an entry of its own later. "filtered" for a word that is no
+    # vocabulary word, with the reason (name, interjection, foreign, number) in filter_reason.
+    match_source: str | None = None
+    filter_reason: str | None = None
 
 
 class StudyLine(CaptionLine):
@@ -137,8 +149,10 @@ def _annotate(
     batches = gloss_batches(pending)
     finished = _counter(len(batches), "meanings", report)
 
-    def gloss(batch: list[TokenToGloss]) -> tuple[dict[tuple[int, int], str], bool]:
-        result = request_glosses(
+    def gloss(
+        batch: list[TokenToGloss],
+    ) -> tuple[tuple[dict[tuple[int, int], str], dict[tuple[int, int], WordForm]], bool]:
+        glosses, forms, cached = request_glosses_and_forms(
             llm,
             batch,
             lexicon,
@@ -149,7 +163,7 @@ def _annotate(
             summary=summary,
         )
         finished()
-        return result
+        return (glosses, forms), cached
 
     results, failed = _run_many(
         batches,
@@ -161,19 +175,35 @@ def _annotate(
     summary.write()
     if failed:
         raise PipelineError(f"{failed} word meaning batches failed; run again to retry them")
-    glosses = {key: gloss for result in results for key, gloss in result.items()}
-    return {
-        position: [
-            LineToken(
+    glosses = {key: gloss for found, _forms in results for key, gloss in found.items()}
+    forms = {key: form for _glosses, found in results for key, form in found.items()}
+
+    def line_token(position: int, token: ExampleToken) -> LineToken:
+        gloss = token.lexicon_gloss or glosses.get((position, token.position))
+        form = forms.get((position, token.position))
+        if form is None:
+            return LineToken(
                 start=token.start,
                 end=token.end,
                 surface=token.surface,
                 lemma=token.lemma,
                 word_id=token.word_id,
-                gloss=token.lexicon_gloss or glosses.get((position, token.position)),
+                gloss=gloss,
             )
-            for token in line_tokens
-        ]
+        placed = place_form(lexicon, form)
+        return LineToken(
+            start=token.start,
+            end=token.end,
+            surface=token.surface,
+            lemma=placed.lemma,
+            word_id=placed.word_id,
+            gloss=gloss,
+            match_source="filtered" if placed.filtered else "model",
+            filter_reason=placed.filtered,
+        )
+
+    return {
+        position: [line_token(position, token) for token in line_tokens]
         for position, line_tokens in tokens.items()
     }
 

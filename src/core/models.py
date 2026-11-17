@@ -127,9 +127,23 @@ class TokenToGloss(Record):
     entry_certain: bool = False
 
 
+# What a word without a vocabulary entry is: an ordinary word the vocabulary lacks, or something no
+# vocabulary lists.
+WordKind = Literal["word", "name", "interjection", "foreign", "number"]
+
+
+class WordForm(Record):
+    """The dictionary form the model gives a word the lexicon could not place."""
+
+    lemma: str
+    kind: WordKind = "word"
+
+
 class SentenceGlosses(Record):
     id: int
     glosses: dict[str, str]
+    # Only asked for words without an entry, by position.
+    forms: dict[str, WordForm] = {}
 
 
 class TokenGlossReply(Record):

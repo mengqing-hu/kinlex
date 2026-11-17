@@ -396,6 +396,12 @@
     "playSentence": "播放这一句",
     "dictionaryForm": "原形",
     "notInVocabulary": "这个词还不在 Kinlex 词库中。",
+    "filtered": {
+      "name": "这是人名、地名或品牌名，不收入词库。",
+      "interjection": "这是语气词或口头填充词，不收入词库。",
+      "foreign": "这是外语词，不收入词库。",
+      "number": "这是数字或单位，不收入词库。"
+    },
     "searchWords": "搜索单词",
     "chat": "AI 对话",
     "chatHint": "可以问单词、语法或剧情。AI 会读你当前播放位置附近的字幕。",

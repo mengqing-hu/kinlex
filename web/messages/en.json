@@ -370,6 +370,12 @@
     "playSentence": "Play sentence",
     "dictionaryForm": "Dictionary form",
     "notInVocabulary": "This word is not in the Kinlex vocabulary yet.",
+    "filtered": {
+      "name": "A name, so it has no vocabulary entry.",
+      "interjection": "A sound or filler word, so it has no vocabulary entry.",
+      "foreign": "A word from another language, so it has no vocabulary entry.",
+      "number": "A number or unit, so it has no vocabulary entry."
+    },
     "searchWords": "Search words",
     "chat": "Ask AI",
     "chatHint": "Ask about a word, the grammar, or what is going on. The AI reads the captions around where you are in the video.",

@@ -52,8 +52,8 @@ def _insert_lines(connection: psycopg.Connection[Any], study: _Study) -> None:
                 """
                 insert into public.video_tokens
                   (video_id, line, position, start, "end", surface, lemma, word_id,
-                   start_ms, end_ms)
-                values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                   start_ms, end_ms, match_source, filter_reason)
+                values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """,
                 (
                     study.video_id,
@@ -66,6 +66,9 @@ def _insert_lines(connection: psycopg.Connection[Any], study: _Study) -> None:
                     token.word_id,
                     token.start_ms,
                     token.end_ms,
+                    # Study files written before these were recorded have neither.
+                    getattr(token, "match_source", None),
+                    getattr(token, "filter_reason", None),
                 ),
             )
 

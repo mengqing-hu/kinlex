@@ -16,7 +16,7 @@ import json
 import re
 from collections import defaultdict
 from collections.abc import Iterable, Sequence
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, NamedTuple
 
 from config import Config, get_settings
 from core.languages import LanguageProfile, language_profile
@@ -28,6 +28,7 @@ from core.models import (
     TokenGloss,
     TokenGlossReply,
     TokenToGloss,
+    WordForm,
 )
 from core.pipeline import TaskResult, ValidationError, _generate_json, _run_many
 from services import db, example_tokens
@@ -39,6 +40,8 @@ if TYPE_CHECKING:
     from spacy.tokens import Doc
 
 PROMPT = "token_glosses_v3"
+# The same request that also asks for the dictionary form and kind of words without an entry.
+FORMS_PROMPT = "token_glosses_v4"
 SENTENCES_PER_CALL = 20
 MAX_GLOSS_LENGTH = 60
 
@@ -124,6 +127,14 @@ class Lexicon:
             entry for entry in self.by_key.get(lemma.lower(), []) if entry.word_class in classes
         ]
 
+    def lookup(self, lemma: str) -> list[LexiconEntry]:
+        """Entries spelled like a dictionary form, whatever their class, also when the form is
+        written without the entry's accents."""
+        key = lexicon_key(lemma)
+        if key not in self.by_key and self.accent_free is not None:
+            key = self.accent_free.get(strip_accents(key), key)
+        return list(self.by_key.get(key, []))
+
     def match(self, lemma: str, surface: str, pos: str) -> tuple[str, list[LexiconEntry], bool]:
         """The lemma to store, its entries, and whether the entry is certain enough to take its
         meaning without asking the model."""
@@ -170,6 +181,24 @@ class Lexicon:
                 if pos != "DET" and len(same_spelling) == 1:
                     return _LEAD.sub("", same_spelling[0].word), same_spelling, False
         return lemma, [], False
+
+
+class PlacedForm(NamedTuple):
+    lemma: str
+    word_id: int | None
+    # Why the word has no entry and never will: a name, a sound, a foreign word or a number.
+    filtered: str | None
+
+
+def place_form(lexicon: Lexicon, form: WordForm) -> PlacedForm:
+    """Where the dictionary form the model gave a word leads: its entry when the vocabulary has
+    one, nothing for a word the vocabulary lacks, or the reason it is no vocabulary word."""
+    if form.kind != "word":
+        return PlacedForm(form.lemma, None, form.kind)
+    entries = lexicon.lookup(form.lemma)
+    if not entries:
+        return PlacedForm(form.lemma, None, None)
+    return PlacedForm(_LEAD.sub("", entries[0].word), entries[0].id, None)
 
 
 def load_spacy(model: str) -> "Language":
@@ -247,7 +276,7 @@ def tokenize(nlp: "Language", lexicon: Lexicon, sentence: str) -> list[ExampleTo
     return tokens
 
 
-def _request(pending: Sequence[TokenToGloss], lexicon: Lexicon) -> str:
+def _request(pending: Sequence[TokenToGloss], lexicon: Lexicon, *, forms: bool) -> str:
     sentences = []
     for example_id, rows in _by_example(pending).items():
         words = []
@@ -256,6 +285,8 @@ def _request(pending: Sequence[TokenToGloss], lexicon: Lexicon) -> str:
             entry = lexicon.by_id.get(row.word_id) if row.word_id is not None else None
             if entry and entry.gloss:
                 word["options"] = entry.gloss
+            if forms and row.word_id is None:
+                word["find_form"] = True
             words.append(word)
         sentences.append(
             {
@@ -275,16 +306,23 @@ def _by_example(rows: Iterable[TokenToGloss]) -> dict[int, list[TokenToGloss]]:
     return grouped
 
 
-def _validate_reply(reply: TokenGlossReply, pending: Sequence[TokenToGloss]) -> None:
-    answered = {sentence.id: sentence.glosses for sentence in reply.sentences}
+def _validate_reply(
+    reply: TokenGlossReply, pending: Sequence[TokenToGloss], *, forms: bool = False
+) -> None:
+    answered = {sentence.id: sentence for sentence in reply.sentences}
     for example_id, rows in _by_example(pending).items():
-        glosses = answered.get(example_id)
-        if glosses is None:
+        sentence = answered.get(example_id)
+        if sentence is None:
             raise ValidationError(f"no answer for example {example_id}")
         for row in rows:
-            gloss = glosses.get(str(row.position), "").strip()
+            gloss = sentence.glosses.get(str(row.position), "").strip()
             if not gloss or len(gloss) > MAX_GLOSS_LENGTH or "\n" in gloss:
                 raise ValidationError(f"bad meaning for {row.surface!r} in example {example_id}")
+            if forms and row.word_id is None:
+                form = sentence.forms.get(str(row.position))
+                lemma = form.lemma.strip() if form else ""
+                if not lemma or len(lemma) > MAX_GLOSS_LENGTH or "\n" in lemma:
+                    raise ValidationError(f"no form for {row.surface!r} in example {example_id}")
 
 
 def gloss_batches(rows: Sequence[TokenToGloss]) -> list[list[TokenToGloss]]:
@@ -316,29 +354,64 @@ def request_glosses(
     summary: RunSummary,
 ) -> tuple[dict[tuple[int, int], str], bool]:
     """Ask the model for the meanings of a batch of words, keyed by (sentence id, position)."""
+    glosses, _forms, cached = request_glosses_and_forms(
+        llm,
+        batch,
+        lexicon,
+        language=language,
+        meaning_language=meaning_language,
+        cache=cache,
+        config=config,
+        summary=summary,
+        forms=False,
+    )
+    return glosses, cached
+
+
+def request_glosses_and_forms(
+    llm: LLMProvider,
+    batch: Sequence[TokenToGloss],
+    lexicon: Lexicon,
+    *,
+    language: str,
+    meaning_language: str,
+    cache: Cache,
+    config: Config,
+    summary: RunSummary,
+    forms: bool = True,
+) -> tuple[dict[tuple[int, int], str], dict[tuple[int, int], WordForm], bool]:
+    """The meanings of a batch of words and, with forms, the dictionary form and kind of each word
+    without an entry, both keyed by (sentence id, position)."""
     source = language_name(language)
     reply, cached = _generate_json(
         llm=llm,
         cache=cache,
         word=f"sentences {batch[0].example_id}-{batch[-1].example_id}",
         model=config.providers.llm.model,
-        prompt=read_prompt(PROMPT).substitute(
+        prompt=read_prompt(FORMS_PROMPT if forms else PROMPT).substitute(
             source_language=source,
             language=language_name(meaning_language),
-            sentences=_request(batch, lexicon),
+            sentences=_request(batch, lexicon, forms=forms),
         ),
         schema=TokenGlossReply,
-        validate=lambda value: _validate_reply(value, batch),
+        validate=lambda value: _validate_reply(value, batch, forms=forms),
         config=config,
         summary=summary,
         system=f"You are a careful {source} dictionary editor. Reply with JSON only.",
     )
-    answered = {sentence.id: sentence.glosses for sentence in reply.sentences}
+    answered = {sentence.id: sentence for sentence in reply.sentences}
     glosses = {
-        (row.example_id, row.position): answered[row.example_id][str(row.position)].strip()
+        (row.example_id, row.position): answered[row.example_id].glosses[str(row.position)].strip()
         for row in batch
     }
-    return glosses, cached
+    found = {
+        (row.example_id, row.position): WordForm(lemma=form.lemma.strip(), kind=form.kind)
+        for row in batch
+        if forms
+        and row.word_id is None
+        and (form := answered[row.example_id].forms.get(str(row.position)))
+    }
+    return glosses, found, cached
 
 
 def annotate_examples(

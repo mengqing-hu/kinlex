@@ -49,6 +49,12 @@ export default async function VideoPage({ params }: VideoPageProps) {
         sentenceSpeed: t('sentenceSpeed'),
         dictionaryForm: t('dictionaryForm'),
         notInVocabulary: t('notInVocabulary'),
+        filtered: {
+          name: t('filtered.name'),
+          interjection: t('filtered.interjection'),
+          foreign: t('filtered.foreign'),
+          number: t('filtered.number'),
+        },
         close: listLabels.wordPanel.close,
         searchWords: t('searchWords'),
         noMatches: t('noMatches'),

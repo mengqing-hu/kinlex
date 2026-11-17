@@ -27,6 +27,7 @@ import { useVideoTime } from '@/lib/client/videoTime'
 import {
   findLineIndex,
   findSpokenToken,
+  type FilteredKind,
   toWebVtt,
   type StudyLine,
   type StudyToken,
@@ -44,6 +45,8 @@ export interface VideoStudyLabels {
   sentenceSpeed: string
   dictionaryForm: string
   notInVocabulary: string
+  // Said instead for a word no vocabulary lists, by why.
+  filtered: Record<FilteredKind, string>
   close: string
   searchWords: string
   noMatches: string
@@ -418,7 +421,9 @@ function VideoWordPanel({
           </p>
         </header>
         {context}
-        <p className="text-xs text-[var(--mute)]">{labels.notInVocabulary}</p>
+        <p className="text-xs text-[var(--mute)]">
+          {token.filtered ? labels.filtered[token.filtered] : labels.notInVocabulary}
+        </p>
       </div>
     </SidePanel>
   )

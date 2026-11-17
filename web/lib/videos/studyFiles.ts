@@ -8,7 +8,7 @@ import { z } from 'zod'
 
 import { findWordSlugs } from '@/lib/repositories/wordRepository'
 import { getPublicSupabase, getSupabase } from '@/lib/supabase/server'
-import type { StudyVideo, StudyVideoSummary } from '@/lib/videos/types'
+import { type StudyVideo, type StudyVideoSummary, toFilteredKind } from '@/lib/videos/types'
 
 // Until videos are stored in the database, the pages read the files kinlex-video writes:
 // data/pipeline/<language>/videos/<id>.<meaning language>.json, with the video beside them as
@@ -43,6 +43,7 @@ const studyFileSchema = z.object({
           // Files written before words were timed have no times.
           start_ms: z.number().nullish(),
           end_ms: z.number().nullish(),
+          filter_reason: z.string().nullish(),
         }),
       ),
     }),
@@ -224,6 +225,7 @@ export async function getStudyVideo(
         gloss: token.gloss,
         startMs: token.start_ms ?? null,
         endMs: token.end_ms ?? null,
+        filtered: toFilteredKind(token.filter_reason),
       })),
     })),
   }
@@ -323,7 +325,9 @@ async function getDatabaseVideo(
       .eq('meaning_language', chosen),
     db
       .from('video_tokens')
-      .select('line, position, start, end, surface, lemma, word_id, start_ms, end_ms')
+      .select(
+        'line, position, start, end, surface, lemma, word_id, start_ms, end_ms, filter_reason',
+      )
       .eq('video_id', id)
       .order('line')
       .order('position'),
@@ -372,6 +376,7 @@ async function getDatabaseVideo(
         gloss: glosses.get(`${token.line}:${token.position}`) ?? null,
         startMs: token.start_ms ?? null,
         endMs: token.end_ms ?? null,
+        filtered: toFilteredKind(token.filter_reason),
       })),
     })),
   }
