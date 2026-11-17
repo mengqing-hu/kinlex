@@ -6,7 +6,7 @@ export const FLASHCARD_DEFAULT_COUNT = 20
 export const FLASHCARD_MAX_COUNT = 100
 const SETTINGS_STORAGE_KEY = 'kinlex:flashcard-settings'
 
-export const flashcardSources = ['all', 'favorites', 'learning'] as const
+export const flashcardSources = ['all', 'favorites', 'learning', 'video'] as const
 export type FlashcardSource = (typeof flashcardSources)[number]
 
 // Which side faces up: the German word ('de-en') or its meaning ('en-de'); 'mixed' picks one per

@@ -69,6 +69,7 @@ export default async function FlashcardsPage({ params }: FlashcardsPageProps) {
               all: t('settings.sources.all'),
               favorites: t('settings.sources.favorites'),
               learning: t('settings.sources.learning'),
+              video: t('settings.sources.video'),
             },
             levels: t('settings.levels'),
             levelsHint: t('settings.levelsHint'),
