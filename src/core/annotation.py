@@ -20,6 +20,7 @@ from typing import TYPE_CHECKING
 
 from config import Config, get_settings
 from core.languages import LanguageProfile, language_profile
+from core.lemma_variants import ACCENT_FREE, VARIANTS, strip_accents
 from core.meaning_languages import language_name
 from core.models import (
     ExampleToken,
@@ -96,11 +97,22 @@ class Lexicon:
     def __init__(self, entries: Iterable[LexiconEntry], profile: LanguageProfile) -> None:
         self.lemma_fixes = _LEMMA_FIXES.get(profile.code, {})
         self.reflexive_ending = profile.reflexive_ending
+        self.variants = VARIANTS.get(profile.code)
         self.by_key: dict[str, list[LexiconEntry]] = defaultdict(list)
         self.by_id: dict[int, LexiconEntry] = {}
         for entry in entries:
             self.by_key[lexicon_key(entry.word)].append(entry)
             self.by_id[entry.id] = entry
+        # Keys spelled without accents, for a word written without one; only a spelling that
+        # stands for a single key is kept, so "si" never finds sí.
+        self.accent_free: dict[str, str] | None = None
+        if profile.code in ACCENT_FREE:
+            spellings: dict[str, set[str]] = defaultdict(set)
+            for key in self.by_key:
+                spellings[strip_accents(key)].add(key)
+            self.accent_free = {
+                plain: next(iter(keys)) for plain, keys in spellings.items() if len(keys) == 1
+            }
 
     def find(self, lemma: str, pos: str) -> list[LexiconEntry]:
         """Entries spelled like the lemma whose word class fits the part of speech.
@@ -134,6 +146,29 @@ class Lexicon:
         same_spelling = self.by_key.get(lemma.lower(), [])
         if pos != "DET" and len(same_spelling) == 1:
             return lemma, same_spelling, False
+        # spaCy left the word inflected or half undone: malas as mala, where the entry is malo.
+        guesses = list(dict.fromkeys(self.variants(lemma, surface, pos))) if self.variants else []
+        for guess in guesses:
+            entries = self.find(guess, pos)
+            if entries:
+                return _LEAD.sub("", entries[0].word), entries, True
+        if pos != "DET":
+            for guess in guesses:
+                same_spelling = self.by_key.get(guess, [])
+                if len(same_spelling) == 1:
+                    return _LEAD.sub("", same_spelling[0].word), same_spelling, False
+        # Written without its accent: video for vídeo.
+        if self.accent_free is not None:
+            for word in dict.fromkeys((lemma.lower(), surface.lower(), *guesses)):
+                key = self.accent_free.get(strip_accents(word))
+                if key is None:
+                    continue
+                entries = self.find(key, pos)
+                if entries:
+                    return _LEAD.sub("", entries[0].word), entries, True
+                same_spelling = self.by_key[key]
+                if pos != "DET" and len(same_spelling) == 1:
+                    return _LEAD.sub("", same_spelling[0].word), same_spelling, False
         return lemma, [], False
 
 
