@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 
 import { isLocale } from '@/i18n/locales'
 import { isSupportedLanguage } from '@/lib/languages'
+import { videoRouteUser } from '@/lib/videos/access'
 import { cancelVideoJob, pauseVideoJob, readVideoJob } from '@/lib/videos/jobs'
 
 interface VideoJobRouteContext {
@@ -26,6 +27,8 @@ async function jobRequest(request: NextRequest, context: VideoJobRouteContext) {
 
 // How processing the video of ?lang= for ?explain= is going.
 export async function GET(request: NextRequest, context: VideoJobRouteContext) {
+  const { response } = await videoRouteUser()
+  if (response) return response
   const named = await jobRequest(request, context)
   if (!named) return new NextResponse(null, { status: 400 })
   const job = await readVideoJob(named)
@@ -44,6 +47,8 @@ function unavailableWhenDeployed(): NextResponse | null {
 export async function PATCH(request: NextRequest, context: VideoJobRouteContext) {
   const unavailable = unavailableWhenDeployed()
   if (unavailable) return unavailable
+  const { response } = await videoRouteUser()
+  if (response) return response
   const named = await jobRequest(request, context)
   if (!named) return new NextResponse(null, { status: 400 })
   return (await pauseVideoJob(named))
@@ -55,6 +60,8 @@ export async function PATCH(request: NextRequest, context: VideoJobRouteContext)
 export async function DELETE(request: NextRequest, context: VideoJobRouteContext) {
   const unavailable = unavailableWhenDeployed()
   if (unavailable) return unavailable
+  const { response } = await videoRouteUser()
+  if (response) return response
   const named = await jobRequest(request, context)
   if (!named) return new NextResponse(null, { status: 400 })
   return (await cancelVideoJob(named))

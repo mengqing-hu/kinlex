@@ -2,6 +2,7 @@ import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 
 import { isSupportedLanguage } from '@/lib/languages'
+import { videoRouteUser } from '@/lib/videos/access'
 import { listVideoCaptions } from '@/lib/videos/jobs'
 import { getYouTubeId } from '@/lib/videos/types'
 
@@ -11,6 +12,8 @@ export async function GET(request: NextRequest) {
   if (process.env.NODE_ENV === 'production') {
     return new NextResponse(null, { status: 404 })
   }
+  const { response } = await videoRouteUser()
+  if (response) return response
   const url = request.nextUrl.searchParams.get('url') ?? ''
   const language = request.nextUrl.searchParams.get('lang') ?? ''
   const id = getYouTubeId(url)

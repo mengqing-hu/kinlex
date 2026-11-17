@@ -51,6 +51,7 @@ interface VideoJobRequest {
 
 interface StartVideoJobRequest extends VideoJobRequest {
   captions: CaptionSource
+  ownerId?: string
 }
 
 // Reading a video's details from YouTube takes a few seconds; one that takes longer has stalled.
@@ -273,6 +274,7 @@ export async function startVideoJob(request: StartVideoJobRequest): Promise<void
       request.captions,
       '--status-file',
       statusPath,
+      ...(request.ownerId ? ['--owner-id', request.ownerId] : []),
     ],
     { cwd: PIPELINE_ROOT, detached: true, stdio: ['ignore', log, log] },
   )
@@ -291,4 +293,8 @@ export async function startVideoJob(request: StartVideoJobRequest): Promise<void
   child.unref()
   // The command has its own copy of the log file.
   closeSync(log)
+}
+
+export async function reprocessVideoJob(request: StartVideoJobRequest): Promise<void> {
+  await startVideoJob(request)
 }

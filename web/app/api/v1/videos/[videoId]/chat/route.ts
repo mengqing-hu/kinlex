@@ -9,6 +9,7 @@ import {
   streamChatReply,
 } from '@/lib/videos/chat'
 import { getStudyVideo } from '@/lib/videos/studyFiles'
+import { videoRouteUser } from '@/lib/videos/access'
 
 interface ChatRouteContext {
   params: Promise<{ videoId: string }>
@@ -23,6 +24,8 @@ export async function POST(request: NextRequest, context: ChatRouteContext) {
   if (!isSupportedLanguage(language) || !parsed.success) {
     return new NextResponse(null, { status: 400 })
   }
+  const { response } = await videoRouteUser()
+  if (response) return response
   if (!isChatConfigured()) {
     return new NextResponse(null, { status: 503 })
   }

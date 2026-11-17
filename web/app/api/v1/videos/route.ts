@@ -6,6 +6,7 @@ import { isLocale } from '@/i18n/locales'
 import { isSupportedLanguage } from '@/lib/languages'
 import { startVideoJob } from '@/lib/videos/jobs'
 import { captionSources, getYouTubeId } from '@/lib/videos/types'
+import { videoRouteUser } from '@/lib/videos/access'
 
 const startSchema = z.object({
   url: z.string(),
@@ -25,11 +26,14 @@ export async function POST(request: NextRequest) {
   if (!parsed.success || !id) {
     return new NextResponse(null, { status: 400 })
   }
+  const { user, response } = await videoRouteUser()
+  if (response) return response
   await startVideoJob({
     id,
     language: parsed.data.language,
     meaningLanguage: parsed.data.meaningLanguage,
     captions: parsed.data.captions,
+    ownerId: user.id,
   })
   return NextResponse.json({ id }, { status: 202 })
 }

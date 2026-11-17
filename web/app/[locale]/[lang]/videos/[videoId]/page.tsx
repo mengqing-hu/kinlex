@@ -7,6 +7,7 @@ import { applyRouteLocale } from '@/i18n/server'
 import { isSupportedLanguage } from '@/lib/languages'
 import { getStudyVideo } from '@/lib/videos/studyFiles'
 import { getWordListLabels } from '@/lib/wordListLabels'
+import { canUseVideos, currentUser } from '@/lib/videos/access'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,6 +26,7 @@ export default async function VideoPage({ params }: VideoPageProps) {
   const { lang, videoId } = await params
   const locale = await applyRouteLocale(params)
   if (!isSupportedLanguage(lang)) notFound()
+  if (!canUseVideos(await currentUser())) notFound()
 
   const [video, t, listLabels] = await Promise.all([
     getStudyVideo(lang, videoId, locale),

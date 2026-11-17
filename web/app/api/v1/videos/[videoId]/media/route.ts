@@ -6,6 +6,7 @@ import { NextResponse } from 'next/server'
 
 import { isSupportedLanguage } from '@/lib/languages'
 import { getVideoFile } from '@/lib/videos/studyFiles'
+import { videoRouteUser } from '@/lib/videos/access'
 
 interface VideoMediaRouteContext {
   params: Promise<{ videoId: string }>
@@ -15,6 +16,8 @@ const RANGE = /^bytes=(\d*)-(\d*)$/
 
 // The downloaded video of ?lang=, in the byte ranges the browser asks for, so it can seek.
 export async function GET(request: NextRequest, context: VideoMediaRouteContext) {
+  const { response } = await videoRouteUser()
+  if (response) return response
   const { videoId } = await context.params
   const language = request.nextUrl.searchParams.get('lang') ?? ''
   const file = isSupportedLanguage(language) ? await getVideoFile(language, videoId) : null
