@@ -23,6 +23,8 @@ const studyFileSchema = z.object({
   title: z.string(),
   language: z.string(),
   meaning_language: z.string(),
+  // Files written before the pipeline recorded it have none.
+  duration_ms: z.number().nullish(),
   lines: z.array(
     z.object({
       position: z.number(),
@@ -163,8 +165,19 @@ export async function listStudyVideos(language: string): Promise<StudyVideoSumma
   }
   const videos = await Promise.all(
     [...byId].map(async ([id, meaningLanguages]) => {
-      const { title } = await readStudyFile(language, id, meaningLanguages[0] ?? 'en')
-      return { id, title, meaningLanguages }
+      const meaningLanguage = meaningLanguages[0] ?? 'en'
+      const [{ title, duration_ms: durationMs }, info] = await Promise.all([
+        readStudyFile(language, id, meaningLanguage),
+        // The study file is written when processing ends, which is when the video was added.
+        stat(path.join(videoDirectory(language), `${id}.${meaningLanguage}.json`)),
+      ])
+      return {
+        id,
+        title,
+        meaningLanguages,
+        addedAt: info.mtime.toISOString(),
+        durationMs: durationMs ?? null,
+      }
     }),
   )
   return videos.toSorted((left, right) => left.title.localeCompare(right.title))
@@ -232,13 +245,18 @@ async function listDatabaseVideos(language: string): Promise<StudyVideoSummary[]
   const db = await videoDb()
   const { data, error } = await db
     .from('videos')
-    .select('id, title')
+    .select('id, title, created_at, duration_ms')
     .eq('language', language)
     .neq('status', 'archived')
     .order('title')
   if (missingTable(error)) return null
   if (error) throw new Error(`list videos: ${error.message}`)
-  const videos = (data ?? []) as Array<{ id: string; title: string }>
+  const videos = (data ?? []) as Array<{
+    id: string
+    title: string
+    created_at: string
+    duration_ms: number | null
+  }>
   if (videos.length === 0) return []
 
   // Every meaning language translates the first line, so its translations name the languages.
@@ -259,6 +277,8 @@ async function listDatabaseVideos(language: string): Promise<StudyVideoSummary[]
     id: video.id,
     title: video.title,
     meaningLanguages: languages.get(video.id) ?? [],
+    addedAt: video.created_at,
+    durationMs: video.duration_ms,
   }))
 }
 

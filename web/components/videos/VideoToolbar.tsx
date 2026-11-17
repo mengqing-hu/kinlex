@@ -3,6 +3,7 @@
 import { useLocale } from 'next-intl'
 import { type FormEvent, useEffect, useState } from 'react'
 
+import { Modal } from '@/components/ui/Modal'
 import { Link, useRouter } from '@/i18n/navigation'
 import {
   type CaptionSource,
@@ -15,8 +16,13 @@ import {
 } from '@/lib/videos/types'
 
 export interface AddVideoLabels {
+  // The page's name, at the start of the toolbar.
+  toolbarTitle: string
   title: string
   intro: string
+  progress: string
+  noJobs: string
+  close: string
   link: string
   linkPlaceholder: string
   invalidLink: string
@@ -55,7 +61,7 @@ interface Option {
   name: string
 }
 
-interface AddVideoFormProps {
+interface VideoToolbarProps {
   language: string
   languages: Option[]
   meaningLanguages: Option[]
@@ -235,7 +241,7 @@ function JobCard({
           if (next.status === 'done') {
             window.clearInterval(timer)
             if (job.openWhenDone) router.push(`/${job.language}/videos/${job.id}`)
-            // The sidebar lists the new video.
+            // The library lists the new video.
             router.refresh()
           } else if (next.status === 'failed' || next.status === 'paused') {
             window.clearInterval(timer)
@@ -352,18 +358,21 @@ function JobCard({
   )
 }
 
-// Opens a video that is already processed, or processes it on this computer and follows the
-// pipeline's progress until the video can be opened. Processing carries on when the learner leaves
-// the page, so the jobs still running or failed are listed again when they come back.
-export function AddVideoForm({
+// The bar over the video library. Adding a video opens a form that opens a video already
+// processed, or processes it on this computer; the progress button lists every job and follows each
+// until its video can be opened. Processing carries on when the learner leaves the page, so the
+// jobs still running or failed are listed again when they come back.
+export function VideoToolbar({
   language,
   languages,
   meaningLanguages,
   processed,
   unfinished,
   labels,
-}: AddVideoFormProps) {
+}: VideoToolbarProps) {
   const router = useRouter()
+  const [addOpen, setAddOpen] = useState(false)
+  const [progressOpen, setProgressOpen] = useState(false)
   const [link, setLink] = useState('')
   const [videoLanguage, setVideoLanguage] = useState(language)
   const [meaningLanguage, setMeaningLanguage] = useState('en')
@@ -480,145 +489,215 @@ export function AddVideoForm({
       return
     }
     const next = { id, language: videoLanguage, meaningLanguage, captions: captionSource }
-    // Already being processed: its card is followed below.
+    setAddOpen(false)
+    setProgressOpen(true)
+    setLink('')
+    // Already being processed: its card is followed in the progress list.
     if (jobs.some((job) => jobKey(job) === jobKey(next) && job.status.status === 'running')) {
       return
     }
     void run(next)
   }
 
+  // Jobs that still need the learner's eye: running, paused or failed.
+  const openJobs = jobs.filter((job) => job.status.status !== 'done').length
+
+  const buttonClass =
+    'inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none'
+
   return (
-    <section aria-label={labels.title} className="max-w-2xl">
-      <h2 className="text-lg font-semibold tracking-tight text-[var(--ink)]">{labels.title}</h2>
-      <p className="mt-2 text-sm leading-6 text-[var(--mute)]">{labels.intro}</p>
-
-      <form
-        className="mt-5 space-y-5 rounded-2xl border border-[var(--line)] bg-[var(--card)] p-5"
-        noValidate
-        onSubmit={handleSubmit}
-      >
-        <fieldset className="space-y-5">
-          <label className="block">
-            <span className="mb-1.5 block text-sm font-semibold text-[var(--ink)]">
-              {labels.link}
-            </span>
-            <input
-              aria-invalid={error}
-              className={fieldClass}
-              placeholder={labels.linkPlaceholder}
-              type="url"
-              value={link}
-              onChange={(event) => setLink(event.target.value)}
-            />
-            {error ? (
-              <span className="mt-1.5 block text-xs text-[var(--familiarity-1)]" role="alert">
-                {labels.invalidLink}
-              </span>
-            ) : null}
-          </label>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block">
-              <span className="mb-1.5 block text-sm font-semibold text-[var(--ink)]">
-                {labels.videoLanguage}
-              </span>
-              <select
-                className={fieldClass}
-                value={videoLanguage}
-                onChange={(event) => setVideoLanguage(event.target.value)}
-              >
-                {languages.map((option) => (
-                  <option key={option.code} value={option.code}>
-                    {option.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="block">
-              <span className="mb-1.5 block text-sm font-semibold text-[var(--ink)]">
-                {labels.meaningLanguage}
-              </span>
-              <select
-                className={fieldClass}
-                value={meaningLanguage}
-                onChange={(event) => setMeaningLanguage(event.target.value)}
-              >
-                {meaningLanguages.map((option) => (
-                  <option key={option.code} value={option.code}>
-                    {option.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <fieldset>
-            <legend className="mb-1.5 block text-sm font-semibold text-[var(--ink)]">
-              {labels.captionSource}
-            </legend>
-            <div className="space-y-2">
-              {captionSources.map((source) => {
-                const available = isAvailable(source)
-                return (
-                  <label
-                    className={`flex items-start gap-3 rounded-lg border px-3 py-2.5 ${
-                      captionSource === source
-                        ? 'border-[var(--info)] bg-[var(--bg)]'
-                        : 'border-[var(--line)]'
-                    } ${available ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'}`}
-                    key={source}
-                  >
-                    <input
-                      checked={captionSource === source}
-                      className="mt-1 accent-[var(--info)]"
-                      disabled={!available}
-                      name="captions"
-                      type="radio"
-                      value={source}
-                      onChange={() => setChosenSource(source)}
-                    />
-                    <span className="min-w-0">
-                      <span className="block text-sm font-medium text-[var(--ink)]">
-                        {labels.captionSources[source]}
-                      </span>
-                      <span className="mt-0.5 block text-xs leading-5 text-[var(--mute)]">
-                        {captionNote(source)}
-                      </span>
-                    </span>
-                  </label>
-                )
-              })}
-            </div>
-            {checked && checked.captions === null ? (
-              <p className="mt-2 text-xs text-[var(--familiarity-1)]" role="alert">
-                {labels.captionCheckFailed}
-              </p>
-            ) : null}
-          </fieldset>
-
+    <>
+      {/* Below the phone's menu bar, which is sticky too. */}
+      <div className="sticky top-14 z-20 border-b border-[var(--line)] bg-[color:var(--card)]/95 backdrop-blur md:top-0">
+        <div className="mx-auto flex h-14 w-full max-w-6xl items-center gap-2 px-5 sm:px-8">
+          <h1 className="min-w-0 flex-1 truncate text-lg font-semibold tracking-tight text-[var(--ink)]">
+            {labels.toolbarTitle}
+          </h1>
           <button
-            className="w-full rounded-lg bg-[var(--ink)] px-4 py-2.5 text-sm font-semibold text-[var(--card)] hover:opacity-90 disabled:opacity-60"
-            disabled={checkingCaptions}
-            type="submit"
+            className={`${buttonClass} border border-[var(--line)] bg-[var(--card)] text-[var(--ink)] hover:border-[var(--mute)]`}
+            type="button"
+            onClick={() => setProgressOpen(true)}
           >
-            {labels.start}
+            <svg
+              aria-hidden="true"
+              className={`size-4 ${jobs.some((job) => job.status.status === 'running') ? 'animate-spin' : ''}`}
+              fill="none"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M21 12a9 9 0 1 1-6.2-8.6" />
+            </svg>
+            <span className="hidden sm:inline">{labels.progress}</span>
+            {openJobs > 0 ? (
+              <span className="min-w-5 rounded-full bg-[var(--root)]/20 px-1.5 text-xs leading-5 tabular-nums">
+                {openJobs}
+              </span>
+            ) : null}
           </button>
-        </fieldset>
-      </form>
-
-      {jobs.length > 0 ? (
-        <div className="mt-6 space-y-4">
-          {jobs.map((job) => (
-            <JobCard
-              job={job}
-              key={`${jobKey(job)}:${job.attempt}`}
-              labels={labels}
-              onCancelled={() => forget(job)}
-              onRestart={() => void run(job)}
-            />
-          ))}
+          <button
+            className={`${buttonClass} bg-[var(--ink)] text-[var(--card)] hover:opacity-90`}
+            type="button"
+            onClick={() => setAddOpen(true)}
+          >
+            <svg
+              aria-hidden="true"
+              className="size-4"
+              fill="none"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            {labels.title}
+          </button>
         </div>
-      ) : null}
-    </section>
+      </div>
+
+      <Modal
+        closeLabel={labels.close}
+        open={addOpen}
+        title={labels.title}
+        onClose={() => setAddOpen(false)}
+      >
+        <p className="text-sm leading-6 text-[var(--mute)]">{labels.intro}</p>
+
+        <form className="mt-5 space-y-5" noValidate onSubmit={handleSubmit}>
+          <fieldset className="space-y-5">
+            <label className="block">
+              <span className="mb-1.5 block text-sm font-semibold text-[var(--ink)]">
+                {labels.link}
+              </span>
+              <input
+                aria-invalid={error}
+                className={fieldClass}
+                placeholder={labels.linkPlaceholder}
+                type="url"
+                value={link}
+                onChange={(event) => setLink(event.target.value)}
+              />
+              {error ? (
+                <span className="mt-1.5 block text-xs text-[var(--familiarity-1)]" role="alert">
+                  {labels.invalidLink}
+                </span>
+              ) : null}
+            </label>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="block">
+                <span className="mb-1.5 block text-sm font-semibold text-[var(--ink)]">
+                  {labels.videoLanguage}
+                </span>
+                <select
+                  className={fieldClass}
+                  value={videoLanguage}
+                  onChange={(event) => setVideoLanguage(event.target.value)}
+                >
+                  {languages.map((option) => (
+                    <option key={option.code} value={option.code}>
+                      {option.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="block">
+                <span className="mb-1.5 block text-sm font-semibold text-[var(--ink)]">
+                  {labels.meaningLanguage}
+                </span>
+                <select
+                  className={fieldClass}
+                  value={meaningLanguage}
+                  onChange={(event) => setMeaningLanguage(event.target.value)}
+                >
+                  {meaningLanguages.map((option) => (
+                    <option key={option.code} value={option.code}>
+                      {option.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <fieldset>
+              <legend className="mb-1.5 block text-sm font-semibold text-[var(--ink)]">
+                {labels.captionSource}
+              </legend>
+              <div className="space-y-2">
+                {captionSources.map((source) => {
+                  const available = isAvailable(source)
+                  return (
+                    <label
+                      className={`flex items-start gap-3 rounded-lg border px-3 py-2.5 ${
+                        captionSource === source
+                          ? 'border-[var(--info)] bg-[var(--bg)]'
+                          : 'border-[var(--line)]'
+                      } ${available ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'}`}
+                      key={source}
+                    >
+                      <input
+                        checked={captionSource === source}
+                        className="mt-1 accent-[var(--info)]"
+                        disabled={!available}
+                        name="captions"
+                        type="radio"
+                        value={source}
+                        onChange={() => setChosenSource(source)}
+                      />
+                      <span className="min-w-0">
+                        <span className="block text-sm font-medium text-[var(--ink)]">
+                          {labels.captionSources[source]}
+                        </span>
+                        <span className="mt-0.5 block text-xs leading-5 text-[var(--mute)]">
+                          {captionNote(source)}
+                        </span>
+                      </span>
+                    </label>
+                  )
+                })}
+              </div>
+              {checked && checked.captions === null ? (
+                <p className="mt-2 text-xs text-[var(--familiarity-1)]" role="alert">
+                  {labels.captionCheckFailed}
+                </p>
+              ) : null}
+            </fieldset>
+
+            <button
+              className="w-full rounded-lg bg-[var(--ink)] px-4 py-2.5 text-sm font-semibold text-[var(--card)] hover:opacity-90 disabled:opacity-60"
+              disabled={checkingCaptions}
+              type="submit"
+            >
+              {labels.start}
+            </button>
+          </fieldset>
+        </form>
+      </Modal>
+
+      <Modal
+        closeLabel={labels.close}
+        open={progressOpen}
+        title={labels.progress}
+        onClose={() => setProgressOpen(false)}
+      >
+        {jobs.length > 0 ? (
+          <div className="space-y-4">
+            {jobs.map((job) => (
+              <JobCard
+                job={job}
+                key={`${jobKey(job)}:${job.attempt}`}
+                labels={labels}
+                onCancelled={() => forget(job)}
+                onRestart={() => void run(job)}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="py-8 text-center text-sm text-[var(--mute)]">{labels.noJobs}</p>
+        )}
+      </Modal>
+    </>
   )
 }

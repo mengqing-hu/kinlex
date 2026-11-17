@@ -325,9 +325,42 @@
     "addTitle": "添加视频",
     "addIntro": "粘贴一个 YouTube 链接。Kinlex 会下载视频，读取字幕（没有字幕时转录语音），翻译每一句，并把每个词和它的释义关联起来。处理在这台电脑上进行。",
     "libraryTitle": "视频学习",
-    "libraryIntro": "你处理过的所有语言的视频。打开一个视频，逐词学习它的字幕。",
     "libraryEmpty": "还没有视频。添加一个 YouTube 链接，处理你的第一个视频。",
-    "closeAdd": "收起",
+    "progress": "处理进度",
+    "noJobs": "没有正在处理的视频。",
+    "close": "关闭",
+    "libraryNoMatches": "没有符合这些条件的视频。",
+    "searchVideos": "搜索视频",
+    "searchVideosPlaceholder": "搜索标题",
+    "filters": {
+      "language": "语言",
+      "allLanguages": "所有语言",
+      "added": "添加时间",
+      "addedAnyTime": "不限时间",
+      "addedRanges": {
+        "7": "最近 7 天",
+        "30": "最近 30 天",
+        "90": "最近 3 个月"
+      },
+      "duration": "时长",
+      "anyDuration": "不限时长",
+      "durationRanges": {
+        "short": "5 分钟以内",
+        "medium": "5–15 分钟",
+        "long": "15 分钟以上"
+      }
+    },
+    "sorting": {
+      "added": "添加日期",
+      "duration": "时长",
+      "title": "标题",
+      "addedAsc": "最早添加在前",
+      "addedDesc": "最新添加在前",
+      "durationAsc": "最短在前",
+      "durationDesc": "最长在前",
+      "titleAsc": "A 到 Z",
+      "titleDesc": "Z 到 A"
+    },
     "videoOptions": "视频选项",
     "renameVideo": "重命名",
     "deleteVideo": "删除",

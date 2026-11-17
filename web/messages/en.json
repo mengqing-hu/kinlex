@@ -299,9 +299,42 @@
     "addTitle": "Add a video",
     "addIntro": "Paste a YouTube link. Kinlex downloads the video, takes its captions or transcribes its speech, translates every sentence, and links each word to its meaning. Processing runs on this computer.",
     "libraryTitle": "Video study",
-    "libraryIntro": "Videos you have processed, in every language. Open one to study its captions word by word.",
     "libraryEmpty": "No videos yet. Add a YouTube link to process your first one.",
-    "closeAdd": "Close",
+    "progress": "Processing",
+    "noJobs": "No videos are being processed.",
+    "close": "Close",
+    "libraryNoMatches": "No videos match these filters.",
+    "searchVideos": "Search videos",
+    "searchVideosPlaceholder": "Search titles",
+    "filters": {
+      "language": "Language",
+      "allLanguages": "All languages",
+      "added": "Added",
+      "addedAnyTime": "Any time",
+      "addedRanges": {
+        "7": "Last 7 days",
+        "30": "Last 30 days",
+        "90": "Last 3 months"
+      },
+      "duration": "Length",
+      "anyDuration": "Any length",
+      "durationRanges": {
+        "short": "Under 5 minutes",
+        "medium": "5–15 minutes",
+        "long": "Over 15 minutes"
+      }
+    },
+    "sorting": {
+      "added": "Date added",
+      "duration": "Length",
+      "title": "Title",
+      "addedAsc": "Oldest first",
+      "addedDesc": "Newest first",
+      "durationAsc": "Shortest first",
+      "durationDesc": "Longest first",
+      "titleAsc": "A to Z",
+      "titleDesc": "Z to A"
+    },
     "videoOptions": "Video options",
     "renameVideo": "Rename",
     "deleteVideo": "Delete",

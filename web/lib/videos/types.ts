@@ -36,6 +36,9 @@ export interface StudyVideoSummary {
   id: string
   title: string
   meaningLanguages: string[]
+  // When the video was added, as an ISO date; null when it is not known.
+  addedAt: string | null
+  durationMs: number | null
 }
 
 // Where a video's captions come from: the uploader's track on YouTube, YouTube's own recognition

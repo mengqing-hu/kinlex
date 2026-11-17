@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu'
 import { Link } from '@/i18n/navigation'
+import { formatDuration, type LibraryVideo } from '@/lib/videos/library'
 
 export interface VideoItemLabels {
   videoOptions: string
@@ -20,22 +21,13 @@ export interface VideoItemLabels {
   deleteConfirm: string
 }
 
-export interface LibraryVideo {
-  id: string
-  href: string
-  // The language the video is in, which its page and its rename and delete calls go under.
-  language: string
-  languageName: string
-  title: string
-  // The names of the languages its words and sentences are explained in.
-  meaningLanguageNames: string[]
-}
-
 interface VideoItemProps {
   video: LibraryVideo
   view: WordListView
   // Template with {languages}.
   explainedIn: string
+  // The date added as the interface shows it, or null when it is not known.
+  addedLabel: string | null
   labels: VideoItemLabels
 }
 
@@ -46,7 +38,7 @@ function thumbnailUrl(id: string): string {
 
 // A processed video in the library, as a card with its still or as a row, with a menu to rename it
 // in place or delete it.
-export function VideoItem({ video, view, explainedIn, labels }: VideoItemProps) {
+export function VideoItem({ video, view, explainedIn, addedLabel, labels }: VideoItemProps) {
   const router = useRouter()
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(video.title)
@@ -95,6 +87,7 @@ export function VideoItem({ video, view, explainedIn, labels }: VideoItemProps) 
     video.meaningLanguageNames.length > 0
       ? explainedIn.replace('{languages}', video.meaningLanguageNames.join(', '))
       : null,
+    addedLabel,
   ]
     .filter(Boolean)
     .join(' · ')
@@ -170,10 +163,27 @@ export function VideoItem({ video, view, explainedIn, labels }: VideoItemProps) 
     />
   )
 
+  // The length over the corner of the still, as video sites show it.
+  const duration =
+    video.durationMs === null ? null : (
+      <span
+        className={`absolute rounded-md bg-black/70 font-semibold text-white tabular-nums backdrop-blur-sm ${
+          cards
+            ? 'right-2 bottom-2 px-2 py-1 text-[13px] leading-none'
+            : 'right-1 bottom-1 px-1.5 py-0.5 text-[11px] leading-tight'
+        }`}
+      >
+        {formatDuration(video.durationMs)}
+      </span>
+    )
+
   if (cards) {
     return (
       <li className="group relative flex flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--card)] transition-colors focus-within:ring-2 focus-within:ring-[var(--info)] hover:border-[var(--root)]">
-        <div className="aspect-video overflow-hidden bg-[var(--bg)]">{thumbnail}</div>
+        <div className="relative aspect-video overflow-hidden bg-[var(--bg)]">
+          {thumbnail}
+          {duration}
+        </div>
         <div className="flex items-start gap-1 p-4 pr-2">
           <div className="min-w-0 flex-1">
             {title}
@@ -187,8 +197,9 @@ export function VideoItem({ video, view, explainedIn, labels }: VideoItemProps) 
 
   return (
     <li className="group relative flex items-center gap-4 rounded-md border-b border-[var(--line)] px-2 py-2 transition-colors last:border-b-0 focus-within:ring-2 focus-within:ring-[var(--info)] hover:bg-[var(--row-hover)]">
-      <div className="aspect-video w-28 shrink-0 overflow-hidden rounded-md bg-[var(--bg)] sm:w-36">
+      <div className="relative aspect-video w-28 shrink-0 overflow-hidden rounded-md bg-[var(--bg)] sm:w-36">
         {thumbnail}
+        {duration}
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex min-w-0">{title}</div>

@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 
-import { AddVideoForm } from '@/components/videos/AddVideoForm'
 import { VideoLibrary } from '@/components/videos/VideoLibrary'
+import { VideoToolbar } from '@/components/videos/VideoToolbar'
 import { localeNames, locales } from '@/i18n/locales'
 import { applyRouteLocale, getLanguageNames } from '@/i18n/server'
 import { isSupportedLanguage, supportedLanguages } from '@/lib/languages'
@@ -39,26 +39,30 @@ export default async function VideosPage({ params }: VideosPageProps) {
     listUnfinishedVideoJobs(),
   ])
 
-  // Every processed video, whatever the language being learned, by title.
-  const videos = processed
-    .flatMap(([code, list]) =>
-      list.map((video) => ({
-        id: video.id,
-        href: `/${code}/videos/${video.id}`,
-        language: code,
-        languageName: languageNames[code] ?? code,
-        title: video.title,
-        meaningLanguageNames: video.meaningLanguages.map(
-          (meaning) => localeNames[meaning as keyof typeof localeNames] ?? meaning,
-        ),
-      })),
-    )
-    .toSorted((left, right) => left.title.localeCompare(right.title))
+  // Every processed video, whatever the language being learned; the library sorts them.
+  const videos = processed.flatMap(([code, list]) =>
+    list.map((video) => ({
+      id: video.id,
+      href: `/${code}/videos/${video.id}`,
+      language: code,
+      languageName: languageNames[code] ?? code,
+      title: video.title,
+      meaningLanguageNames: video.meaningLanguages.map(
+        (meaning) => localeNames[meaning as keyof typeof localeNames] ?? meaning,
+      ),
+      addedAt: video.addedAt,
+      durationMs: video.durationMs,
+    })),
+  )
 
-  const addForm = (
-    <AddVideoForm
+  const toolbar = (
+    <VideoToolbar
       labels={{
+        toolbarTitle: t('libraryTitle'),
         title: t('addTitle'),
+        progress: t('progress'),
+        noJobs: t('noJobs'),
+        close: t('close'),
         intro: t('addIntro'),
         link: t('link'),
         linkPlaceholder: t('linkPlaceholder'),
@@ -118,14 +122,47 @@ export default async function VideosPage({ params }: VideosPageProps) {
 
   return (
     <VideoLibrary
-      addForm={addForm}
-      addOpen={unfinished.length > 0}
+      toolbar={toolbar}
+      // eslint-disable-next-line react-hooks/purity -- the page is made anew for every request.
+      now={Date.now()}
       labels={{
         title: t('libraryTitle'),
-        intro: t('libraryIntro'),
-        addVideo: t('addTitle'),
-        closeAdd: t('closeAdd'),
         empty: t('libraryEmpty'),
+        noMatches: t('libraryNoMatches'),
+        search: t('searchVideos'),
+        searchPlaceholder: t('searchVideosPlaceholder'),
+        language: t('filters.language'),
+        allLanguages: t('filters.allLanguages'),
+        added: t('filters.added'),
+        addedAnyTime: t('filters.addedAnyTime'),
+        addedRanges: {
+          7: t('filters.addedRanges.7'),
+          30: t('filters.addedRanges.30'),
+          90: t('filters.addedRanges.90'),
+        },
+        duration: t('filters.duration'),
+        anyDuration: t('filters.anyDuration'),
+        durationRanges: {
+          short: t('filters.durationRanges.short'),
+          medium: t('filters.durationRanges.medium'),
+          long: t('filters.durationRanges.long'),
+        },
+        sorting: {
+          sort: levelT('sorting.sort'),
+          sortBy: levelT('sorting.sortBy'),
+          default: levelT('sorting.default'),
+          reverse: levelT('sorting.reverse'),
+          sorts: {
+            added: t('sorting.added'),
+            duration: t('sorting.duration'),
+            title: t('sorting.title'),
+          },
+          orders: {
+            added: { asc: t('sorting.addedAsc'), desc: t('sorting.addedDesc') },
+            duration: { asc: t('sorting.durationAsc'), desc: t('sorting.durationDesc') },
+            title: { asc: t('sorting.titleAsc'), desc: t('sorting.titleDesc') },
+          },
+        },
         explainedIn: t.raw('explainedIn') as string,
         views: {
           view: levelT('views.view'),
