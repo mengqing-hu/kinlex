@@ -441,6 +441,13 @@ export function VideoStudy({ video, labels }: { video: StudyVideo; labels: Video
   const [showOriginal, setShowOriginal] = useState(true)
   const [showTranslation, setShowTranslation] = useState(true)
 
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get('t')
+    const time = requested ? Number(requested) : NaN
+    if (!Number.isFinite(time) || !videoRef.current) return
+    videoRef.current.currentTime = Math.max(0, time / 1000)
+  }, [video.id])
+
   const current = findLineIndex(video.lines, timeMs)
   const currentLine = video.lines[current]
   const spokenToken = currentLine ? findSpokenToken(currentLine, timeMs) : null
