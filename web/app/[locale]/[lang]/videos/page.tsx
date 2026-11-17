@@ -3,11 +3,13 @@ import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 
 import { AddVideoForm } from '@/components/videos/AddVideoForm'
+import { VideoLibrary } from '@/components/videos/VideoLibrary'
 import { localeNames, locales } from '@/i18n/locales'
 import { applyRouteLocale, getLanguageNames } from '@/i18n/server'
 import { isSupportedLanguage, supportedLanguages } from '@/lib/languages'
 import { listUnfinishedVideoJobs } from '@/lib/videos/jobs'
 import { listStudyVideos } from '@/lib/videos/studyFiles'
+import { canUseVideos, currentUser } from '@/lib/videos/access'
 
 // The study files change whenever the pipeline processes a video.
 export const dynamic = 'force-dynamic'
@@ -18,16 +20,18 @@ interface VideosPageProps {
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('videoPage')
-  return { title: t('addTitle') }
+  return { title: t('libraryTitle') }
 }
 
 export default async function VideosPage({ params }: VideosPageProps) {
   const { lang } = await params
   await applyRouteLocale(params)
   if (!isSupportedLanguage(lang)) notFound()
+  if (!canUseVideos(await currentUser())) notFound()
 
-  const [t, languageNames, processed, unfinished] = await Promise.all([
+  const [t, levelT, languageNames, processed, unfinished] = await Promise.all([
     getTranslations('videoPage'),
+    getTranslations('levelPage'),
     getLanguageNames(),
     Promise.all(
       supportedLanguages.map(async ({ code }) => [code, await listStudyVideos(code)] as const),
@@ -35,7 +39,23 @@ export default async function VideosPage({ params }: VideosPageProps) {
     listUnfinishedVideoJobs(),
   ])
 
-  return (
+  // Every processed video, whatever the language being learned, by title.
+  const videos = processed
+    .flatMap(([code, list]) =>
+      list.map((video) => ({
+        id: video.id,
+        href: `/${code}/videos/${video.id}`,
+        language: code,
+        languageName: languageNames[code] ?? code,
+        title: video.title,
+        meaningLanguageNames: video.meaningLanguages.map(
+          (meaning) => localeNames[meaning as keyof typeof localeNames] ?? meaning,
+        ),
+      })),
+    )
+    .toSorted((left, right) => left.title.localeCompare(right.title))
+
+  const addForm = (
     <AddVideoForm
       labels={{
         title: t('addTitle'),
@@ -93,6 +113,33 @@ export default async function VideosPage({ params }: VideosPageProps) {
       meaningLanguages={locales.map((code) => ({ code, name: localeNames[code] }))}
       processed={Object.fromEntries(processed)}
       unfinished={unfinished}
+    />
+  )
+
+  return (
+    <VideoLibrary
+      addForm={addForm}
+      addOpen={unfinished.length > 0}
+      labels={{
+        title: t('libraryTitle'),
+        intro: t('libraryIntro'),
+        addVideo: t('addTitle'),
+        closeAdd: t('closeAdd'),
+        empty: t('libraryEmpty'),
+        explainedIn: t.raw('explainedIn') as string,
+        views: {
+          view: levelT('views.view'),
+          list: levelT('views.list'),
+          cards: levelT('views.cards'),
+        },
+        item: {
+          videoOptions: t('videoOptions'),
+          rename: t('renameVideo'),
+          delete: t('deleteVideo'),
+          deleteConfirm: t.raw('deleteVideoConfirm') as string,
+        },
+      }}
+      videos={videos}
     />
   )
 }

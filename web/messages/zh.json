@@ -11,18 +11,13 @@
     "flashcards": "单词卡",
     "favorites": "收藏",
     "videos": "视频学习",
-    "videoLibrary": "视频库",
     "signIn": "登录",
     "account": "账户",
     "mainNavigation": "主导航",
     "collapseSidebar": "收起侧边栏",
     "expandSidebar": "展开侧边栏",
     "openMenu": "打开菜单",
-    "closeMenu": "关闭菜单",
-    "videoOptions": "视频选项",
-    "renameVideo": "重命名",
-    "deleteVideo": "删除",
-    "deleteVideoConfirm": "删除“{title}”？视频和字幕会从这台电脑上移除。"
+    "closeMenu": "关闭菜单"
   },
   "footer": {
     "description": "通过词与词之间的联系来学习单词。",
@@ -288,7 +283,8 @@
       "sources": {
         "all": "全部单词",
         "favorites": "收藏",
-        "learning": "还在学"
+        "learning": "还在学",
+        "video": "视频中的词"
       },
       "levels": "级别",
       "levelsHint": "不选择表示全部级别。",
@@ -328,6 +324,15 @@
   "videoPage": {
     "addTitle": "添加视频",
     "addIntro": "粘贴一个 YouTube 链接。Kinlex 会下载视频，读取字幕（没有字幕时转录语音），翻译每一句，并把每个词和它的释义关联起来。处理在这台电脑上进行。",
+    "libraryTitle": "视频学习",
+    "libraryIntro": "你处理过的所有语言的视频。打开一个视频，逐词学习它的字幕。",
+    "libraryEmpty": "还没有视频。添加一个 YouTube 链接，处理你的第一个视频。",
+    "closeAdd": "收起",
+    "videoOptions": "视频选项",
+    "renameVideo": "重命名",
+    "deleteVideo": "删除",
+    "deleteVideoConfirm": "删除“{title}”？视频和字幕会从这台电脑上移除。",
+    "explainedIn": "释义：{languages}",
     "link": "YouTube 链接",
     "linkPlaceholder": "https://www.youtube.com/watch?v=…",
     "invalidLink": "这不是 YouTube 视频链接。",

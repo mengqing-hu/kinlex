@@ -488,12 +488,12 @@ export function AddVideoForm({
   }
 
   return (
-    <main className="mx-auto w-full max-w-2xl px-5 py-10 sm:px-8">
-      <h1 className="text-2xl font-semibold tracking-tight text-[var(--ink)]">{labels.title}</h1>
+    <section aria-label={labels.title} className="max-w-2xl">
+      <h2 className="text-lg font-semibold tracking-tight text-[var(--ink)]">{labels.title}</h2>
       <p className="mt-2 text-sm leading-6 text-[var(--mute)]">{labels.intro}</p>
 
       <form
-        className="mt-8 space-y-5 rounded-2xl border border-[var(--line)] bg-[var(--card)] p-5"
+        className="mt-5 space-y-5 rounded-2xl border border-[var(--line)] bg-[var(--card)] p-5"
         noValidate
         onSubmit={handleSubmit}
       >
@@ -619,6 +619,6 @@ export function AddVideoForm({
           ))}
         </div>
       ) : null}
-    </main>
+    </section>
   )
 }

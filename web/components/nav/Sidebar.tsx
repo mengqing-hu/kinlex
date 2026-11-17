@@ -4,11 +4,9 @@ import { type ReactNode, useEffect, useState, useSyncExternalStore } from 'react
 
 import { LanguageSwitcher } from '@/components/nav/LanguageSwitcher'
 import { UserMenu } from '@/components/nav/UserMenu'
-import { type VideoNavLabels, VideoNavItem } from '@/components/videos/VideoNavItem'
 import { Link, usePathname } from '@/i18n/navigation'
 import type { SupportedLanguageCode } from '@/lib/languages'
 import { SIDEBAR_STORAGE_KEY } from '@/lib/sidebar'
-import type { StudyVideoLink } from '@/lib/videos/types'
 
 export type SidebarIcon = 'levels' | 'roots' | 'flashcards' | 'favorites' | 'videos'
 
@@ -34,8 +32,6 @@ export interface SidebarLabels {
   openMenu: string
   signIn: string
   videos: string
-  videoLibrary: string
-  video: VideoNavLabels
 }
 
 interface SidebarProps {
@@ -44,9 +40,7 @@ interface SidebarProps {
   // Each learning language's name in the interface language, by code.
   languageNames: Record<string, string>
   links: readonly SidebarLink[]
-  // The processed videos of every language, listed under the video study link.
-  videos: readonly StudyVideoLink[]
-  // Where the video study link goes: adding a video in the language being learned.
+  // Where the video study link goes: the video library, which lists the videos of every language.
   videosHref: string
 }
 
@@ -121,19 +115,11 @@ const navItemClass =
   'md:sidebar-collapsed:justify-center md:sidebar-collapsed:px-0 flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none'
 const navItemIdleClass = 'text-[var(--mute)] hover:bg-[var(--bg)] hover:text-[var(--ink)]'
 
-export function Sidebar({
-  labels,
-  language,
-  languageNames,
-  links,
-  videos,
-  videosHref,
-}: SidebarProps) {
+export function Sidebar({ labels, language, languageNames, links, videosHref }: SidebarProps) {
   const pathname = usePathname()
   const collapsed = useSyncExternalStore(subscribeToCollapsed, getCollapsedSnapshot, () => false)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const onVideoPage = VIDEO_PATH.test(pathname)
-  const [videosOpen, setVideosOpen] = useState(onVideoPage)
 
   function linkClassName(isCurrent: boolean) {
     return `${navItemClass} ${
@@ -257,50 +243,19 @@ export function Sidebar({
                 </li>
               )
             })}
-            {/* Video study is not tied to the language being learned, so it sits apart and
-                lists the videos of every language. */}
+            {/* Video study is not tied to the language being learned, so it sits apart. */}
             <li aria-hidden="true" className="mx-1 my-2 h-px bg-[var(--line)]" />
             <li>
-              <div className="flex items-center gap-1">
-                <Link
-                  aria-current={onVideoPage ? 'page' : undefined}
-                  aria-label={collapsed ? labels.videos : undefined}
-                  className={linkClassName(onVideoPage)}
-                  href={videosHref}
-                  title={collapsed ? labels.videos : undefined}
-                  onClick={() => setVideosOpen(true)}
-                >
-                  <Icon>{iconPaths.videos}</Icon>
-                  <span className={hideWhenCollapsed}>{labels.videos}</span>
-                </Link>
-                <button
-                  aria-label={videosOpen ? labels.videoLibrary : labels.videos}
-                  className={`${hideWhenCollapsed} inline-flex size-8 shrink-0 items-center justify-center rounded-md text-[var(--mute)] hover:bg-[var(--bg)] hover:text-[var(--ink)]`}
-                  type="button"
-                  onClick={() => setVideosOpen((open) => !open)}
-                >
-                  <Icon className={`size-4 transition-transform ${videosOpen ? 'rotate-180' : ''}`}>
-                    <path d="m6 9 6 6 6-6" />
-                  </Icon>
-                </button>
-              </div>
-              {videosOpen && videos.length > 0 ? (
-                <div
-                  className={`${hideWhenCollapsed} mt-1 ml-8 space-y-0.5 border-l border-[var(--line)] pl-2`}
-                >
-                  {videos.map((video) => (
-                    <VideoNavItem
-                      current={pathname === video.href}
-                      href={video.href}
-                      id={video.id}
-                      key={`${video.language}:${video.id}`}
-                      labels={labels.video}
-                      language={video.language}
-                      title={video.title}
-                    />
-                  ))}
-                </div>
-              ) : null}
+              <Link
+                aria-current={onVideoPage ? 'page' : undefined}
+                aria-label={collapsed ? labels.videos : undefined}
+                className={linkClassName(onVideoPage)}
+                href={videosHref}
+                title={collapsed ? labels.videos : undefined}
+              >
+                <Icon>{iconPaths.videos}</Icon>
+                <span className={hideWhenCollapsed}>{labels.videos}</span>
+              </Link>
             </li>
           </ul>
         </nav>

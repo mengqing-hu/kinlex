@@ -11,18 +11,13 @@
     "flashcards": "Flashcards",
     "favorites": "Favorites",
     "videos": "Video study",
-    "videoLibrary": "Video library",
     "signIn": "Sign in",
     "account": "Account",
     "mainNavigation": "Main navigation",
     "collapseSidebar": "Collapse sidebar",
     "expandSidebar": "Expand sidebar",
     "openMenu": "Open menu",
-    "closeMenu": "Close menu",
-    "videoOptions": "Video options",
-    "renameVideo": "Rename",
-    "deleteVideo": "Delete",
-    "deleteVideoConfirm": "Delete “{title}”? The video and its captions are removed from this computer."
+    "closeMenu": "Close menu"
   },
   "footer": {
     "description": "Learn words through their connections.",
@@ -262,7 +257,8 @@
       "sources": {
         "all": "All words",
         "favorites": "Favorites",
-        "learning": "Still learning"
+        "learning": "Still learning",
+        "video": "Words from videos"
       },
       "levels": "Levels",
       "levelsHint": "None selected means every level.",
@@ -302,6 +298,15 @@
   "videoPage": {
     "addTitle": "Add a video",
     "addIntro": "Paste a YouTube link. Kinlex downloads the video, takes its captions or transcribes its speech, translates every sentence, and links each word to its meaning. Processing runs on this computer.",
+    "libraryTitle": "Video study",
+    "libraryIntro": "Videos you have processed, in every language. Open one to study its captions word by word.",
+    "libraryEmpty": "No videos yet. Add a YouTube link to process your first one.",
+    "closeAdd": "Close",
+    "videoOptions": "Video options",
+    "renameVideo": "Rename",
+    "deleteVideo": "Delete",
+    "deleteVideoConfirm": "Delete “{title}”? The video and its captions are removed from this computer.",
+    "explainedIn": "Explained in {languages}",
     "link": "YouTube link",
     "linkPlaceholder": "https://www.youtube.com/watch?v=…",
     "invalidLink": "This is not a link to a YouTube video.",
