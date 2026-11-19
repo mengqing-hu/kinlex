@@ -7,22 +7,37 @@ as they mishear more often than an official track.
 
 Videos are read without signing in. Only a video YouTube will not show without an account, such
 as an age-restricted one, is read again signed in with the cookies the settings name, so the
-account is not tied to every download.
+account is not tied to every download. The cookies are best exported from a private browser window
+that is closed right after: a session the browser keeps using is soon signed out by YouTube.
 """
 
+import fcntl
 import json
+import os
 import re
-from collections.abc import Callable
+import shutil
+import tempfile
+import time
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 from config import get_settings
+from utils.runtime import DATA_ROOT
 
 _VIDEO_ID = re.compile(r"(?:v=|youtu\.be/|/shorts/|/embed/|/live/)([\w-]{11})")
 _BARE_ID = re.compile(r"[\w-]{11}")
 _CAPTION_FORMAT = "json3"
 _VIDEO_FORMAT = "bv*[height<=720][ext=mp4][vcodec^=avc1]+ba[ext=m4a]/b[height<=720][ext=mp4]/b"
+# YouTube asks a client that makes many requests in a short time to sign in ("confirm you're not a
+# bot"), so requests are spaced out: every request yt-dlp makes waits this long first, and a
+# download a random time between these two.
+_SECONDS_BETWEEN_REQUESTS = 1.0
+_SECONDS_BEFORE_DOWNLOAD = (2.0, 5.0)
+# Held by the one process that is talking to YouTube; the others wait for their turn.
+_TURN_LOCK = DATA_ROOT / "youtube.lock"
 
 
 class YouTubeError(RuntimeError):
@@ -69,8 +84,18 @@ def _sign_in_options() -> dict[str, Any]:
     if settings.youtube_cookies_from_browser:
         options["cookiesfrombrowser"] = (settings.youtube_cookies_from_browser,)
     if settings.youtube_cookies_file:
-        options["cookiefile"] = settings.youtube_cookies_file
+        options["cookiefile"] = _cookie_copy(settings.youtube_cookies_file)
     return options
+
+
+def _cookie_copy(path: str) -> str:
+    """A copy of the cookies file for yt-dlp to use. yt-dlp writes the cookies YouTube sends back
+    into the file it is given, and when YouTube signs the session out those replace the login, so
+    the learner's file is never handed over itself."""
+    copy = Path(tempfile.gettempdir()) / f"kinlex-youtube-cookies-{os.getpid()}.txt"
+    shutil.copyfile(path, copy)
+    copy.chmod(0o600)
+    return str(copy)
 
 
 def _client(options: dict[str, Any] | None = None, *, signed_in: bool = False) -> Any:
@@ -79,7 +104,36 @@ def _client(options: dict[str, Any] | None = None, *, signed_in: bool = False) -
     except ImportError as error:
         raise RuntimeError('reading YouTube needs yt-dlp: pip install -e ".[video]"') from error
     sign_in = _sign_in_options() if signed_in else {}
-    return yt_dlp.YoutubeDL({"quiet": True, "no_warnings": True, **sign_in, **(options or {})})
+    low, high = _SECONDS_BEFORE_DOWNLOAD
+    pacing = {
+        "sleep_interval_requests": _SECONDS_BETWEEN_REQUESTS,
+        "sleep_interval": low,
+        "max_sleep_interval": high,
+    }
+    return yt_dlp.YoutubeDL(
+        {"quiet": True, "no_warnings": True, **pacing, **sign_in, **(options or {})}
+    )
+
+
+@contextmanager
+def youtube_turn(on_wait: Callable[[], None] | None = None) -> Iterator[None]:
+    """Hold the turn to talk to YouTube, so videos are read and downloaded one at a time.
+
+    on_wait is told when another process has the turn and this one starts waiting. The lock is
+    the operating system's, so a process that is stopped or crashes gives the turn up at once.
+    """
+    _TURN_LOCK.parent.mkdir(parents=True, exist_ok=True)
+    with _TURN_LOCK.open("a") as handle:
+        try:
+            fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            if on_wait:
+                on_wait()
+            fcntl.flock(handle, fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(handle, fcntl.LOCK_UN)
 
 
 def _needs_sign_in(error: Exception) -> bool:
@@ -142,6 +196,8 @@ def pick_speech_track(info: VideoInfo, language: str) -> CaptionTrack | None:
 
 
 def download_track(track: CaptionTrack, *, signed_in: bool = False) -> dict[str, Any]:
+    # A direct request, which yt-dlp's own spacing does not cover.
+    time.sleep(_SECONDS_BETWEEN_REQUESTS)
     with _client(signed_in=signed_in) as client:
         data: dict[str, Any] = json.loads(client.urlopen(track.url).read())
     return data

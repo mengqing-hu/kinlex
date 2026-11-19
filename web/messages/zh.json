@@ -432,6 +432,7 @@
     "resume": "继续",
     "cancel": "取消",
     "paused": "已暂停",
+    "queued": "排队中：正在下载另一个视频",
     "cancelConfirm": "停止处理“{title}”？已下载的视频文件也会删除，已经完成的翻译会保留，下次处理时直接使用。",
     "finishesAround": "预计 {time} 完成（约 {minutes} 分钟）",
     "almostDone": "即将完成",

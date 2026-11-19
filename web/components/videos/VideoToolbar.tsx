@@ -49,6 +49,8 @@ export interface AddVideoLabels {
   resume: string
   cancel: string
   paused: string
+  // Waiting while another video is read from YouTube.
+  queued: string
   // Template with {title}.
   cancelConfirm: string
   // Templates with {time} and {minutes}.
@@ -134,7 +136,11 @@ async function startJob(job: Job): Promise<boolean> {
 }
 
 function ProcessingSteps({ status, labels }: { status: VideoJob; labels: AddVideoLabels }) {
-  const current = STAGE_ROWS.indexOf(ROW_OF_STAGE[status.stage ?? 'metadata'] ?? 'metadata')
+  // A queued video has not started any step yet.
+  const current =
+    status.stage === 'queued'
+      ? -1
+      : STAGE_ROWS.indexOf(ROW_OF_STAGE[status.stage ?? 'metadata'] ?? 'metadata')
   return (
     <ol className="mt-4 space-y-3">
       {STAGE_ROWS.map((row, index) => {
@@ -260,20 +266,22 @@ function JobCard({
         ? labels.done
         : status.status === 'paused'
           ? labels.paused
-          : status.remainingSeconds === null || status.finishesAt === null
-            ? labels.processing
-            : `${labels.processing} · ${
-                status.remainingSeconds < 60
-                  ? labels.almostDone
-                  : labels.finishesAround
-                      .replace(
-                        '{time}',
-                        new Intl.DateTimeFormat(locale, { timeStyle: 'short' }).format(
-                          status.finishesAt,
-                        ),
-                      )
-                      .replace('{minutes}', String(Math.ceil(status.remainingSeconds / 60)))
-              }`
+          : status.stage === 'queued'
+            ? labels.queued
+            : status.remainingSeconds === null || status.finishesAt === null
+              ? labels.processing
+              : `${labels.processing} · ${
+                  status.remainingSeconds < 60
+                    ? labels.almostDone
+                    : labels.finishesAround
+                        .replace(
+                          '{time}',
+                          new Intl.DateTimeFormat(locale, { timeStyle: 'short' }).format(
+                            status.finishesAt,
+                          ),
+                        )
+                        .replace('{minutes}', String(Math.ceil(status.remainingSeconds / 60)))
+                }`
 
   return (
     <section className="rounded-2xl border border-[var(--line)] bg-[var(--card)]">

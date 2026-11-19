@@ -105,6 +105,7 @@ export default async function VideosPage({ params }: VideosPageProps) {
         resume: t('resume'),
         cancel: t('cancel'),
         paused: t('paused'),
+        queued: t('queued'),
         cancelConfirm: t.raw('cancelConfirm') as string,
         finishesAround: t.raw('finishesAround') as string,
         almostDone: t('almostDone'),

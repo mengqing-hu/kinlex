@@ -45,8 +45,16 @@ from video.translation import translate_lines
 # Where the captions come from: the video's own track, YouTube's recognition of the speech, or
 # a transcription of the sound with Whisper.
 CaptionSource = Literal["official", "automatic", "whisper"]
+# "queued" while another video is being read from YouTube; this one waits for its turn.
 Stage = Literal[
-    "metadata", "download", "captions", "transcription", "translation", "meanings", "timing"
+    "queued",
+    "metadata",
+    "download",
+    "captions",
+    "transcription",
+    "translation",
+    "meanings",
+    "timing",
 ]
 # Told each stage as it starts, and how much of it is done (0 to 1) where that is known.
 Report = Callable[[Stage, float | None], None]
@@ -234,36 +242,42 @@ def process_video(
     log = get_logger()
 
     identifier = youtube.video_id(url)
-    report("metadata", None)
-    info = youtube.read_video(identifier)
-    log.info("video %s: %s%s", identifier, info.title, " (signed in)" if info.signed_in else "")
-    if on_video:
-        on_video(info.title, info.duration_ms)
     path = video_path(directory, identifier)
-    if not path.is_file():
-        log.info("downloading the video")
-        report("download", 0)
-        youtube.download_video(
-            identifier, path, lambda done: report("download", done), signed_in=info.signed_in
-        )
-
-    with model_client(get_settings()) as client:
-        llm = create_llm(client, config)
+    # Everything read from YouTube is read in one turn, so only one video at a time asks it for
+    # anything; translating and explaining happen after the turn is given up.
+    with youtube.youtube_turn(lambda: report("queued", None)):
+        report("metadata", None)
+        info = youtube.read_video(identifier)
+        log.info("video %s: %s%s", identifier, info.title, " (signed in)" if info.signed_in else "")
+        if on_video:
+            on_video(info.title, info.duration_ms)
+        if not path.is_file():
+            log.info("downloading the video")
+            report("download", 0)
+            youtube.download_video(
+                identifier, path, lambda done: report("download", done), signed_in=info.signed_in
+            )
         track = youtube.pick_track(info, language)
         speech = youtube.pick_speech_track(info, language)
         source: CaptionSource = captions or ("official" if track is not None else "whisper")
         # YouTube's recognition of the speech times the words of any captions, so it is read once.
-        heard = (
-            timed_words(youtube.download_track(speech, signed_in=info.signed_in)) if speech else []
+        heard_data = youtube.download_track(speech, signed_in=info.signed_in) if speech else None
+        official_data = (
+            youtube.download_track(track, signed_in=info.signed_in)
+            if source == "official" and track is not None
+            else None
         )
+    heard = timed_words(heard_data) if heard_data else []
+
+    with model_client(get_settings()) as client:
+        llm = create_llm(client, config)
         if source == "official":
-            if track is None:
+            if track is None or official_data is None:
                 raise NoCaptionsError(f"{identifier} has no official {language} captions")
             report("captions", None)
             log.info("captions: official track %s", track.code)
             caption_track = track.code
-            data = youtube.download_track(track, signed_in=info.signed_in)
-            lines = lines_from_cues(official_cues(data))
+            lines = lines_from_cues(official_cues(official_data))
         elif source == "automatic":
             if speech is None:
                 raise NoCaptionsError(f"{identifier} has no automatic {language} captions")

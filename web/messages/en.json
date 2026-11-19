@@ -406,6 +406,7 @@
     "resume": "Continue",
     "cancel": "Cancel",
     "paused": "Paused",
+    "queued": "Waiting for its turn: another video is being downloaded",
     "cancelConfirm": "Stop processing “{title}”? The downloaded video is deleted too. Translations made so far are kept for next time.",
     "finishesAround": "ready around {time} (about {minutes} min)",
     "almostDone": "almost done",
