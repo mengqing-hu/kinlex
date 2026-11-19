@@ -336,6 +336,7 @@
       "titleDesc": "Z to A"
     },
     "videoOptions": "Video options",
+    "watched": "Watched",
     "renameVideo": "Rename",
     "deleteVideo": "Delete",
     "deleteVideoConfirm": "Delete “{title}”? The video and its captions are removed from this computer.",

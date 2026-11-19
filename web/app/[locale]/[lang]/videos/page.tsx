@@ -8,6 +8,7 @@ import { localeNames, locales } from '@/i18n/locales'
 import { applyRouteLocale, getLanguageNames } from '@/i18n/server'
 import { isSupportedLanguage, supportedLanguages } from '@/lib/languages'
 import { listUnfinishedVideoJobs } from '@/lib/videos/jobs'
+import { listVideoProgress } from '@/lib/videos/progress'
 import { listStudyVideos } from '@/lib/videos/studyFiles'
 import { canUseVideos, currentUser } from '@/lib/videos/access'
 
@@ -29,7 +30,7 @@ export default async function VideosPage({ params }: VideosPageProps) {
   if (!isSupportedLanguage(lang)) notFound()
   if (!canUseVideos(await currentUser())) notFound()
 
-  const [t, levelT, languageNames, processed, unfinished] = await Promise.all([
+  const [t, levelT, languageNames, processed, unfinished, progressById] = await Promise.all([
     getTranslations('videoPage'),
     getTranslations('levelPage'),
     getLanguageNames(),
@@ -37,6 +38,7 @@ export default async function VideosPage({ params }: VideosPageProps) {
       supportedLanguages.map(async ({ code }) => [code, await listStudyVideos(code)] as const),
     ),
     listUnfinishedVideoJobs(),
+    listVideoProgress(),
   ])
 
   // Every processed video, whatever the language being learned; the library sorts them.
@@ -52,6 +54,7 @@ export default async function VideosPage({ params }: VideosPageProps) {
       ),
       addedAt: video.addedAt,
       durationMs: video.durationMs,
+      progress: progressById.get(video.id) ?? null,
     })),
   )
 
@@ -174,6 +177,7 @@ export default async function VideosPage({ params }: VideosPageProps) {
           videoOptions: t('videoOptions'),
           rename: t('renameVideo'),
           delete: t('deleteVideo'),
+          watched: t('watched'),
           deleteConfirm: t.raw('deleteVideoConfirm') as string,
         },
       }}

@@ -51,6 +51,13 @@ export interface StudyVideoSummary {
   durationMs: number | null
 }
 
+// How far the learner has watched a video. finished stays true once the video has played to its
+// end, even while it is watched again.
+export interface VideoProgress {
+  positionMs: number
+  finished: boolean
+}
+
 // Where a video's captions come from: the uploader's track on YouTube, YouTube's own recognition
 // of the speech, or a Whisper transcription the pipeline makes.
 export const captionSources = ['official', 'automatic', 'whisper'] as const

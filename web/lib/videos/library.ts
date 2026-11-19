@@ -1,6 +1,7 @@
 // Filtering and sorting the video library. A plain module, so the page and its tests can use it.
 
 import type { SortOrder } from '@/lib/constants'
+import type { VideoProgress } from '@/lib/videos/types'
 
 export interface LibraryVideo {
   id: string
@@ -14,6 +15,8 @@ export interface LibraryVideo {
   // When the video was added, as an ISO date; null when it is not known.
   addedAt: string | null
   durationMs: number | null
+  // How far the learner has watched it, or null when they have not.
+  progress: VideoProgress | null
 }
 
 // 'added' is the default order: the newest videos first.
@@ -100,4 +103,13 @@ export function formatDuration(durationMs: number): string {
   const minutes = Math.floor(seconds / 60) % 60
   const rest = String(seconds % 60).padStart(2, '0')
   return hours > 0 ? `${hours}:${String(minutes).padStart(2, '0')}:${rest}` : `${minutes}:${rest}`
+}
+
+// 1:05:09 or 02:31, as a player shows where it is: the minutes always have two digits.
+export function formatClock(durationMs: number): string {
+  const seconds = Math.floor(durationMs / 1000)
+  const hours = Math.floor(seconds / 3600)
+  const minutes = String(Math.floor(seconds / 60) % 60).padStart(2, '0')
+  const rest = String(seconds % 60).padStart(2, '0')
+  return hours > 0 ? `${hours}:${minutes}:${rest}` : `${minutes}:${rest}`
 }

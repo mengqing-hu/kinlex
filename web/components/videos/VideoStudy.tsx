@@ -16,6 +16,7 @@ import { PanelCloseButton, panelSectionLabelClass, SidePanel } from '@/component
 import { Switch } from '@/components/ui/Switch'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip'
 import { useVideoChat, VideoChatPanel, type VideoChatLabels } from '@/components/videos/VideoChat'
+import { useWatchProgress } from '@/components/videos/useWatchProgress'
 import {
   findVideoMatches,
   useWordSearch,
@@ -32,6 +33,7 @@ import {
   type StudyLine,
   type StudyToken,
   type StudyVideo,
+  type VideoProgress,
 } from '@/lib/videos/types'
 
 export interface VideoStudyLabels {
@@ -429,8 +431,18 @@ function VideoWordPanel({
   )
 }
 
-export function VideoStudy({ video, labels }: { video: StudyVideo; labels: VideoStudyLabels }) {
+export function VideoStudy({
+  video,
+  progress,
+  labels,
+}: {
+  video: StudyVideo
+  // How far the learner watched it before, or null when they have not.
+  progress: VideoProgress | null
+  labels: VideoStudyLabels
+}) {
   const videoRef = useRef<HTMLVideoElement>(null)
+  useWatchProgress(videoRef, video.id, progress)
   const listRef = useRef<HTMLDivElement>(null)
   const timeMs = useVideoTime(videoRef)
   const [selection, setSelection] = useState<Selection | null>(null)

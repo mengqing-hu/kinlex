@@ -5,6 +5,7 @@ import { getTranslations } from 'next-intl/server'
 import { VideoStudy } from '@/components/videos/VideoStudy'
 import { applyRouteLocale } from '@/i18n/server'
 import { isSupportedLanguage } from '@/lib/languages'
+import { getVideoProgress } from '@/lib/videos/progress'
 import { getStudyVideo } from '@/lib/videos/studyFiles'
 import { getWordListLabels } from '@/lib/wordListLabels'
 import { canUseVideos, currentUser } from '@/lib/videos/access'
@@ -28,8 +29,9 @@ export default async function VideoPage({ params }: VideoPageProps) {
   if (!isSupportedLanguage(lang)) notFound()
   if (!canUseVideos(await currentUser())) notFound()
 
-  const [video, t, listLabels] = await Promise.all([
+  const [video, progress, t, listLabels] = await Promise.all([
     getStudyVideo(lang, videoId, locale),
+    getVideoProgress(videoId),
     getTranslations('videoPage'),
     getWordListLabels(lang),
   ])
@@ -72,6 +74,7 @@ export default async function VideoPage({ params }: VideoPageProps) {
           close: listLabels.wordPanel.close,
         },
       }}
+      progress={progress}
       video={video}
     />
   )

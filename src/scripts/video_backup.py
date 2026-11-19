@@ -21,6 +21,7 @@ TABLES = (
     "video_tokens",
     "video_token_glosses",
     "video_examples",
+    "video_progress",
 )
 
 

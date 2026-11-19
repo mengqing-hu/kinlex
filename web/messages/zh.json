@@ -362,6 +362,7 @@
       "titleDesc": "Z 到 A"
     },
     "videoOptions": "视频选项",
+    "watched": "已看完",
     "renameVideo": "重命名",
     "deleteVideo": "删除",
     "deleteVideoConfirm": "删除“{title}”？视频和字幕会从这台电脑上移除。",

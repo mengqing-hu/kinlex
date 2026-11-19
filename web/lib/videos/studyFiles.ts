@@ -237,7 +237,7 @@ async function videoDb(): Promise<any> {
   return getSupabase()
 }
 
-function missingTable(error: { code?: string } | null): boolean {
+export function missingTable(error: { code?: string } | null): boolean {
   // PostgREST answers PGRST205 for a table it does not know.
   return error?.code === 'PGRST205' || error?.code === '42P01'
 }

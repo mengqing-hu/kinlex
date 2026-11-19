@@ -11,12 +11,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu'
 import { Link } from '@/i18n/navigation'
-import { formatDuration, type LibraryVideo } from '@/lib/videos/library'
+import { formatClock, formatDuration, type LibraryVideo } from '@/lib/videos/library'
 
 export interface VideoItemLabels {
   videoOptions: string
   rename: string
   delete: string
+  watched: string
   // Raw template with a {title} placeholder.
   deleteConfirm: string
 }
@@ -163,17 +164,47 @@ export function VideoItem({ video, view, explainedIn, addedLabel, labels }: Vide
     />
   )
 
-  // The length over the corner of the still, as video sites show it.
-  const duration =
-    video.durationMs === null ? null : (
+  // How far the learner has got, as a share of the length; null when there is nothing to draw.
+  const { progress, durationMs } = video
+  const watchedShare =
+    progress === null || durationMs === null || durationMs <= 0
+      ? null
+      : progress.finished
+        ? 1
+        : Math.min(progress.positionMs / durationMs, 1)
+
+  // Over the corner of the still, as video sites show it: the length, how far the learner has got
+  // in it, or that they have watched it all.
+  const cornerText = progress?.finished
+    ? `✓ ${labels.watched}`
+    : durationMs === null
+      ? null
+      : progress
+        ? `${formatClock(progress.positionMs)}/${formatClock(durationMs)}`
+        : formatDuration(durationMs)
+  const corner =
+    cornerText === null ? null : (
       <span
         className={`absolute rounded-md bg-black/70 font-semibold text-white tabular-nums backdrop-blur-sm ${
           cards
-            ? 'right-2 bottom-2 px-2 py-1 text-[13px] leading-none'
-            : 'right-1 bottom-1 px-1.5 py-0.5 text-[11px] leading-tight'
+            ? 'right-2 bottom-3 px-2 py-1 text-[13px] leading-none'
+            : 'right-1 bottom-1.5 px-1.5 py-0.5 text-[11px] leading-tight'
         }`}
       >
-        {formatDuration(video.durationMs)}
+        {cornerText}
+      </span>
+    )
+
+  const progressBar =
+    watchedShare === null ? null : (
+      <span
+        aria-hidden="true"
+        className={`absolute inset-x-0 bottom-0 bg-black/40 ${cards ? 'h-1' : 'h-0.5'}`}
+      >
+        <span
+          className="block h-full bg-[var(--watched)]"
+          style={{ width: `${watchedShare * 100}%` }}
+        />
       </span>
     )
 
@@ -182,7 +213,8 @@ export function VideoItem({ video, view, explainedIn, addedLabel, labels }: Vide
       <li className="group relative flex flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--card)] transition-colors focus-within:ring-2 focus-within:ring-[var(--info)] hover:border-[var(--root)]">
         <div className="relative aspect-video overflow-hidden bg-[var(--bg)]">
           {thumbnail}
-          {duration}
+          {corner}
+          {progressBar}
         </div>
         <div className="flex items-start gap-1 p-4 pr-2">
           <div className="min-w-0 flex-1">
@@ -199,7 +231,8 @@ export function VideoItem({ video, view, explainedIn, addedLabel, labels }: Vide
     <li className="group relative flex items-center gap-4 rounded-md border-b border-[var(--line)] px-2 py-2 transition-colors last:border-b-0 focus-within:ring-2 focus-within:ring-[var(--info)] hover:bg-[var(--row-hover)]">
       <div className="relative aspect-video w-28 shrink-0 overflow-hidden rounded-md bg-[var(--bg)] sm:w-36">
         {thumbnail}
-        {duration}
+        {corner}
+        {progressBar}
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex min-w-0">{title}</div>

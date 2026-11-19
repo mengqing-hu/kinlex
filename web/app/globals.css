@@ -25,6 +25,8 @@
   --familiarity-3: #e0a526;
   --familiarity-4: #9fae3f;
   --familiarity-5: #5f8f4e;
+  /* How far a video has been watched, as video sites draw it over the still. */
+  --watched: #e8638c;
   --background: var(--bg);
   --foreground: var(--ink);
 }
@@ -47,6 +49,7 @@
   --familiarity-3: #e8b84a;
   --familiarity-4: #bfcb66;
   --familiarity-5: #8fbf7c;
+  --watched: #f0799f;
   --background: var(--bg);
   --foreground: var(--ink);
 }
