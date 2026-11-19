@@ -115,6 +115,9 @@ class StudyVideo(Record):
     caption_source: CaptionSource
     # The official or automatic track's code (es, es-419), or the speech recognition model.
     caption_track: str
+    # The YouTube channel that published the video, when YouTube names it.
+    channel_id: str | None = None
+    channel_name: str | None = None
     lines: list[StudyLine]
 
 
@@ -349,6 +352,8 @@ def process_video(
         meaning_language=meaning_language,
         caption_source=source,
         caption_track=caption_track,
+        channel_id=info.channel_id,
+        channel_name=info.channel_name,
         lines=[
             StudyLine(
                 **line.model_dump(),

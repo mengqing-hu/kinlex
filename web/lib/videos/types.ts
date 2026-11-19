@@ -42,9 +42,17 @@ export interface StudyVideo {
   lines: StudyLine[]
 }
 
+// The YouTube channel a video comes from.
+export interface VideoChannel {
+  id: string
+  name: string
+}
+
 export interface StudyVideoSummary {
   id: string
   title: string
+  // Null for videos processed before the channel was kept, until it is filled in.
+  channel: VideoChannel | null
   meaningLanguages: string[]
   // When the video was added, as an ISO date; null when it is not known.
   addedAt: string | null

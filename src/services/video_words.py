@@ -132,10 +132,12 @@ def persist_study_video(
             """
             insert into public.videos
               (id, owner_id, language, title, duration_ms, provider, provider_video_id,
-               source_url, media_path, status)
-            values (%s, %s, %s, %s, %s, %s, %s, %s, %s, 'done')
+               source_url, media_path, channel_id, channel_name, status)
+            values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 'done')
             on conflict (id) do update set
               duration_ms = excluded.duration_ms,
+              channel_id = coalesce(excluded.channel_id, videos.channel_id),
+              channel_name = coalesce(excluded.channel_name, videos.channel_name),
               source_url = excluded.source_url,
               media_path = excluded.media_path,
               status = 'done',
@@ -151,6 +153,9 @@ def persist_study_video(
                 study.video_id,
                 source_url,
                 media_path,
+                # Study files written before the channel was kept have neither.
+                getattr(study, "channel_id", None),
+                getattr(study, "channel_name", None),
             ),
         )
         if not _same_lines(connection, study):

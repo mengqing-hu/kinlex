@@ -61,6 +61,9 @@ class VideoInfo:
     speech_tracks: list[CaptionTrack]
     # Whether the video could only be read signed in, so it is downloaded signed in too.
     signed_in: bool = False
+    # The channel that published it; YouTube leaves these out for some videos.
+    channel_id: str | None = None
+    channel_name: str | None = None
 
 
 def video_id(url_or_id: str) -> str:
@@ -180,6 +183,8 @@ def read_video(identifier: str) -> VideoInfo:
             if track.code.endswith("-orig")
         ],
         signed_in=signed_in,
+        channel_id=info.get("channel_id"),
+        channel_name=info.get("channel") or info.get("uploader"),
     )
 
 

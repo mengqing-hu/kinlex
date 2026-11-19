@@ -309,6 +309,8 @@
     "filters": {
       "language": "Language",
       "allLanguages": "All languages",
+      "channel": "Channel",
+      "allChannels": "All channels",
       "added": "Added",
       "addedAnyTime": "Any time",
       "addedRanges": {
@@ -337,6 +339,7 @@
     },
     "videoOptions": "Video options",
     "watched": "Watched",
+    "showChannel": "Show videos from {channel}",
     "renameVideo": "Rename",
     "deleteVideo": "Delete",
     "deleteVideoConfirm": "Delete “{title}”? The video and its captions are removed from this computer.",

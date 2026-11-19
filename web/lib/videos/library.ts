@@ -1,7 +1,7 @@
 // Filtering and sorting the video library. A plain module, so the page and its tests can use it.
 
 import type { SortOrder } from '@/lib/constants'
-import type { VideoProgress } from '@/lib/videos/types'
+import type { VideoChannel, VideoProgress } from '@/lib/videos/types'
 
 export interface LibraryVideo {
   id: string
@@ -10,6 +10,7 @@ export interface LibraryVideo {
   language: string
   languageName: string
   title: string
+  channel: VideoChannel | null
   // The names of the languages its words and sentences are explained in.
   meaningLanguageNames: string[]
   // When the video was added, as an ISO date; null when it is not known.
@@ -44,6 +45,8 @@ export interface VideoFilters {
   query: string
   // A language code, or '' for every language.
   language: string
+  // A channel id, or '' for every channel.
+  channel: string
   added: AddedRange | ''
   duration: DurationRange | ''
 }
@@ -65,6 +68,7 @@ export function matchesFilters(video: LibraryVideo, filters: VideoFilters, now: 
   return (
     (!query || video.title.toLocaleLowerCase().includes(query)) &&
     (!filters.language || video.language === filters.language) &&
+    (!filters.channel || video.channel?.id === filters.channel) &&
     (!filters.added || isAddedWithin(video, filters.added, now)) &&
     (!filters.duration || durationRangeOf(video.durationMs) === filters.duration)
   )

@@ -49,6 +49,7 @@ export default async function VideosPage({ params }: VideosPageProps) {
       language: code,
       languageName: languageNames[code] ?? code,
       title: video.title,
+      channel: video.channel,
       meaningLanguageNames: video.meaningLanguages.map(
         (meaning) => localeNames[meaning as keyof typeof localeNames] ?? meaning,
       ),
@@ -137,6 +138,8 @@ export default async function VideosPage({ params }: VideosPageProps) {
         searchPlaceholder: t('searchVideosPlaceholder'),
         language: t('filters.language'),
         allLanguages: t('filters.allLanguages'),
+        channel: t('filters.channel'),
+        allChannels: t('filters.allChannels'),
         added: t('filters.added'),
         addedAnyTime: t('filters.addedAnyTime'),
         addedRanges: {
@@ -178,6 +181,7 @@ export default async function VideosPage({ params }: VideosPageProps) {
           rename: t('renameVideo'),
           delete: t('deleteVideo'),
           watched: t('watched'),
+          showChannel: t.raw('showChannel') as string,
           deleteConfirm: t.raw('deleteVideoConfirm') as string,
         },
       }}

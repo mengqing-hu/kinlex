@@ -18,6 +18,8 @@ export interface VideoItemLabels {
   rename: string
   delete: string
   watched: string
+  // Template with {channel}.
+  showChannel: string
   // Raw template with a {title} placeholder.
   deleteConfirm: string
 }
@@ -30,6 +32,8 @@ interface VideoItemProps {
   // The date added as the interface shows it, or null when it is not known.
   addedLabel: string | null
   labels: VideoItemLabels
+  // Shows only the videos of the channel.
+  onChannel: (id: string) => void
 }
 
 // YouTube's 16:9 still of the video.
@@ -39,7 +43,14 @@ function thumbnailUrl(id: string): string {
 
 // A processed video in the library, as a card with its still or as a row, with a menu to rename it
 // in place or delete it.
-export function VideoItem({ video, view, explainedIn, addedLabel, labels }: VideoItemProps) {
+export function VideoItem({
+  video,
+  view,
+  explainedIn,
+  addedLabel,
+  labels,
+  onChannel,
+}: VideoItemProps) {
   const router = useRouter()
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(video.title)
@@ -92,6 +103,29 @@ export function VideoItem({ video, view, explainedIn, addedLabel, labels }: Vide
   ]
     .filter(Boolean)
     .join(' · ')
+
+  // The channel leads the line; picking it shows the channel's videos. Above the link that covers
+  // the item, so it filters rather than opening the video.
+  const { channel } = video
+  const detailLine = (
+    <p className="mt-1 truncate text-xs text-[var(--mute)]">
+      {channel ? (
+        <>
+          <button
+            aria-label={labels.showChannel.replace('{channel}', channel.name)}
+            className="relative z-10 rounded-sm font-medium text-[var(--ink)] hover:underline focus-visible:ring-2 focus-visible:ring-[var(--info)] focus-visible:outline-none"
+            title={labels.showChannel.replace('{channel}', channel.name)}
+            type="button"
+            onClick={() => onChannel(channel.id)}
+          >
+            {channel.name}
+          </button>
+          {details ? ' · ' : null}
+        </>
+      ) : null}
+      {details}
+    </p>
+  )
 
   const title = editing ? (
     <input
@@ -219,7 +253,7 @@ export function VideoItem({ video, view, explainedIn, addedLabel, labels }: Vide
         <div className="flex items-start gap-1 p-4 pr-2">
           <div className="min-w-0 flex-1">
             {title}
-            <p className="mt-1 truncate text-xs text-[var(--mute)]">{details}</p>
+            {detailLine}
           </div>
           {menu}
         </div>
@@ -236,7 +270,7 @@ export function VideoItem({ video, view, explainedIn, addedLabel, labels }: Vide
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex min-w-0">{title}</div>
-        <p className="mt-1 truncate text-xs text-[var(--mute)]">{details}</p>
+        {detailLine}
       </div>
       {menu}
     </li>

@@ -335,6 +335,8 @@
     "filters": {
       "language": "语言",
       "allLanguages": "所有语言",
+      "channel": "频道",
+      "allChannels": "所有频道",
       "added": "添加时间",
       "addedAnyTime": "不限时间",
       "addedRanges": {
@@ -363,6 +365,7 @@
     },
     "videoOptions": "视频选项",
     "watched": "已看完",
+    "showChannel": "查看 {channel} 的视频",
     "renameVideo": "重命名",
     "deleteVideo": "删除",
     "deleteVideoConfirm": "删除“{title}”？视频和字幕会从这台电脑上移除。",

@@ -8,7 +8,12 @@ import { z } from 'zod'
 
 import { findWordSlugs } from '@/lib/repositories/wordRepository'
 import { getPublicSupabase, getSupabase } from '@/lib/supabase/server'
-import { type StudyVideo, type StudyVideoSummary, toFilteredKind } from '@/lib/videos/types'
+import {
+  type StudyVideo,
+  type StudyVideoSummary,
+  toFilteredKind,
+  type VideoChannel,
+} from '@/lib/videos/types'
 
 // Until videos are stored in the database, the pages read the files kinlex-video writes:
 // data/pipeline/<language>/videos/<id>.<meaning language>.json, with the video beside them as
@@ -25,6 +30,9 @@ const studyFileSchema = z.object({
   meaning_language: z.string(),
   // Files written before the pipeline recorded it have none.
   duration_ms: z.number().nullish(),
+  // Files written before the channel was kept have neither.
+  channel_id: z.string().nullish(),
+  channel_name: z.string().nullish(),
   lines: z.array(
     z.object({
       position: z.number(),
@@ -51,6 +59,13 @@ const studyFileSchema = z.object({
 })
 
 type StudyFile = z.infer<typeof studyFileSchema>
+
+function toChannel(
+  id: string | null | undefined,
+  name: string | null | undefined,
+): VideoChannel | null {
+  return id && name ? { id, name } : null
+}
 
 export function videoDirectory(language: string): string {
   return path.join(STUDY_ROOT, language, 'videos')
@@ -167,14 +182,16 @@ export async function listStudyVideos(language: string): Promise<StudyVideoSumma
   const videos = await Promise.all(
     [...byId].map(async ([id, meaningLanguages]) => {
       const meaningLanguage = meaningLanguages[0] ?? 'en'
-      const [{ title, duration_ms: durationMs }, info] = await Promise.all([
-        readStudyFile(language, id, meaningLanguage),
-        // The study file is written when processing ends, which is when the video was added.
-        stat(path.join(videoDirectory(language), `${id}.${meaningLanguage}.json`)),
-      ])
+      const [{ title, duration_ms: durationMs, channel_id, channel_name }, info] =
+        await Promise.all([
+          readStudyFile(language, id, meaningLanguage),
+          // The study file is written when processing ends, which is when the video was added.
+          stat(path.join(videoDirectory(language), `${id}.${meaningLanguage}.json`)),
+        ])
       return {
         id,
         title,
+        channel: toChannel(channel_id, channel_name),
         meaningLanguages,
         addedAt: info.mtime.toISOString(),
         durationMs: durationMs ?? null,
@@ -245,12 +262,18 @@ export function missingTable(error: { code?: string } | null): boolean {
 // The learner's videos of a language that are not archived, or null when the tables do not exist.
 async function listDatabaseVideos(language: string): Promise<StudyVideoSummary[] | null> {
   const db = await videoDb()
-  const { data, error } = await db
-    .from('videos')
-    .select('id, title, created_at, duration_ms')
-    .eq('language', language)
-    .neq('status', 'archived')
-    .order('title')
+  const select = (columns: string) =>
+    db
+      .from('videos')
+      .select(columns)
+      .eq('language', language)
+      .neq('status', 'archived')
+      .order('title')
+  let { data, error } = await select('id, title, created_at, duration_ms, channel_id, channel_name')
+  // A database the channel migration has not reached lists its videos without channels.
+  if (error?.code === '42703') {
+    ;({ data, error } = await select('id, title, created_at, duration_ms'))
+  }
   if (missingTable(error)) return null
   if (error) throw new Error(`list videos: ${error.message}`)
   const videos = (data ?? []) as Array<{
@@ -258,6 +281,8 @@ async function listDatabaseVideos(language: string): Promise<StudyVideoSummary[]
     title: string
     created_at: string
     duration_ms: number | null
+    channel_id?: string | null
+    channel_name?: string | null
   }>
   if (videos.length === 0) return []
 
@@ -278,6 +303,7 @@ async function listDatabaseVideos(language: string): Promise<StudyVideoSummary[]
   return videos.map((video) => ({
     id: video.id,
     title: video.title,
+    channel: toChannel(video.channel_id, video.channel_name),
     meaningLanguages: languages.get(video.id) ?? [],
     addedAt: video.created_at,
     durationMs: video.duration_ms,

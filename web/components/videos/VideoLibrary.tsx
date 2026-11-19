@@ -31,6 +31,8 @@ export interface VideoLibraryLabels {
   searchPlaceholder: string
   language: string
   allLanguages: string
+  channel: string
+  allChannels: string
   added: string
   addedAnyTime: string
   addedRanges: Record<AddedRange, string>
@@ -77,6 +79,10 @@ export function VideoLibrary({ videos, toolbar, now, labels }: VideoLibraryProps
     language: videos.some((video) => video.language === searchParams.get('language'))
       ? (searchParams.get('language') ?? '')
       : '',
+    // A channel no video shows any more lists every channel, as a language does.
+    channel: videos.some((video) => video.channel?.id === searchParams.get('channel'))
+      ? (searchParams.get('channel') ?? '')
+      : '',
     added: pick(addedRanges, searchParams.get('added')),
     duration: pick(durationRanges, searchParams.get('duration')),
   }
@@ -100,6 +106,13 @@ export function VideoLibrary({ videos, toolbar, now, labels }: VideoLibraryProps
   const languages = [
     ...new Map(videos.map((video) => [video.language, video.languageName])).entries(),
   ].toSorted((left, right) => left[1].localeCompare(right[1]))
+  const channels = [
+    ...new Map(
+      videos.flatMap((video) =>
+        video.channel ? [[video.channel.id, video.channel.name]] : [],
+      ) as [string, string][],
+    ).entries(),
+  ].toSorted((left, right) => left[1].localeCompare(right[1]))
   const shown = sortVideos(
     videos.filter((video) => matchesFilters(video, filters, now)),
     sort ?? 'added',
@@ -113,6 +126,7 @@ export function VideoLibrary({ videos, toolbar, now, labels }: VideoLibraryProps
       key={`${video.language}:${video.id}`}
       labels={labels.item}
       video={video}
+      onChannel={(id) => updateParams({ channel: id })}
       view={view}
     />
   ))
@@ -141,6 +155,25 @@ export function VideoLibrary({ videos, toolbar, now, labels }: VideoLibraryProps
                   ]}
                   value={filters.language}
                   onChange={(value) => updateParams({ language: value })}
+                />
+              ) : null}
+              {channels.length > 1 || filters.channel ? (
+                <FilterSelect
+                  label={labels.channel}
+                  options={[
+                    {
+                      value: '',
+                      label: labels.allChannels,
+                      count: countWith({ channel: '' }),
+                    },
+                    ...channels.map(([id, name]) => ({
+                      value: id,
+                      label: name,
+                      count: countWith({ channel: id }),
+                    })),
+                  ]}
+                  value={filters.channel}
+                  onChange={(value) => updateParams({ channel: value })}
                 />
               ) : null}
               <FilterSelect
